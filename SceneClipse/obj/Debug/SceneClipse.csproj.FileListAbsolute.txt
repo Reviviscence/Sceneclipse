@@ -1,0 +1,15 @@
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\bin\Debug\SceneClipse.exe.config
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\bin\Debug\SceneClipse.exe
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\bin\Debug\SceneClipse.pdb
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\obj\Debug\SceneClipse.csprojAssemblyReference.cache
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\obj\Debug\SceneClipse.Properties.Resources.resources
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\obj\Debug\SceneClipse.csproj.GenerateResource.cache
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\obj\Debug\SceneClipse.csproj.CoreCompileInputs.cache
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\obj\Debug\SceneClipse.exe
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\obj\Debug\SceneClipse.pdb
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\bin\Debug\Interop.WMPLib.dll
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\bin\Debug\AxInterop.WMPLib.dll
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\obj\Debug\Interop.WMPLib.dll
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\obj\Debug\AxInterop.WMPLib.dll
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\obj\Debug\SceneClipse.csproj.ResolveComReference.cache
+E:\TH_Workplace_Coding\source\repos\SceneClipse\SceneClipse\obj\Debug\SceneClipse.Form1.resources
