@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.IO;
 using System.Xml;
+using System.Threading;
 
 namespace SceneClipse
 {
@@ -25,26 +26,19 @@ namespace SceneClipse
         private string _sFilenamePlaying = "";        
         private string _sFilehashPlaying = "";           // 현재 미사용
         private bool _isUpdatingBookmarkInfo = false;
+        private bool _isWaitingForJump = false;
 
         public Form1()
         {
             InitializeComponent();
             InitializeBookmarkList();
-
+            
+            this.panelTagList.VerticalScroll.Enabled = false;
             _listBookmarks = new SortedList<int, BookmarkItem>();
         }
 
         private void buttonPlay_Click(object sender, EventArgs e)
         {
-            // 디버그용 임시 파일 설정(TODO : 이후에 제거)
-            if (_sFilenamePlaying == "")
-            {
-                InitializeBookmarkdata();
-                _sFilenamePlaying = @"c:\Wildlife.wmv";
-                // _sFilehashPlaying = GetMD5HashFromFile(_sFilenamePlaying);
-
-                axMediaPlayer1.URL = _sFilenamePlaying;
-            }
 
             axMediaPlayer1.Ctlcontrols.play();
             
@@ -65,10 +59,24 @@ namespace SceneClipse
         // pause 버튼 클릭시 - 재생중이면 정지, 정지상태면 다시 재생
         private void buttonPause_Click(object sender, EventArgs e)
         {
-            if( axMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPaused )
-               axMediaPlayer1.Ctlcontrols.play();
-            else if( axMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPlaying )
-               axMediaPlayer1.Ctlcontrols.pause();
+            // 디버그용 임시 파일 설정(TODO : 이후에 제거)
+            if (_sFilenamePlaying == "")
+            {
+                InitializeBookmarkdata();
+                _sFilenamePlaying = @"c:\Wildlife.wmv";
+                // _sFilehashPlaying = GetMD5HashFromFile(_sFilenamePlaying);
+
+                axMediaPlayer1.URL = _sFilenamePlaying;
+            }
+            else
+            {
+                // 재생중이면 정지, 정지상태면 다시 재생
+                if (axMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPaused ||
+                    axMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsStopped )
+                    axMediaPlayer1.Ctlcontrols.play();
+                else if (axMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPlaying)
+                    axMediaPlayer1.Ctlcontrols.pause();
+            }
         }
 
         // 파일 열기. 다이얼로그 표시 후 파일 선택하여 재생
@@ -621,9 +629,13 @@ namespace SceneClipse
                 nodeRoot.AppendChild(nodeBookmark);
 
             }
-
+            
+            string sSaveFilename;
             SaveFileDialog dialogSave = new SaveFileDialog();
             dialogSave.Filter = "XML File | *.xml";
+            sSaveFilename = textBoxOpenFileName.Text.Substring(0, textBoxOpenFileName.Text.LastIndexOf('.')) + ".xml";
+           
+            dialogSave.FileName = sSaveFilename;
 
             if (dialogSave.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -725,6 +737,102 @@ namespace SceneClipse
         private void buttonQuit_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        // private void buttonParse_Click(object sender, EventArgs e)
+        // FormParseDialog 다이얼로그를 출력시키고, 시간 정보(단위 : 초.밀리초)를 받아옴
+        // 받아온 시간정보를 이용해 책갈피 작성
+        private void buttonParse_Click(object sender, EventArgs e)
+        {
+            var dialogParse = new FormParseDialog();
+
+            dialogParse.sFileName = _sFilenamePlaying;
+
+            var result = dialogParse.ShowDialog();
+
+            if( result == DialogResult.OK )
+            {
+                /*
+                 * TODO : 받은 책갈피 시간정보로 실제 책갈피를 생성
+                 * */
+
+                InitializeBookmarkdata();
+
+                foreach (double d in dialogParse.vBookmarkTimes)
+                {
+                    _nBookmarkCount++;
+
+                    double dTimeStart, dTimeEnd;
+                    dTimeStart = dTimeEnd = d;
+
+                    // 시간 보정 여부 체크후 시간값 수정
+                    if( dialogParse.bUseTimeModify)
+                    {
+                        if (dialogParse.bUseModifyHead)
+                            dTimeStart = d - dialogParse.nModifySec;
+                        else
+                            dTimeEnd = d + dialogParse.nModifySec;
+                    }
+
+                    // 시간보정 이후 시간이 - 값이 되지 않도록 보정
+                    if (dTimeStart < 0) dTimeStart = 0;
+
+                    BookmarkTimeData time = new BookmarkTimeData(dTimeStart);
+                    string sTimeData = time.sTimeBookmark;
+
+                    // 책갈피 목록에 추가     
+                    BookmarkItem itemNewBookmark = new BookmarkItem("책갈피 " + sTimeData, dTimeStart);
+                    itemNewBookmark.BookmarkEnd = new BookmarkTimeData(dTimeEnd);
+
+                    _listBookmarks.Add(_nBookmarkCount, itemNewBookmark);
+
+                    // TODO : 설정된 시간에 해당하는 이미지를 가져오기
+                    /*
+                    // mediaplayer의 플레이 시간을 강제로 조정;
+                    axMediaPlayer1.PositionChange += (s, ev) => {
+                        _isWaitingForJump = false;
+                    };
+                    _isWaitingForJump = true;
+                    axMediaPlayer1.Ctlcontrols.currentPosition = d;
+                    Thread.Sleep(1000);
+                    while (_isWaitingForJump)
+                    {
+                        Thread.Sleep(1000);
+                    }
+                    
+                    // mediaplayer에서 이미지 가져오기
+                    Bitmap bitmap = new Bitmap(axMediaPlayer1.Width, axMediaPlayer1.Height - 76);
+                    {
+                        using (Graphics g = Graphics.FromImage(bitmap))
+                        {
+                            g.CopyFromScreen(axMediaPlayer1.PointToScreen(new System.Drawing.Point()).X,
+                                axMediaPlayer1.PointToScreen(new System.Drawing.Point()).Y,
+                                0, 0,
+                                new System.Drawing.Size(
+                                    axMediaPlayer1.Width, axMediaPlayer1.Height - 76));
+
+                        }
+                        // 이미지 표시(디버그용)                
+                        // bitmap.Save("e:\\test.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                        // if (pictureBox1.Image != null) pictureBox1.Image.Dispose();
+                        // pictureBox1.Image = bitmap.Clone(new Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
+
+                        imageList1.Images.Add(bitmap);
+                    }
+                    itemNewBookmark.imageThumbnail = bitmap;
+                    */
+                    // 리스트에 등록
+                    ListViewItem item = new ListViewItem(sTimeData);
+                    item.SubItems.Add(d.ToString());
+                    item.SubItems.Add(itemNewBookmark.sBookmarkName);
+                    item.SubItems.Add(_nBookmarkCount.ToString());
+                    
+                    // item.ImageIndex = imageList1.Images.Count;
+                    
+                    listViewBookmark.Items.Add(item);
+                }
+            }
         }
     }
 }

@@ -61,6 +61,7 @@ namespace SceneClipse
             UpdateTime(d);
         }
 
+        // double d : 책갈피 시간정보(초, 소숫점 이하 : 밀리초)
         public void UpdateTime(double d)
         {
             // 시간 정보(string 혹은 double값)를 읽어와 datetime으로 변환

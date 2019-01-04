@@ -28,3 +28,4 @@ E:\TH_Workplace_Coding\source\repos\Reviviscence\Sceneclipse\SceneClipse\obj\Deb
 E:\TH_Workplace_Coding\source\repos\Reviviscence\Sceneclipse\SceneClipse\obj\Debug\SceneClipse.csproj.CoreCompileInputs.cache
 E:\TH_Workplace_Coding\source\repos\Reviviscence\Sceneclipse\SceneClipse\obj\Debug\SceneClipse.exe
 E:\TH_Workplace_Coding\source\repos\Reviviscence\Sceneclipse\SceneClipse\obj\Debug\SceneClipse.pdb
+E:\TH_Workplace_Coding\source\repos\Reviviscence\Sceneclipse\SceneClipse\obj\Debug\SceneClipse.FormParseDialog.resources

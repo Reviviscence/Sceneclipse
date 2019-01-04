@@ -32,8 +32,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
             this.axMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
-            this.buttonStop = new System.Windows.Forms.Button();
-            this.buttonPlay = new System.Windows.Forms.Button();
             this.labelTimeDisplay = new System.Windows.Forms.Label();
             this.timerCurrentTime = new System.Windows.Forms.Timer(this.components);
             this.buttonPause = new System.Windows.Forms.Button();
@@ -68,6 +66,7 @@
             this.buttonSaveBookmark = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonQuit = new System.Windows.Forms.Button();
+            this.buttonParse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.axMediaPlayer1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -85,7 +84,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 126);
+            this.label1.Location = new System.Drawing.Point(10, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(69, 12);
             this.label1.TabIndex = 0;
@@ -100,30 +99,10 @@
             this.axMediaPlayer1.Size = new System.Drawing.Size(611, 426);
             this.axMediaPlayer1.TabIndex = 1;
             // 
-            // buttonStop
-            // 
-            this.buttonStop.Location = new System.Drawing.Point(12, 518);
-            this.buttonStop.Name = "buttonStop";
-            this.buttonStop.Size = new System.Drawing.Size(75, 23);
-            this.buttonStop.TabIndex = 2;
-            this.buttonStop.Text = "Stop";
-            this.buttonStop.UseVisualStyleBackColor = true;
-            this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
-            // 
-            // buttonPlay
-            // 
-            this.buttonPlay.Location = new System.Drawing.Point(12, 489);
-            this.buttonPlay.Name = "buttonPlay";
-            this.buttonPlay.Size = new System.Drawing.Size(75, 23);
-            this.buttonPlay.TabIndex = 3;
-            this.buttonPlay.Text = "Play";
-            this.buttonPlay.UseVisualStyleBackColor = true;
-            this.buttonPlay.Click += new System.EventHandler(this.buttonPlay_Click);
-            // 
             // labelTimeDisplay
             // 
             this.labelTimeDisplay.AutoSize = true;
-            this.labelTimeDisplay.Location = new System.Drawing.Point(10, 142);
+            this.labelTimeDisplay.Location = new System.Drawing.Point(12, 25);
             this.labelTimeDisplay.Name = "labelTimeDisplay";
             this.labelTimeDisplay.Size = new System.Drawing.Size(0, 12);
             this.labelTimeDisplay.TabIndex = 4;
@@ -136,11 +115,11 @@
             // 
             // buttonPause
             // 
-            this.buttonPause.Location = new System.Drawing.Point(94, 489);
+            this.buttonPause.Location = new System.Drawing.Point(12, 489);
             this.buttonPause.Name = "buttonPause";
             this.buttonPause.Size = new System.Drawing.Size(75, 23);
             this.buttonPause.TabIndex = 5;
-            this.buttonPause.Text = "Pause";
+            this.buttonPause.Text = "재생/정지";
             this.buttonPause.UseVisualStyleBackColor = true;
             this.buttonPause.Click += new System.EventHandler(this.buttonPause_Click);
             // 
@@ -156,7 +135,7 @@
             // 
             // textBoxOpenFileName
             // 
-            this.textBoxOpenFileName.Location = new System.Drawing.Point(12, 199);
+            this.textBoxOpenFileName.Location = new System.Drawing.Point(14, 82);
             this.textBoxOpenFileName.MaximumSize = new System.Drawing.Size(150, 500);
             this.textBoxOpenFileName.MinimumSize = new System.Drawing.Size(150, 4);
             this.textBoxOpenFileName.Multiline = true;
@@ -176,7 +155,7 @@
             // labelOpenFileName
             // 
             this.labelOpenFileName.AutoSize = true;
-            this.labelOpenFileName.Location = new System.Drawing.Point(10, 168);
+            this.labelOpenFileName.Location = new System.Drawing.Point(12, 51);
             this.labelOpenFileName.Name = "labelOpenFileName";
             this.labelOpenFileName.Size = new System.Drawing.Size(121, 12);
             this.labelOpenFileName.TabIndex = 10;
@@ -191,7 +170,7 @@
             // 
             this.buttonBookmark.Location = new System.Drawing.Point(6, 20);
             this.buttonBookmark.Name = "buttonBookmark";
-            this.buttonBookmark.Size = new System.Drawing.Size(97, 23);
+            this.buttonBookmark.Size = new System.Drawing.Size(75, 23);
             this.buttonBookmark.TabIndex = 12;
             this.buttonBookmark.Text = "책갈피";
             this.buttonBookmark.UseVisualStyleBackColor = true;
@@ -199,9 +178,9 @@
             // 
             // listViewBookmark
             // 
-            this.listViewBookmark.Location = new System.Drawing.Point(12, 250);
+            this.listViewBookmark.Location = new System.Drawing.Point(12, 122);
             this.listViewBookmark.Name = "listViewBookmark";
-            this.listViewBookmark.Size = new System.Drawing.Size(261, 175);
+            this.listViewBookmark.Size = new System.Drawing.Size(261, 303);
             this.listViewBookmark.TabIndex = 13;
             this.listViewBookmark.UseCompatibleStateImageBehavior = false;
             this.listViewBookmark.View = System.Windows.Forms.View.Details;
@@ -438,10 +417,10 @@
             // panelTagList
             // 
             this.panelTagList.AutoScroll = true;
-            this.panelTagList.AutoScrollMinSize = new System.Drawing.Size(550, 700);
+            this.panelTagList.AutoScrollMinSize = new System.Drawing.Size(550, 0);
             this.panelTagList.ColumnCount = 2;
             this.panelTagList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
-            this.panelTagList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 489F));
+            this.panelTagList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 505F));
             this.panelTagList.Controls.Add(this.label6, 0, 0);
             this.panelTagList.Controls.Add(this.textBoxTagInput, 1, 0);
             this.panelTagList.Location = new System.Drawing.Point(3, 59);
@@ -473,7 +452,7 @@
             // 
             this.buttonLoadBookmark.Location = new System.Drawing.Point(6, 49);
             this.buttonLoadBookmark.Name = "buttonLoadBookmark";
-            this.buttonLoadBookmark.Size = new System.Drawing.Size(97, 23);
+            this.buttonLoadBookmark.Size = new System.Drawing.Size(75, 23);
             this.buttonLoadBookmark.TabIndex = 16;
             this.buttonLoadBookmark.Text = "불러오기";
             this.buttonLoadBookmark.UseVisualStyleBackColor = true;
@@ -483,7 +462,7 @@
             // 
             this.buttonSaveBookmark.Location = new System.Drawing.Point(6, 78);
             this.buttonSaveBookmark.Name = "buttonSaveBookmark";
-            this.buttonSaveBookmark.Size = new System.Drawing.Size(97, 23);
+            this.buttonSaveBookmark.Size = new System.Drawing.Size(75, 23);
             this.buttonSaveBookmark.TabIndex = 17;
             this.buttonSaveBookmark.Text = "저장";
             this.buttonSaveBookmark.UseVisualStyleBackColor = true;
@@ -491,25 +470,36 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.buttonParse);
             this.groupBox1.Controls.Add(this.buttonBookmark);
             this.groupBox1.Controls.Add(this.buttonSaveBookmark);
             this.groupBox1.Controls.Add(this.buttonLoadBookmark);
-            this.groupBox1.Location = new System.Drawing.Point(172, 440);
+            this.groupBox1.Location = new System.Drawing.Point(93, 440);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(109, 108);
+            this.groupBox1.Size = new System.Drawing.Size(170, 108);
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "책갈피";
             // 
             // buttonQuit
             // 
-            this.buttonQuit.Location = new System.Drawing.Point(94, 519);
+            this.buttonQuit.Location = new System.Drawing.Point(12, 518);
             this.buttonQuit.Name = "buttonQuit";
             this.buttonQuit.Size = new System.Drawing.Size(75, 23);
             this.buttonQuit.TabIndex = 19;
             this.buttonQuit.Text = "종료";
             this.buttonQuit.UseVisualStyleBackColor = true;
             this.buttonQuit.Click += new System.EventHandler(this.buttonQuit_Click);
+            // 
+            // buttonParse
+            // 
+            this.buttonParse.Location = new System.Drawing.Point(89, 49);
+            this.buttonParse.Name = "buttonParse";
+            this.buttonParse.Size = new System.Drawing.Size(75, 23);
+            this.buttonParse.TabIndex = 18;
+            this.buttonParse.Text = "자동생성";
+            this.buttonParse.UseVisualStyleBackColor = true;
+            this.buttonParse.Click += new System.EventHandler(this.buttonParse_Click);
             // 
             // Form1
             // 
@@ -527,8 +517,6 @@
             this.Controls.Add(this.buttonOpenFile);
             this.Controls.Add(this.buttonPause);
             this.Controls.Add(this.labelTimeDisplay);
-            this.Controls.Add(this.buttonPlay);
-            this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.axMediaPlayer1);
             this.Controls.Add(this.label1);
             this.Name = "Form1";
@@ -557,8 +545,6 @@
 
         private System.Windows.Forms.Label label1;
         private AxWMPLib.AxWindowsMediaPlayer axMediaPlayer1;
-        private System.Windows.Forms.Button buttonStop;
-        private System.Windows.Forms.Button buttonPlay;
         private System.Windows.Forms.Label labelTimeDisplay;
         private System.Windows.Forms.Timer timerCurrentTime;
         private System.Windows.Forms.Button buttonPause;
@@ -593,6 +579,7 @@
         private System.Windows.Forms.Button buttonSaveBookmark;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button buttonQuit;
+        private System.Windows.Forms.Button buttonParse;
     }
 }
 
