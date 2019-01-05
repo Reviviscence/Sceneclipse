@@ -30,10 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.label1 = new System.Windows.Forms.Label();
             this.axMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
-            this.labelTimeDisplay = new System.Windows.Forms.Label();
-            this.timerCurrentTime = new System.Windows.Forms.Timer(this.components);
             this.buttonPause = new System.Windows.Forms.Button();
             this.buttonOpenFile = new System.Windows.Forms.Button();
             this.textBoxOpenFileName = new System.Windows.Forms.TextBox();
@@ -65,8 +62,14 @@
             this.buttonLoadBookmark = new System.Windows.Forms.Button();
             this.buttonSaveBookmark = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.buttonQuit = new System.Windows.Forms.Button();
             this.buttonParse = new System.Windows.Forms.Button();
+            this.buttonQuit = new System.Windows.Forms.Button();
+            this.buttonExportBandicut = new System.Windows.Forms.Button();
+            this.buttonSeekPrev = new System.Windows.Forms.Button();
+            this.buttonSeekNext = new System.Windows.Forms.Button();
+            this.numericSeekTimeAmount = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxSeekType = new System.Windows.Forms.ComboBox();
+            this.checkAutoSeekToTime = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.axMediaPlayer1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -79,43 +82,21 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericBookmarkEndSec)).BeginInit();
             this.panelTagList.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericSeekTimeAmount)).BeginInit();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 12);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "현재 시간 : ";
             // 
             // axMediaPlayer1
             // 
             this.axMediaPlayer1.Enabled = true;
-            this.axMediaPlayer1.Location = new System.Drawing.Point(284, 122);
+            this.axMediaPlayer1.Location = new System.Drawing.Point(269, 122);
             this.axMediaPlayer1.Name = "axMediaPlayer1";
             this.axMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axMediaPlayer1.OcxState")));
             this.axMediaPlayer1.Size = new System.Drawing.Size(611, 426);
             this.axMediaPlayer1.TabIndex = 1;
             // 
-            // labelTimeDisplay
-            // 
-            this.labelTimeDisplay.AutoSize = true;
-            this.labelTimeDisplay.Location = new System.Drawing.Point(12, 25);
-            this.labelTimeDisplay.Name = "labelTimeDisplay";
-            this.labelTimeDisplay.Size = new System.Drawing.Size(0, 12);
-            this.labelTimeDisplay.TabIndex = 4;
-            // 
-            // timerCurrentTime
-            // 
-            this.timerCurrentTime.Enabled = true;
-            this.timerCurrentTime.Interval = 1000;
-            this.timerCurrentTime.Tick += new System.EventHandler(this.timerCurrentTime_Tick);
-            // 
             // buttonPause
             // 
-            this.buttonPause.Location = new System.Drawing.Point(12, 489);
+            this.buttonPause.Location = new System.Drawing.Point(93, 353);
             this.buttonPause.Name = "buttonPause";
             this.buttonPause.Size = new System.Drawing.Size(75, 23);
             this.buttonPause.TabIndex = 5;
@@ -125,7 +106,7 @@
             // 
             // buttonOpenFile
             // 
-            this.buttonOpenFile.Location = new System.Drawing.Point(12, 460);
+            this.buttonOpenFile.Location = new System.Drawing.Point(12, 353);
             this.buttonOpenFile.Name = "buttonOpenFile";
             this.buttonOpenFile.Size = new System.Drawing.Size(75, 23);
             this.buttonOpenFile.TabIndex = 6;
@@ -147,7 +128,7 @@
             // 
             // labelPlayTime
             // 
-            this.labelPlayTime.Location = new System.Drawing.Point(121, 350);
+            this.labelPlayTime.Location = new System.Drawing.Point(162, 12);
             this.labelPlayTime.Name = "labelPlayTime";
             this.labelPlayTime.Size = new System.Drawing.Size(100, 55);
             this.labelPlayTime.TabIndex = 9;
@@ -170,9 +151,9 @@
             // 
             this.buttonBookmark.Location = new System.Drawing.Point(6, 20);
             this.buttonBookmark.Name = "buttonBookmark";
-            this.buttonBookmark.Size = new System.Drawing.Size(75, 23);
+            this.buttonBookmark.Size = new System.Drawing.Size(156, 23);
             this.buttonBookmark.TabIndex = 12;
-            this.buttonBookmark.Text = "책갈피";
+            this.buttonBookmark.Text = "책갈피 생성";
             this.buttonBookmark.UseVisualStyleBackColor = true;
             this.buttonBookmark.Click += new System.EventHandler(this.buttonBookmark_Click);
             // 
@@ -180,7 +161,7 @@
             // 
             this.listViewBookmark.Location = new System.Drawing.Point(12, 122);
             this.listViewBookmark.Name = "listViewBookmark";
-            this.listViewBookmark.Size = new System.Drawing.Size(261, 303);
+            this.listViewBookmark.Size = new System.Drawing.Size(250, 225);
             this.listViewBookmark.TabIndex = 13;
             this.listViewBookmark.UseCompatibleStateImageBehavior = false;
             this.listViewBookmark.View = System.Windows.Forms.View.Details;
@@ -190,14 +171,14 @@
             // imageList1
             // 
             this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth16Bit;
-            this.imageList1.ImageSize = new System.Drawing.Size(64, 64);
+            this.imageList1.ImageSize = new System.Drawing.Size(104, 104);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(284, 12);
+            this.pictureBox1.Location = new System.Drawing.Point(230, 12);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(64, 64);
+            this.pictureBox1.Size = new System.Drawing.Size(104, 104);
             this.pictureBox1.TabIndex = 14;
             this.pictureBox1.TabStop = false;
             // 
@@ -208,7 +189,7 @@
             this.tableLayoutPanel1.Controls.Add(this.textBoxBookmarkName, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.panelTagList, 0, 2);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(355, 12);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(340, 12);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
@@ -221,7 +202,7 @@
             // 
             this.textBoxBookmarkName.Location = new System.Drawing.Point(3, 3);
             this.textBoxBookmarkName.Name = "textBoxBookmarkName";
-            this.textBoxBookmarkName.Size = new System.Drawing.Size(276, 21);
+            this.textBoxBookmarkName.Size = new System.Drawing.Size(387, 21);
             this.textBoxBookmarkName.TabIndex = 0;
             this.textBoxBookmarkName.TextChanged += new System.EventHandler(this.textBoxBookmarkName_TextChanged);
             // 
@@ -253,6 +234,7 @@
             this.tableLayoutPanel2.Controls.Add(this.numericBookmarkEndHour, 7, 0);
             this.tableLayoutPanel2.Controls.Add(this.numericBookmarkEndMin, 9, 0);
             this.tableLayoutPanel2.Controls.Add(this.numericBookmarkEndSec, 11, 0);
+            this.tableLayoutPanel2.Controls.Add(this.checkAutoSeekToTime, 12, 0);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 29);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
@@ -450,7 +432,7 @@
             // 
             // buttonLoadBookmark
             // 
-            this.buttonLoadBookmark.Location = new System.Drawing.Point(6, 49);
+            this.buttonLoadBookmark.Location = new System.Drawing.Point(87, 49);
             this.buttonLoadBookmark.Name = "buttonLoadBookmark";
             this.buttonLoadBookmark.Size = new System.Drawing.Size(75, 23);
             this.buttonLoadBookmark.TabIndex = 16;
@@ -460,7 +442,7 @@
             // 
             // buttonSaveBookmark
             // 
-            this.buttonSaveBookmark.Location = new System.Drawing.Point(6, 78);
+            this.buttonSaveBookmark.Location = new System.Drawing.Point(6, 49);
             this.buttonSaveBookmark.Name = "buttonSaveBookmark";
             this.buttonSaveBookmark.Size = new System.Drawing.Size(75, 23);
             this.buttonSaveBookmark.TabIndex = 17;
@@ -470,30 +452,21 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.buttonExportBandicut);
             this.groupBox1.Controls.Add(this.buttonParse);
             this.groupBox1.Controls.Add(this.buttonBookmark);
             this.groupBox1.Controls.Add(this.buttonSaveBookmark);
             this.groupBox1.Controls.Add(this.buttonLoadBookmark);
-            this.groupBox1.Location = new System.Drawing.Point(93, 440);
+            this.groupBox1.Location = new System.Drawing.Point(12, 411);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(170, 108);
+            this.groupBox1.Size = new System.Drawing.Size(250, 108);
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "책갈피";
             // 
-            // buttonQuit
-            // 
-            this.buttonQuit.Location = new System.Drawing.Point(12, 518);
-            this.buttonQuit.Name = "buttonQuit";
-            this.buttonQuit.Size = new System.Drawing.Size(75, 23);
-            this.buttonQuit.TabIndex = 19;
-            this.buttonQuit.Text = "종료";
-            this.buttonQuit.UseVisualStyleBackColor = true;
-            this.buttonQuit.Click += new System.EventHandler(this.buttonQuit_Click);
-            // 
             // buttonParse
             // 
-            this.buttonParse.Location = new System.Drawing.Point(89, 49);
+            this.buttonParse.Location = new System.Drawing.Point(168, 20);
             this.buttonParse.Name = "buttonParse";
             this.buttonParse.Size = new System.Drawing.Size(75, 23);
             this.buttonParse.TabIndex = 18;
@@ -501,11 +474,96 @@
             this.buttonParse.UseVisualStyleBackColor = true;
             this.buttonParse.Click += new System.EventHandler(this.buttonParse_Click);
             // 
+            // buttonQuit
+            // 
+            this.buttonQuit.Location = new System.Drawing.Point(175, 353);
+            this.buttonQuit.Name = "buttonQuit";
+            this.buttonQuit.Size = new System.Drawing.Size(75, 23);
+            this.buttonQuit.TabIndex = 19;
+            this.buttonQuit.Text = "종료";
+            this.buttonQuit.UseVisualStyleBackColor = true;
+            this.buttonQuit.Click += new System.EventHandler(this.buttonQuit_Click);
+            // 
+            // buttonExportBandicut
+            // 
+            this.buttonExportBandicut.Location = new System.Drawing.Point(6, 79);
+            this.buttonExportBandicut.Name = "buttonExportBandicut";
+            this.buttonExportBandicut.Size = new System.Drawing.Size(156, 23);
+            this.buttonExportBandicut.TabIndex = 19;
+            this.buttonExportBandicut.Text = "반디컷 프로젝트로";
+            this.buttonExportBandicut.UseVisualStyleBackColor = true;
+            // 
+            // buttonSeekPrev
+            // 
+            this.buttonSeekPrev.Location = new System.Drawing.Point(124, 384);
+            this.buttonSeekPrev.Name = "buttonSeekPrev";
+            this.buttonSeekPrev.Size = new System.Drawing.Size(60, 23);
+            this.buttonSeekPrev.TabIndex = 20;
+            this.buttonSeekPrev.Text = "앞으로";
+            this.buttonSeekPrev.UseVisualStyleBackColor = true;
+            this.buttonSeekPrev.Click += new System.EventHandler(this.buttonSeekPrev_Click);
+            // 
+            // buttonSeekNext
+            // 
+            this.buttonSeekNext.Location = new System.Drawing.Point(190, 384);
+            this.buttonSeekNext.Name = "buttonSeekNext";
+            this.buttonSeekNext.Size = new System.Drawing.Size(60, 23);
+            this.buttonSeekNext.TabIndex = 21;
+            this.buttonSeekNext.Text = "뒤로";
+            this.buttonSeekNext.UseVisualStyleBackColor = true;
+            this.buttonSeekNext.Click += new System.EventHandler(this.buttonSeekNext_Click);
+            // 
+            // numericSeekTimeAmount
+            // 
+            this.numericSeekTimeAmount.Location = new System.Drawing.Point(18, 384);
+            this.numericSeekTimeAmount.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericSeekTimeAmount.Name = "numericSeekTimeAmount";
+            this.numericSeekTimeAmount.Size = new System.Drawing.Size(31, 21);
+            this.numericSeekTimeAmount.TabIndex = 22;
+            this.numericSeekTimeAmount.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // comboBoxSeekType
+            // 
+            this.comboBoxSeekType.FormattingEnabled = true;
+            this.comboBoxSeekType.Items.AddRange(new object[] {
+            "초",
+            "분",
+            "시간"});
+            this.comboBoxSeekType.Location = new System.Drawing.Point(56, 384);
+            this.comboBoxSeekType.Name = "comboBoxSeekType";
+            this.comboBoxSeekType.Size = new System.Drawing.Size(62, 20);
+            this.comboBoxSeekType.TabIndex = 23;
+            this.comboBoxSeekType.Text = "초";
+            // 
+            // checkAutoSeekToTime
+            // 
+            this.checkAutoSeekToTime.AutoSize = true;
+            this.checkAutoSeekToTime.Checked = true;
+            this.checkAutoSeekToTime.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkAutoSeekToTime.Location = new System.Drawing.Point(393, 3);
+            this.checkAutoSeekToTime.Name = "checkAutoSeekToTime";
+            this.checkAutoSeekToTime.Size = new System.Drawing.Size(136, 16);
+            this.checkAutoSeekToTime.TabIndex = 10;
+            this.checkAutoSeekToTime.Text = "시간수정시 자동이동";
+            this.checkAutoSeekToTime.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(899, 551);
+            this.ClientSize = new System.Drawing.Size(883, 551);
+            this.Controls.Add(this.comboBoxSeekType);
+            this.Controls.Add(this.numericSeekTimeAmount);
+            this.Controls.Add(this.buttonSeekNext);
+            this.Controls.Add(this.buttonSeekPrev);
             this.Controls.Add(this.buttonQuit);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.tableLayoutPanel1);
@@ -516,9 +574,7 @@
             this.Controls.Add(this.textBoxOpenFileName);
             this.Controls.Add(this.buttonOpenFile);
             this.Controls.Add(this.buttonPause);
-            this.Controls.Add(this.labelTimeDisplay);
             this.Controls.Add(this.axMediaPlayer1);
-            this.Controls.Add(this.label1);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.axMediaPlayer1)).EndInit();
@@ -536,17 +592,14 @@
             this.panelTagList.ResumeLayout(false);
             this.panelTagList.PerformLayout();
             this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericSeekTimeAmount)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private AxWMPLib.AxWindowsMediaPlayer axMediaPlayer1;
-        private System.Windows.Forms.Label labelTimeDisplay;
-        private System.Windows.Forms.Timer timerCurrentTime;
         private System.Windows.Forms.Button buttonPause;
         private System.Windows.Forms.Button buttonOpenFile;
         private System.Windows.Forms.TextBox textBoxOpenFileName;
@@ -580,6 +633,12 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button buttonQuit;
         private System.Windows.Forms.Button buttonParse;
+        private System.Windows.Forms.Button buttonExportBandicut;
+        private System.Windows.Forms.Button buttonSeekPrev;
+        private System.Windows.Forms.Button buttonSeekNext;
+        private System.Windows.Forms.NumericUpDown numericSeekTimeAmount;
+        private System.Windows.Forms.ComboBox comboBoxSeekType;
+        private System.Windows.Forms.CheckBox checkAutoSeekToTime;
     }
 }
 

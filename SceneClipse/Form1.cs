@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Xml;
 using System.Threading;
+using WMPLib;
 
 namespace SceneClipse
 {
@@ -39,21 +40,13 @@ namespace SceneClipse
 
         private void buttonPlay_Click(object sender, EventArgs e)
         {
-
             axMediaPlayer1.Ctlcontrols.play();
-            
             timerPlayTime.Start();
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
         {
             axMediaPlayer1.Ctlcontrols.stop();
-        }
-                
-        private void timerCurrentTime_Tick(object sender, EventArgs e)
-        {
-            string sCurrentTime = DateTime.Now.ToString("tt HH:mm:ss");
-            labelTimeDisplay.Text = sCurrentTime;
         }
 
         // pause 버튼 클릭시 - 재생중이면 정지, 정지상태면 다시 재생
@@ -94,6 +87,7 @@ namespace SceneClipse
 
                 axMediaPlayer1.URL = openFiledialog1.FileName;
                 textBoxOpenFileName.Text = openFiledialog1.FileName;
+
                 timerPlayTime.Start();
 
                 // labelOpenFileName.Text = "재생중인 파일 : " + openFiledialog1.FileName;
@@ -130,6 +124,7 @@ namespace SceneClipse
                 if (sVideoTime.Split(':').Length < 3) sVideoTime = "00:" + sVideoTime;
 
                 BookmarkItem itemNewBookmark = new BookmarkItem("책갈피 " + sVideoTime, dVideoTime);
+                itemNewBookmark.BookmarkEnd.UpdateTime(dVideoTime);
 
                 // mediaplayer에서 이미지 가져오기
                 Bitmap bitmap = new Bitmap(axMediaPlayer1.Width, axMediaPlayer1.Height - 76);
@@ -202,12 +197,12 @@ namespace SceneClipse
 
             BookmarkItem bookmarkSelected = _listBookmarks[_nCurrentBookmarkIdx];
 
-            axMediaPlayer1.Ctlcontrols.currentPosition = bookmarkSelected.BookmarkStart.dTimeBookmark;
+            axMediaPlayer1.Ctlcontrols.currentPosition = bookmarkSelected.BookmarkStart.getTimeDouble();
 
             //pictureBox1.Image = imageList1.Images[(sender as ListView).SelectedItems[0].Index];
             // 이미지를 썸네일 크기로 변환해서 표시(TODO : 썸네일 크기 상수화)
             if (bookmarkSelected.imageThumbnail != null)
-                pictureBox1.Image = bookmarkSelected.imageThumbnail.GetThumbnailImage(64, 64, null, new IntPtr());
+                pictureBox1.Image = bookmarkSelected.imageThumbnail.GetThumbnailImage(imageList1.ImageSize.Width, imageList1.ImageSize.Height, null, new IntPtr());
 
             textBoxBookmarkName.Text = bookmarkSelected.sBookmarkName;
 
@@ -438,7 +433,7 @@ namespace SceneClipse
                 {
                     if (item.SubItems[3].Text == _nCurrentBookmarkIdx.ToString())
                     {
-                        item.SubItems[0].Text = itemCurrent.BookmarkStart.sTimeBookmark;
+                        item.SubItems[0].Text = itemCurrent.BookmarkStart.getTime();
                         item.SubItems[2].Text = itemCurrent.sBookmarkName;
                     }
                 }
@@ -449,32 +444,26 @@ namespace SceneClipse
         
         private void numericBookmarkStartHour_MouseClick(object sender, MouseEventArgs e)
         {
-            UpdateBookmarkDataFromInput();
         }
 
         private void numericBookmarkStartMin_MouseClick(object sender, MouseEventArgs e)
         {
-            UpdateBookmarkDataFromInput();
         }
 
         private void numericBookmarkStartSec_MouseClick(object sender, MouseEventArgs e)
         {
-            UpdateBookmarkDataFromInput();
         }
 
         private void numericBookmarkEndHour_MouseClick(object sender, MouseEventArgs e)
         {
-            UpdateBookmarkDataFromInput();
         }
 
         private void numericBookmarkEndMin_MouseClick(object sender, MouseEventArgs e)
         {
-            UpdateBookmarkDataFromInput();
         }
 
         private void numericBookmarkEndSec_MouseClick(object sender, MouseEventArgs e)
         {
-            UpdateBookmarkDataFromInput();
         }
 
         private void textBoxBookmarkName_TextChanged(object sender, EventArgs e)
@@ -482,8 +471,22 @@ namespace SceneClipse
             UpdateBookmarkDataFromInput();
         }
 
+        private void JumpPlayerToTime(int nHour, int nMin, int nSec)
+        {
+            int nSeekTime = nHour * 3600 + nMin * 60 + nSec;
+            axMediaPlayer1.Ctlcontrols.currentPosition = nSeekTime;
+        }
+
         private void numericBookmarkStartHour_ValueChanged(object sender, EventArgs e)
         {
+            if (checkAutoSeekToTime.Checked)
+            {
+                JumpPlayerToTime(
+                    Convert.ToInt32(numericBookmarkStartHour.Value), 
+                    Convert.ToInt32(numericBookmarkStartMin.Value),
+                    Convert.ToInt32(numericBookmarkStartSec.Value));
+            }
+
             UpdateBookmarkDataFromInput();
         }
 
@@ -503,6 +506,14 @@ namespace SceneClipse
                 numericBookmarkStartMin.Value = 59;
                 numericBookmarkStartHour.Value--;
                 _isUpdatingBookmarkInfo = false;
+            }
+
+            if (checkAutoSeekToTime.Checked)
+            {
+                JumpPlayerToTime(
+                    Convert.ToInt32(numericBookmarkStartHour.Value),
+                    Convert.ToInt32(numericBookmarkStartMin.Value),
+                    Convert.ToInt32(numericBookmarkStartSec.Value));
             }
 
             UpdateBookmarkDataFromInput();
@@ -525,11 +536,28 @@ namespace SceneClipse
                 numericBookmarkStartMin.Value--;
                 _isUpdatingBookmarkInfo = false;
             }
+
+            if (checkAutoSeekToTime.Checked)
+            {
+                JumpPlayerToTime(
+                    Convert.ToInt32(numericBookmarkStartHour.Value),
+                    Convert.ToInt32(numericBookmarkStartMin.Value),
+                    Convert.ToInt32(numericBookmarkStartSec.Value));
+            }
+
             UpdateBookmarkDataFromInput();
         }
 
         private void numericBookmarkEndHour_ValueChanged(object sender, EventArgs e)
         {
+            if (checkAutoSeekToTime.Checked)
+            {
+                JumpPlayerToTime(
+                    Convert.ToInt32(numericBookmarkEndHour.Value),
+                    Convert.ToInt32(numericBookmarkEndMin.Value),
+                    Convert.ToInt32(numericBookmarkEndSec.Value));
+            }
+
             UpdateBookmarkDataFromInput();
         }
 
@@ -550,6 +578,15 @@ namespace SceneClipse
                 numericBookmarkEndHour.Value--;
                 _isUpdatingBookmarkInfo = false;
             }
+
+            if (checkAutoSeekToTime.Checked)
+            {
+                JumpPlayerToTime(
+                    Convert.ToInt32(numericBookmarkEndHour.Value),
+                    Convert.ToInt32(numericBookmarkEndMin.Value),
+                    Convert.ToInt32(numericBookmarkEndSec.Value));
+            }
+
             UpdateBookmarkDataFromInput();
         }
 
@@ -569,6 +606,14 @@ namespace SceneClipse
                 numericBookmarkEndSec.Value = 59;
                 numericBookmarkEndMin.Value--;
                 _isUpdatingBookmarkInfo = false;
+            }
+            
+            if (checkAutoSeekToTime.Checked)
+            {
+                JumpPlayerToTime(
+                    Convert.ToInt32(numericBookmarkEndHour.Value),
+                    Convert.ToInt32(numericBookmarkEndMin.Value),
+                    Convert.ToInt32(numericBookmarkEndSec.Value));
             }
 
             UpdateBookmarkDataFromInput();
@@ -608,8 +653,8 @@ namespace SceneClipse
                 // kvItem.Value.
                 XmlElement nodeBookmark = xml.CreateElement("bookmarkdata");
 
-                nodeBookmark.SetAttribute("bookmarkStart", kvItem.Value.BookmarkStart.dTimeBookmark.ToString());
-                nodeBookmark.SetAttribute("bookmarkEnd", kvItem.Value.BookmarkEnd.dTimeBookmark.ToString());
+                nodeBookmark.SetAttribute("bookmarkStart", kvItem.Value.BookmarkStart.getTime());
+                nodeBookmark.SetAttribute("bookmarkEnd", kvItem.Value.BookmarkEnd.getTime());
                 nodeBookmark.SetAttribute("bookmarkName", kvItem.Value.sBookmarkName);
 
                 XmlNode nodeTags = xml.CreateElement("tags");
@@ -716,7 +761,7 @@ namespace SceneClipse
                         _listBookmarks.Add(_nBookmarkCount, itemBookmark);
 
                         // 리스트에 등록
-                        ListViewItem item = new ListViewItem(itemBookmark.BookmarkStart.sTimeBookmark);
+                        ListViewItem item = new ListViewItem(itemBookmark.BookmarkStart.getTime());
                         item.SubItems.Add(dBookmarkStart.ToString());
                         item.SubItems.Add(sBookmarkName);
                         item.SubItems.Add(_nBookmarkCount.ToString());
@@ -778,7 +823,7 @@ namespace SceneClipse
                     if (dTimeStart < 0) dTimeStart = 0;
 
                     BookmarkTimeData time = new BookmarkTimeData(dTimeStart);
-                    string sTimeData = time.sTimeBookmark;
+                    string sTimeData = time.getTime();
 
                     // 책갈피 목록에 추가     
                     BookmarkItem itemNewBookmark = new BookmarkItem("책갈피 " + sTimeData, dTimeStart);
@@ -832,6 +877,34 @@ namespace SceneClipse
                     
                     listViewBookmark.Items.Add(item);
                 }
+            }
+        }
+
+        private void buttonSeekPrev_Click(object sender, EventArgs e)
+        {
+            if( _sFilenamePlaying != "" )
+            {
+                int nSeekTime = Convert.ToInt32(numericSeekTimeAmount.Value);
+                if (comboBoxSeekType.SelectedItem.ToString() == "분")
+                    nSeekTime *= 60;
+                else if (comboBoxSeekType.SelectedItem.ToString() == "시간")
+                    nSeekTime *= 3600;
+
+                axMediaPlayer1.Ctlcontrols.currentPosition -= nSeekTime;
+            }
+        }
+
+        private void buttonSeekNext_Click(object sender, EventArgs e)
+        {
+            if (_sFilenamePlaying != "")
+            {
+                int nSeekTime = Convert.ToInt32(numericSeekTimeAmount.Value);
+                if (comboBoxSeekType.SelectedItem.ToString() == "분")
+                    nSeekTime *= 60;
+                else if (comboBoxSeekType.SelectedItem.ToString() == "시간")
+                    nSeekTime *= 3600;
+
+                axMediaPlayer1.Ctlcontrols.currentPosition += nSeekTime;
             }
         }
     }

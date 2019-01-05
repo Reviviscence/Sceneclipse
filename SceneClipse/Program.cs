@@ -66,7 +66,7 @@ namespace SceneClipse
         {
             // 시간 정보(string 혹은 double값)를 읽어와 datetime으로 변환
             DateTime timeBookmark = new DateTime(0);
-            timeBookmark = timeBookmark.AddMilliseconds(dTimeBookmark * 1000);
+            timeBookmark = timeBookmark.AddMilliseconds(d * 1000);
 
             UpdateTime(timeBookmark);
         }
@@ -85,8 +85,11 @@ namespace SceneClipse
             // + "." + (MilliSec / 10).ToString("D2");
         }
 
-        public string sTimeBookmark { get; set; }
-        public double dTimeBookmark { get; set; }
+        public string getTime() { return sTimeBookmark; }
+        public double getTimeDouble() { return dTimeBookmark; }
+
+        private string sTimeBookmark { get; set; }
+        private double dTimeBookmark { get; set; }
         public int Hour;
         public int Min;
         public int Sec;
