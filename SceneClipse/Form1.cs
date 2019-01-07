@@ -220,7 +220,12 @@ namespace SceneClipse
                 // mediaplayer에서 이미지 가져오기
                 string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
                 string sSnapshotFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
+
+                // 임시설정 - non-ascii 문자를 전부 제거. 현재 잘 해결되지 않았음(TODO : 한글 등의 파일명이 있어도 썸네일이 잘 생성되도록)
+                sSnapshotFileName = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(ToUTF8(sSnapshotFileName))).Replace("?", string.Empty);
+
                 string sSnapshotFullPath = sSnapshotPath + @"\" + sSnapshotFileName;
+
 
                 // 스크린샷 경로가 없으면 새로 만듦
                 if( !Directory.Exists(sSnapshotPath) )
@@ -238,9 +243,11 @@ namespace SceneClipse
 
                 itemNewBookmark.sThumbnailPath = sSnapshotFileName;
 
-                Bitmap bitmap = new Bitmap(sSnapshotPath + @"\" + sSnapshotFileName);
-                itemNewBookmark.imageThumbnail = bitmap;
-                
+                if (File.Exists(sSnapshotFullPath))
+                {
+                    Bitmap bitmap = new Bitmap(sSnapshotFullPath);
+                    itemNewBookmark.imageThumbnail = bitmap;
+                }                
                 
                 // 책갈피 목록에 추가            
                 _listBookmarks.Add(nCurrentBookmarkIndex, itemNewBookmark);
@@ -1198,8 +1205,13 @@ namespace SceneClipse
                 // mediaplayer에서 이미지 가져오기
                 string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
                 string sSnapshotFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
+
+                // 임시설정 - non-ascii 문자를 전부 제거. 현재 잘 해결되지 않았음(TODO : 한글 등의 파일명이 있어도 썸네일이 잘 생성되도록)
+                sSnapshotFileName = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(ToUTF8(sSnapshotFileName))).Replace("?", string.Empty);
+
                 string sSnapshotFullPath = sSnapshotPath + @"\" + sSnapshotFileName;
                 Directory.CreateDirectory(sSnapshotPath);
+
 
                 BookmarkItem bookmarkSelected = _listBookmarks[_nCurrentBookmarkIdx];
 
@@ -1226,10 +1238,13 @@ namespace SceneClipse
 
                 bookmarkSelected.sThumbnailPath = sSnapshotFileName;
 
-                Bitmap bitmap = new Bitmap(sSnapshotFullPath);
-                bookmarkSelected.imageThumbnail = bitmap;
+                if (File.Exists(sSnapshotFullPath))
+                {
+                    Bitmap bitmap = new Bitmap(sSnapshotFullPath);
+                    bookmarkSelected.imageThumbnail = bitmap;
 
-                pictureBox1.Image = bookmarkSelected.imageThumbnail.GetThumbnailImage(pictureBox1.Width, pictureBox1.Height, null, new IntPtr());
+                    pictureBox1.Image = bookmarkSelected.imageThumbnail.GetThumbnailImage(pictureBox1.Width, pictureBox1.Height, null, new IntPtr());
+                }
             }
         }
 
