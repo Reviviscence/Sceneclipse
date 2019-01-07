@@ -113,10 +113,10 @@ namespace SceneClipse
 
             if (vlcMediaPlayer.IsPlaying)
             {
-                // 1초에 한번씩만 작동하도록 설정
-                if (_nVideoPosition != vlcMediaPlayer.Time / 1000)
+                // 0.5초에 한번씩 작동하도록 설정
+                if (_nVideoPosition < vlcMediaPlayer.Time - 500)
                 {
-                    _nVideoPosition = vlcMediaPlayer.Time / 1000;
+                    _nVideoPosition = vlcMediaPlayer.Time;
                     BookmarkTimeData time = new BookmarkTimeData(vlcMediaPlayer.Time / 1000);
                     string sVideoTime = "재생 중 : " + time.GetTime()
                         + " (" + Math.Floor(vlcMediaPlayer.Position * 100) + "%)";
@@ -250,7 +250,6 @@ namespace SceneClipse
                     if (File.Exists(ToUTF8(sSnapshotFullPath)))
                         File.Move(ToUTF8(sSnapshotFullPath), sSnapshotFullPath);
                 }
-
 
                 itemNewBookmark.sThumbnailPath = sSnapshotFileName;
 
@@ -1214,9 +1213,8 @@ namespace SceneClipse
                 // mediaplayer에서 이미지 가져오기
                 string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
                 string sSnapshotFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
+                string sSnapshotFullPath = sSnapshotPath + @"\" + sSnapshotFileName;
                 Directory.CreateDirectory(sSnapshotPath);
-                
-                vlcMediaPlayer.TakeSnapshot(sSnapshotPath + @"\\" + sSnapshotFileName);
 
                 BookmarkItem bookmarkSelected = _listBookmarks[_nCurrentBookmarkIdx];
 
@@ -1224,12 +1222,26 @@ namespace SceneClipse
                 if (bookmarkSelected.sThumbnailPath != null)
                 {
                     bookmarkSelected.imageThumbnail.Dispose();
-                    File.Delete(sSnapshotPath + @"\\" + bookmarkSelected.sThumbnailPath);
+                    File.Delete(sSnapshotPath + @"\" + bookmarkSelected.sThumbnailPath);
+                }
+
+                // 스크린샷 경로가 없으면 새로 만듦
+                if (!Directory.Exists(sSnapshotPath))
+                    Directory.CreateDirectory(sSnapshotPath);
+
+                vlcMediaPlayer.TakeSnapshot(sSnapshotFullPath);
+
+                // 스크린샷의 파일명에 한글 등이 포함되어 있을 경우 UTF-8로 변경되어 파일명이 깨짐.
+                // 해당 문제를 수정하기 위해 파일명이 UTF-8형식으로 깨질 경우 파일명을 변경하도록 코드 수정.
+                if (!File.Exists(sSnapshotFullPath))
+                {
+                    if (File.Exists(ToUTF8(sSnapshotFullPath)))
+                        File.Move(ToUTF8(sSnapshotFullPath), sSnapshotFullPath);
                 }
 
                 bookmarkSelected.sThumbnailPath = sSnapshotFileName;
 
-                Bitmap bitmap = new Bitmap(sSnapshotPath + @"\\" + sSnapshotFileName);
+                Bitmap bitmap = new Bitmap(sSnapshotFullPath);
                 bookmarkSelected.imageThumbnail = bitmap;
 
                 pictureBox1.Image = bookmarkSelected.imageThumbnail.GetThumbnailImage(pictureBox1.Width, pictureBox1.Height, null, new IntPtr());
