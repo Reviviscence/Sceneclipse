@@ -40,7 +40,9 @@ namespace SceneClipse
         private string _sFilehashPlaying = "";           // 현재 미사용
         private bool _isUpdatingBookmarkInfo = false;
         private bool _isWaitingForJump = false;
-        private long _nVideoPosition = 0;
+        private int _nVideoProgress = 0;
+        private string _sVideoPlaytime = "";
+        private int _nTrackbarMaximum = 0;
 
         public Form1()
         {
@@ -75,7 +77,7 @@ namespace SceneClipse
             this.Controls.Add(this.vlcMediaPlayer);
             this.panelMediaPlayer.Controls.Add(this.vlcMediaPlayer);
 
-            // 트랙바 관련 컨트롤 추가
+            // 트랙바 관련 컨트롤 추가(마우스 드래그 이벤트)
             Panel panelVideoProgress = new Panel();
             panelVideoProgress.Dock = DockStyle.Fill;
             panelVideoProgress.BackColor = Color.Transparent;
@@ -85,6 +87,8 @@ namespace SceneClipse
 
             this.panelTrackbarBackground.Controls.Add(panelVideoProgress);
             //panelVideoProgress.BringToFront();
+
+            _nTrackbarMaximum = trackBarVideoProgress.Maximum;
 
         }
 
@@ -99,7 +103,7 @@ namespace SceneClipse
 
                     int nProgressValue = Convert.ToInt32(trackBarVideoProgress.Maximum * vlcMediaPlayer.Position);
                                         
-                    trackBarVideoProgress.Value =
+                    _nVideoProgress =
                         (nProgressValue < trackBarVideoProgress.Maximum) ?
                         nProgressValue : trackBarVideoProgress.Maximum;
 
@@ -113,37 +117,18 @@ namespace SceneClipse
 
             if (vlcMediaPlayer.IsPlaying)
             {
-                // 0.5초에 한번씩 작동하도록 설정
-                if (_nVideoPosition < vlcMediaPlayer.Time - 500)
-                {
-                    _nVideoPosition = vlcMediaPlayer.Time;
-                    BookmarkTimeData time = new BookmarkTimeData(vlcMediaPlayer.Time / 1000);
-                    string sVideoTime = "재생 중 : " + time.GetTime()
-                        + " (" + Math.Floor(vlcMediaPlayer.Position * 100) + "%)";
+                BookmarkTimeData time = new BookmarkTimeData(vlcMediaPlayer.Time / 1000);
+                _sVideoPlaytime = "재생 중 : " + time.GetTime()
+                    + " (" + Math.Floor(vlcMediaPlayer.Position * 100) + "%)";
 
-                    if (labelPlayTime.Text != sVideoTime)
-                    {
-                        labelPlayTime.Invoke((MethodInvoker)delegate
-                        {
-                            labelPlayTime.Text = sVideoTime;
-                        });
-
-                        int nProgressValue = Convert.ToInt32(trackBarVideoProgress.Maximum * vlcMediaPlayer.Position);
-
-                        trackBarVideoProgress.Invoke((MethodInvoker)delegate
-                        {
-                            trackBarVideoProgress.Value =
-                            (nProgressValue < trackBarVideoProgress.Maximum) ?
-                            nProgressValue : trackBarVideoProgress.Maximum;
-                        });
-                    }
-                }
+                int nProgressValue = Convert.ToInt32(_nTrackbarMaximum * vlcMediaPlayer.Position);
+                _nVideoProgress =
+                    (nProgressValue < _nTrackbarMaximum) ?
+                    nProgressValue : _nTrackbarMaximum;
             }
             else
             {
-                labelPlayTime.Invoke((MethodInvoker)delegate {
-                    labelPlayTime.Text = "";
-                });
+                _sVideoPlaytime = "";
             }
         }
 
@@ -1257,6 +1242,16 @@ namespace SceneClipse
 
                 vlcMediaPlayer.Position = ((float)nPosition / (trackBarVideoProgress.Width - TRACKBAR_MODIFY_POSITION_VALUE * 2));
             }
+        }
+
+        private void timerDisplayPlaytime_Tick(object sender, EventArgs e)
+        {
+
+            if (labelPlayTime.Text != _sVideoPlaytime)
+                labelPlayTime.Text = _sVideoPlaytime;
+
+            if (trackBarVideoProgress.Value != _nVideoProgress)
+                trackBarVideoProgress.Value = _nVideoProgress;
         }
     }
 }

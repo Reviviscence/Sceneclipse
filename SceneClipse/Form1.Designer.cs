@@ -72,6 +72,7 @@
             this.panelMediaPlayer = new System.Windows.Forms.Panel();
             this.trackBarVideoProgress = new System.Windows.Forms.TrackBar();
             this.panelTrackbarBackground = new System.Windows.Forms.Panel();
+            this.timerDisplayPlaytime = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -600,6 +601,11 @@
             this.panelTrackbarBackground.Size = new System.Drawing.Size(612, 38);
             this.panelTrackbarBackground.TabIndex = 26;
             // 
+            // timerDisplayPlaytime
+            // 
+            this.timerDisplayPlaytime.Enabled = true;
+            this.timerDisplayPlaytime.Tick += new System.EventHandler(this.timerDisplayPlaytime_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -691,6 +697,7 @@
         private Vlc.DotNet.Forms.VlcControl vlcMediaPlayer;
         private System.Windows.Forms.TrackBar trackBarVideoProgress;
         private System.Windows.Forms.Panel panelTrackbarBackground;
+        private System.Windows.Forms.Timer timerDisplayPlaytime;
     }
 }
 
