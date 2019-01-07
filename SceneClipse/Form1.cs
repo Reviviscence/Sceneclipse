@@ -117,7 +117,7 @@ namespace SceneClipse
 
             if (vlcMediaPlayer.IsPlaying)
             {
-                BookmarkTimeData time = new BookmarkTimeData(vlcMediaPlayer.Time / 1000);
+                BookmarkTimeData time = new BookmarkTimeData(vlcMediaPlayer.Time);
                 _sVideoPlaytime = "재생 중 : " + time.GetTime()
                     + " (" + Math.Floor(vlcMediaPlayer.Position * 100) + "%)";
 
@@ -207,7 +207,7 @@ namespace SceneClipse
                 // 책갈피 리스트에서 현재 추가할 정보의 인덱스
                 int nCurrentBookmarkIndex = ++_nBookmarkCount;
 
-                BookmarkTimeData timeVideo = new BookmarkTimeData(vlcMediaPlayer.Time / 1000);
+                BookmarkTimeData timeVideo = new BookmarkTimeData(vlcMediaPlayer.Time);
                 string sVideoTime = timeVideo.GetTime();
                 double dVideoTime = timeVideo.GetTimeDouble();
 
@@ -264,7 +264,7 @@ namespace SceneClipse
                 listViewBookmark.Items.Add(item);
 
                 // 책갈피 편집부분에도 표시
-                UpdateBookmarkInputData(nCurrentBookmarkIndex);
+                UpdateBookmarkInputData(nCurrentBookmarkIndex, false);
 
                 //listBookmark.DisplayMember = "sVideoTime";
                 //listBookmark.Items.Add(item);          
@@ -297,7 +297,8 @@ namespace SceneClipse
         // private void UpdateBookmarkInputData(int nIdx)
         // 책갈피 정보를 입력칸에 갱신함
         // nIdx = 해당 책갈피의 인덱스 값
-        private void UpdateBookmarkInputData(int nIdx)
+        // bJumpToBookmark = 갱신 후 해당 시각으로 이동할지 여부(책갈피 생성시에는 이동하지 않음)
+        private void UpdateBookmarkInputData(int nIdx, bool bJumpToBookmark = true)
         {
             _isUpdatingBookmarkInfo = true;
 
@@ -305,7 +306,8 @@ namespace SceneClipse
 
             BookmarkItem bookmarkSelected = _listBookmarks[_nCurrentBookmarkIdx];
 
-            vlcMediaPlayer.Time = Convert.ToInt64(bookmarkSelected.BookmarkStart.GetTimeDouble() * 1000);
+            if ( bJumpToBookmark )
+                vlcMediaPlayer.Time = Convert.ToInt64(bookmarkSelected.BookmarkStart.GetTimeDouble());
             // axMediaPlayer1.Ctlcontrols.currentPosition = bookmarkSelected.BookmarkStart.GetTimeDouble();
 
             //pictureBox1.Image = imageList1.Images[(sender as ListView).SelectedItems[0].Index];
@@ -786,7 +788,9 @@ namespace SceneClipse
             XmlDeclaration xmldecl = xml.CreateXmlDeclaration("1.0", "utf-16", null);
             xml.InsertBefore(xmldecl, xml.DocumentElement);
 
-            XmlNode nodeRoot = xml.CreateElement("bookmarks");
+            XmlElement nodeRoot = xml.CreateElement("bookmarks");
+            nodeRoot.SetAttribute("version", "1.1");
+
             xml.AppendChild(nodeRoot);
 
             // 각 책갈피 리스트를 반복해 입력
@@ -902,6 +906,12 @@ namespace SceneClipse
                     listViewBookmark.Clear();
                     InitializeBookmarkList();
 
+                    XmlNodeList nodeBookmarkRoot = xmlOpen.SelectNodes("/bookmarks");
+                    double dBookmarkVersion = 0;
+
+                    if(nodeBookmarkRoot.Count > 0 && nodeBookmarkRoot[0].Attributes["version"] != null )
+                        dBookmarkVersion = Convert.ToDouble(nodeBookmarkRoot[0].Attributes["version"].Value);
+
                     XmlNodeList nodeBookmarks = xmlOpen.SelectNodes("/bookmarks/bookmarkdata");
 
                     // 책갈피 내용별 루프
@@ -911,7 +921,14 @@ namespace SceneClipse
                         string sBookmarkName = nodeData.Attributes["bookmarkName"].Value;
                         double dBookmarkStart = Convert.ToDouble(nodeData.Attributes["bookmarkStart"].Value);
                         double dBookmarkEnd = Convert.ToDouble(nodeData.Attributes["bookmarkEnd"].Value);
-                        
+
+                        // 1.1버전 아래에서는 시간값 기준이 밀리초가 아닌 초로 되어 있으므로 보정
+                        if (dBookmarkVersion < 1.1)
+                        {
+                            dBookmarkStart *= 1000;
+                            dBookmarkEnd *= 1000;
+                        }
+
                         BookmarkItem itemBookmark = new BookmarkItem(sBookmarkName, dBookmarkStart);
                         itemBookmark.BookmarkEnd = new BookmarkTimeData(dBookmarkEnd);
 
@@ -990,12 +1007,12 @@ namespace SceneClipse
                     // 시간보정 이후 시간이 - 값이 되지 않도록 보정
                     if (dTimeStart < 0) dTimeStart = 0;
 
-                    BookmarkTimeData time = new BookmarkTimeData(dTimeStart);
+                    BookmarkTimeData time = new BookmarkTimeData(dTimeStart * 1000);
                     string sTimeData = time.GetTime();
 
                     // 책갈피 목록에 추가     
-                    BookmarkItem itemNewBookmark = new BookmarkItem("책갈피 " + sTimeData, dTimeStart);
-                    itemNewBookmark.BookmarkEnd = new BookmarkTimeData(dTimeEnd);
+                    BookmarkItem itemNewBookmark = new BookmarkItem("책갈피 " + sTimeData, dTimeStart * 1000);
+                    itemNewBookmark.BookmarkEnd = new BookmarkTimeData(dTimeEnd * 1000);
 
                     _listBookmarks.Add(_nBookmarkCount, itemNewBookmark);
 
@@ -1126,8 +1143,8 @@ namespace SceneClipse
                 if (dStart > dEnd)
                     dEnd = dStart + 1;
 
-                nodeBookmark.SetAttribute("Start", (dStart * 1000000).ToString());
-                nodeBookmark.SetAttribute("End", (dEnd * 1000000).ToString());
+                nodeBookmark.SetAttribute("Start", (dStart * 1000).ToString());
+                nodeBookmark.SetAttribute("End", (dEnd * 1000).ToString());
                 nodeBookmark.SetAttribute("Title", kvItem.Value.sBookmarkName);
 
                 // 파일경로 보정 - 파일명만 남게 수정
@@ -1180,7 +1197,7 @@ namespace SceneClipse
 
         private void buttonSetCurrentTimeToStart_Click(object sender, EventArgs e)
         {
-            BookmarkTimeData timedata = new BookmarkTimeData(vlcMediaPlayer.Time / 1000);
+            BookmarkTimeData timedata = new BookmarkTimeData(vlcMediaPlayer.Time);
             _isUpdatingBookmarkInfo = true;
             numericBookmarkStartHour.Value = timedata.Hour;
             numericBookmarkStartMin.Value = timedata.Min;
@@ -1190,7 +1207,7 @@ namespace SceneClipse
 
         private void buttonSetCurrentTimeToEnd_Click(object sender, EventArgs e)
         {
-            BookmarkTimeData timedata = new BookmarkTimeData(vlcMediaPlayer.Time / 1000);
+            BookmarkTimeData timedata = new BookmarkTimeData(vlcMediaPlayer.Time);
             _isUpdatingBookmarkInfo = true;
             numericBookmarkEndHour.Value = timedata.Hour;
             numericBookmarkEndMin.Value = timedata.Min;
