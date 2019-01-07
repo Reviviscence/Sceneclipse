@@ -373,3 +373,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+/SceneClipse/bin
+/SceneClipse/obj
+/.vs
