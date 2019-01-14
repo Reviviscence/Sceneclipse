@@ -39,7 +39,7 @@ namespace SceneClipse
         private string _sFilenamePlaying = "";        
         private string _sFilehashPlaying = "";           // 현재 미사용
         private bool _isUpdatingBookmarkInfo = false;
-        private bool _isWaitingForJump = false;
+        private bool _isWaitingForJump = false;        
         private int _nVideoProgress = 0;
         private string _sVideoPlaytime = "";
         private int _nTrackbarMaximum = 0;
@@ -199,78 +199,6 @@ namespace SceneClipse
             }
         }
         
-        private void buttonBookmark_Click(object sender, EventArgs e)
-        {
-
-            if (_sFilenamePlaying != "")
-            {
-                // 책갈피 리스트에서 현재 추가할 정보의 인덱스
-                int nCurrentBookmarkIndex = ++_nBookmarkCount;
-
-                BookmarkTimeData timeVideo = new BookmarkTimeData(vlcMediaPlayer.Time);
-                string sVideoTime = timeVideo.GetTime();
-                double dVideoTime = timeVideo.GetTimeDouble();
-
-                // 시간이 0시간일 경우 문구 앞에 00을 추가함
-                if (sVideoTime.Split(':').Length < 3) sVideoTime = "00:" + sVideoTime;
-
-                BookmarkItem itemNewBookmark = new BookmarkItem("책갈피 " + sVideoTime, dVideoTime);
-                itemNewBookmark.BookmarkEnd.UpdateTime(dVideoTime);
-
-                // mediaplayer에서 이미지 가져오기
-                string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
-                string sSnapshotFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
-
-                // 임시설정 - non-ascii 문자를 전부 제거. 현재 잘 해결되지 않았음(TODO : 한글 등의 파일명이 있어도 썸네일이 잘 생성되도록)
-                sSnapshotFileName = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(ToUTF8(sSnapshotFileName))).Replace("?", string.Empty);
-
-                string sSnapshotFullPath = sSnapshotPath + @"\" + sSnapshotFileName;
-
-
-                // 스크린샷 경로가 없으면 새로 만듦
-                if( !Directory.Exists(sSnapshotPath) )
-                    Directory.CreateDirectory(sSnapshotPath);
-
-                vlcMediaPlayer.TakeSnapshot(sSnapshotFullPath);
-
-                // 스크린샷의 파일명에 한글 등이 포함되어 있을 경우 UTF-8로 변경되어 파일명이 깨짐.
-                // 해당 문제를 수정하기 위해 파일명이 UTF-8형식으로 깨질 경우 파일명을 변경하도록 코드 수정.
-                if( !File.Exists(sSnapshotFullPath) )
-                {
-                    if (File.Exists(ToUTF8(sSnapshotFullPath)))
-                        File.Move(ToUTF8(sSnapshotFullPath), sSnapshotFullPath);
-                }
-
-                itemNewBookmark.sThumbnailPath = sSnapshotFileName;
-
-                if (File.Exists(sSnapshotFullPath))
-                {
-                    Bitmap bitmap = new Bitmap(sSnapshotFullPath);
-                    itemNewBookmark.imageThumbnail = bitmap;
-                }                
-                
-                // 책갈피 목록에 추가            
-                _listBookmarks.Add(nCurrentBookmarkIndex, itemNewBookmark);
-
-
-                // 리스트에 등록
-                ListViewItem item = new ListViewItem(sVideoTime);
-                item.SubItems.Add(dVideoTime.ToString());
-                item.SubItems.Add(itemNewBookmark.sBookmarkName);
-                item.SubItems.Add(nCurrentBookmarkIndex.ToString());
-
-                item.ImageIndex = imageList1.Images.Count;
-
-                listViewBookmark.Items.Add(item);
-
-                // 책갈피 편집부분에도 표시
-                UpdateBookmarkInputData(nCurrentBookmarkIndex, false);
-
-                //listBookmark.DisplayMember = "sVideoTime";
-                //listBookmark.Items.Add(item);          
-            }
-        }
-
         // UTF-8 변환용 함수. VLC플레이어에서 스크린샷 생성시 UTF-8로 변환되어 생성되므로 파일명을 변환할 필요가 있을 듯.
         private string ToUTF8(string sSnapshotFullPath)
         {
@@ -289,8 +217,8 @@ namespace SceneClipse
         {
             if ((sender as ListView).SelectedItems.Count > 0)
             {
-                UpdateBookmarkInputData(Convert.ToInt32((sender as ListView).SelectedItems[0].SubItems[3].Text));
-                
+                if(!_isUpdatingBookmarkInfo)                
+                    UpdateBookmarkInputData(Convert.ToInt32((sender as ListView).FocusedItem.SubItems[3].Text));        
             }
         }
 
@@ -1284,6 +1212,101 @@ namespace SceneClipse
 
             if (trackBarVideoProgress.Value != _nVideoProgress)
                 trackBarVideoProgress.Value = _nVideoProgress;
+        }
+
+        private void buttonBookmark_Click(object sender, EventArgs e)
+        {
+
+            if (_sFilenamePlaying != "")
+            {
+                // 책갈피 리스트에서 현재 추가할 정보의 인덱스
+                int nCurrentBookmarkIndex = ++_nBookmarkCount;
+
+                BookmarkTimeData timeVideo = new BookmarkTimeData(vlcMediaPlayer.Time);
+                string sVideoTime = timeVideo.GetTime();
+                double dVideoTime = timeVideo.GetTimeDouble();
+
+                // 시간이 0시간일 경우 문구 앞에 00을 추가함
+                if (sVideoTime.Split(':').Length < 3) sVideoTime = "00:" + sVideoTime;
+
+                BookmarkItem itemNewBookmark = new BookmarkItem("책갈피 " + sVideoTime, dVideoTime);
+                itemNewBookmark.BookmarkEnd.UpdateTime(dVideoTime);
+
+                // mediaplayer에서 이미지 가져오기
+                string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
+                string sSnapshotFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
+
+                // 임시설정 - non-ascii 문자를 전부 제거. 현재 잘 해결되지 않았음(TODO : 한글 등의 파일명이 있어도 썸네일이 잘 생성되도록)
+                sSnapshotFileName = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(ToUTF8(sSnapshotFileName))).Replace("?", string.Empty);
+
+                string sSnapshotFullPath = sSnapshotPath + @"\" + sSnapshotFileName;
+
+
+                // 스크린샷 경로가 없으면 새로 만듦
+                if (!Directory.Exists(sSnapshotPath))
+                    Directory.CreateDirectory(sSnapshotPath);
+
+                vlcMediaPlayer.TakeSnapshot(sSnapshotFullPath);
+
+                // 스크린샷의 파일명에 한글 등이 포함되어 있을 경우 UTF-8로 변경되어 파일명이 깨짐.
+                // 해당 문제를 수정하기 위해 파일명이 UTF-8형식으로 깨질 경우 파일명을 변경하도록 코드 수정.
+                if (!File.Exists(sSnapshotFullPath))
+                {
+                    if (File.Exists(ToUTF8(sSnapshotFullPath)))
+                        File.Move(ToUTF8(sSnapshotFullPath), sSnapshotFullPath);
+                }
+
+                itemNewBookmark.sThumbnailPath = sSnapshotFileName;
+
+                if (File.Exists(sSnapshotFullPath))
+                {
+                    Bitmap bitmap = new Bitmap(sSnapshotFullPath);
+                    itemNewBookmark.imageThumbnail = bitmap;
+                }
+
+                // 책갈피 목록에 추가            
+                _listBookmarks.Add(nCurrentBookmarkIndex, itemNewBookmark);
+
+
+                // 리스트에 등록
+                ListViewItem item = new ListViewItem(sVideoTime);
+                item.SubItems.Add(dVideoTime.ToString());
+                item.SubItems.Add(itemNewBookmark.sBookmarkName);
+                item.SubItems.Add(nCurrentBookmarkIndex.ToString());
+
+                item.ImageIndex = imageList1.Images.Count;
+
+                listViewBookmark.Items.Add(item);
+
+                // 책갈피 편집부분에도 표시
+                UpdateBookmarkInputData(nCurrentBookmarkIndex, false);
+
+                //listBookmark.DisplayMember = "sVideoTime";
+                //listBookmark.Items.Add(item);          
+            }
+        }
+
+        private void buttonRemoveBookmark_Click(object sender, EventArgs e)
+        {
+            if (listViewBookmark.SelectedItems.Count > 0)
+            {
+                _isUpdatingBookmarkInfo = true;
+                {
+                    int nBookmarkIdx = listViewBookmark.FocusedItem.Index;
+
+                    // 책갈피 삭제시 다음 책갈피로 포커스 이동
+                    if (listViewBookmark.Items.Count - 1 != nBookmarkIdx)
+                    {
+                        listViewBookmark.Items[nBookmarkIdx + 1].Selected = true;
+                        listViewBookmark.Select();
+                    }
+
+                    _listBookmarks.Remove(Convert.ToInt32(listViewBookmark.FocusedItem.SubItems[3].Text));
+
+                    listViewBookmark.Items.RemoveAt(nBookmarkIdx);
+                }
+                _isUpdatingBookmarkInfo = false;
+            }
         }
     }
 }
