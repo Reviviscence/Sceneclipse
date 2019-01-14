@@ -14,7 +14,8 @@ namespace SceneClipse
     {
         public List<double> vBookmarkTimes = new List<double>();
         public bool bUseTimeModify;
-        public bool bUseModifyHead;
+        public bool bUseModifyHead = false;
+        public bool bUseModifyTail = false;
         public int nModifySec;
         public string sFileName;
 
@@ -143,7 +144,8 @@ namespace SceneClipse
             }
 
             bUseTimeModify = checkModifyTime.Checked;
-            bUseModifyHead = radioModifyHead.Checked;
+            bUseModifyHead = checkBoxModifyHead.Checked;
+            bUseModifyTail = checkBoxModifyTail.Checked;
             nModifySec = Convert.ToInt32(numericModifySec.Value);
 
             this.DialogResult = DialogResult.OK;
@@ -237,16 +239,6 @@ namespace SceneClipse
             }
         }
 
-        private void radioModifyHead_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioModifyHead.Checked) radioModifyTail.Checked = false;
-        }
-
-        private void radioModifyTail_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioModifyTail.Checked) radioModifyHead.Checked = false;
-        }
-        
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;

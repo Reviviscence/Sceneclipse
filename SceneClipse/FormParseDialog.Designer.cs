@@ -40,13 +40,13 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonGetTimeDataFromFilename = new System.Windows.Forms.Button();
             this.groupModifyTime = new System.Windows.Forms.GroupBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.radioModifyHead = new System.Windows.Forms.RadioButton();
-            this.radioModifyTail = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.numericHour = new System.Windows.Forms.NumericUpDown();
             this.checkModifyTime = new System.Windows.Forms.CheckBox();
+            this.checkBoxModifyHead = new System.Windows.Forms.CheckBox();
+            this.checkBoxModifyTail = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericModifySec)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericSec)).BeginInit();
@@ -71,7 +71,7 @@
             this.numericModifySec.Size = new System.Drawing.Size(44, 21);
             this.numericModifySec.TabIndex = 1;
             this.numericModifySec.Value = new decimal(new int[] {
-            30,
+            10,
             0,
             0,
             0});
@@ -197,14 +197,16 @@
             this.groupModifyTime.TabStop = false;
             this.groupModifyTime.Text = "시간 보정";
             // 
-            // label5
+            // groupBox2
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 21);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(81, 12);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "보정할 시간 : ";
+            this.groupBox2.Controls.Add(this.checkBoxModifyTail);
+            this.groupBox2.Controls.Add(this.checkBoxModifyHead);
+            this.groupBox2.Location = new System.Drawing.Point(9, 44);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(214, 40);
+            this.groupBox2.TabIndex = 5;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "보정 위치";
             // 
             // label6
             // 
@@ -215,40 +217,14 @@
             this.label6.TabIndex = 2;
             this.label6.Text = "초";
             // 
-            // radioModifyHead
+            // label5
             // 
-            this.radioModifyHead.AutoSize = true;
-            this.radioModifyHead.Checked = true;
-            this.radioModifyHead.Location = new System.Drawing.Point(13, 18);
-            this.radioModifyHead.Name = "radioModifyHead";
-            this.radioModifyHead.Size = new System.Drawing.Size(75, 16);
-            this.radioModifyHead.TabIndex = 3;
-            this.radioModifyHead.TabStop = true;
-            this.radioModifyHead.Text = "시작 시간";
-            this.radioModifyHead.UseVisualStyleBackColor = true;
-            this.radioModifyHead.CheckedChanged += new System.EventHandler(this.radioModifyHead_CheckedChanged);
-            // 
-            // radioModifyTail
-            // 
-            this.radioModifyTail.AutoSize = true;
-            this.radioModifyTail.Location = new System.Drawing.Point(107, 18);
-            this.radioModifyTail.Name = "radioModifyTail";
-            this.radioModifyTail.Size = new System.Drawing.Size(63, 16);
-            this.radioModifyTail.TabIndex = 4;
-            this.radioModifyTail.Text = "끝 시간";
-            this.radioModifyTail.UseVisualStyleBackColor = true;
-            this.radioModifyTail.CheckedChanged += new System.EventHandler(this.radioModifyTail_CheckedChanged);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.radioModifyTail);
-            this.groupBox2.Controls.Add(this.radioModifyHead);
-            this.groupBox2.Location = new System.Drawing.Point(9, 44);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(214, 40);
-            this.groupBox2.TabIndex = 5;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "보정 위치";
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 21);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(81, 12);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "보정할 시간 : ";
             // 
             // numericHour
             // 
@@ -274,6 +250,30 @@
             this.checkModifyTime.Text = "시간 보정 사용";
             this.checkModifyTime.UseVisualStyleBackColor = true;
             this.checkModifyTime.CheckedChanged += new System.EventHandler(this.checkModifyTime_CheckedChanged);
+            // 
+            // checkBoxModifyHead
+            // 
+            this.checkBoxModifyHead.AutoSize = true;
+            this.checkBoxModifyHead.Checked = true;
+            this.checkBoxModifyHead.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxModifyHead.Location = new System.Drawing.Point(19, 18);
+            this.checkBoxModifyHead.Name = "checkBoxModifyHead";
+            this.checkBoxModifyHead.Size = new System.Drawing.Size(76, 16);
+            this.checkBoxModifyHead.TabIndex = 5;
+            this.checkBoxModifyHead.Text = "시작 시간";
+            this.checkBoxModifyHead.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxModifyTail
+            // 
+            this.checkBoxModifyTail.AutoSize = true;
+            this.checkBoxModifyTail.Checked = true;
+            this.checkBoxModifyTail.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxModifyTail.Location = new System.Drawing.Point(110, 18);
+            this.checkBoxModifyTail.Name = "checkBoxModifyTail";
+            this.checkBoxModifyTail.Size = new System.Drawing.Size(64, 16);
+            this.checkBoxModifyTail.TabIndex = 6;
+            this.checkBoxModifyTail.Text = "끝 시간";
+            this.checkBoxModifyTail.UseVisualStyleBackColor = true;
             // 
             // FormParseDialog
             // 
@@ -323,11 +323,11 @@
         private System.Windows.Forms.Button buttonGetTimeDataFromFilename;
         private System.Windows.Forms.GroupBox groupModifyTime;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.RadioButton radioModifyTail;
-        private System.Windows.Forms.RadioButton radioModifyHead;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown numericHour;
         private System.Windows.Forms.CheckBox checkModifyTime;
+        private System.Windows.Forms.CheckBox checkBoxModifyTail;
+        private System.Windows.Forms.CheckBox checkBoxModifyHead;
     }
 }

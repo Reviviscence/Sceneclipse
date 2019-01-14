@@ -928,7 +928,7 @@ namespace SceneClipse
                     {
                         if (dialogParse.bUseModifyHead)
                             dTimeStart = d - dialogParse.nModifySec;
-                        else
+                        if (dialogParse.bUseModifyTail)
                             dTimeEnd = d + dialogParse.nModifySec;
                     }
 
