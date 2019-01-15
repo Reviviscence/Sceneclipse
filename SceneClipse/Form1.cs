@@ -197,9 +197,18 @@ namespace SceneClipse
                 if (openFiledialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     InitializeBookmarkdata();
-
                     _sFilenamePlaying = openFiledialog1.FileName;
                     // _sFilehashPlaying = GetMD5HashFromFile(_sFilenamePlaying);
+
+                    // 자동 북마크파일 불러오기(불러오는 파일의 위치와 동일한 경로에 같은 이름의 .sclip 파일이 있으면 자동으로 읽어옴)
+                    if (checkAutoloadBookmark.Checked)
+                    {
+                        string sBookmarkFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
+                        if( File.Exists(sBookmarkFilename ) )
+                        {
+                            LoadBookmarkFormFile(sBookmarkFilename);
+                        }
+                    }
 
                     vlcMediaPlayer.SetMedia(new FileInfo(openFiledialog1.FileName));
                     vlcMediaPlayer.Audio.Volume = trackBarVolumeControl.Value;
@@ -842,77 +851,82 @@ namespace SceneClipse
 
             if (dialogOpen.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                XmlDocument xmlOpen = new XmlDocument();
+                LoadBookmarkFormFile(dialogOpen.FileName);
+            }
+        }
 
-                // utf-16 인코딩 정의
-                XmlDeclaration xmldecl = xmlOpen.CreateXmlDeclaration("1.0", "utf-16", null);
-                try
+        private void LoadBookmarkFormFile(string sFileName)
+        {
+            XmlDocument xmlOpen = new XmlDocument();
+
+            // utf-16 인코딩 정의
+            XmlDeclaration xmldecl = xmlOpen.CreateXmlDeclaration("1.0", "utf-16", null);
+            try
+            {
+                xmlOpen.Load(sFileName);
+
+                // 기존 책갈피 내용 초기화
+                _nBookmarkCount = 0;
+                _listBookmarks.Clear();
+
+                // 리스트 초기화
+                listViewBookmark.Clear();
+                InitializeBookmarkList();
+
+                XmlNodeList nodeBookmarkRoot = xmlOpen.SelectNodes("/bookmarks");
+                double dBookmarkVersion = 0;
+
+                if (nodeBookmarkRoot.Count > 0 && nodeBookmarkRoot[0].Attributes["version"] != null)
+                    dBookmarkVersion = Convert.ToDouble(nodeBookmarkRoot[0].Attributes["version"].Value);
+
+                XmlNodeList nodeBookmarks = xmlOpen.SelectNodes("/bookmarks/bookmarkdata");
+
+                // 책갈피 내용별 루프
+                foreach (XmlNode nodeData in nodeBookmarks)
                 {
-                    xmlOpen.Load(dialogOpen.FileName);
+                    // 이름, 시작시간, 끝시간 읽어오기
+                    string sBookmarkName = nodeData.Attributes["bookmarkName"].Value;
+                    double dBookmarkStart = Convert.ToDouble(nodeData.Attributes["bookmarkStart"].Value);
+                    double dBookmarkEnd = Convert.ToDouble(nodeData.Attributes["bookmarkEnd"].Value);
 
-                    // 기존 책갈피 내용 초기화
-                    _nBookmarkCount = 0;
-                    _listBookmarks.Clear();
-
-                    // 리스트 초기화
-                    listViewBookmark.Clear();
-                    InitializeBookmarkList();
-
-                    XmlNodeList nodeBookmarkRoot = xmlOpen.SelectNodes("/bookmarks");
-                    double dBookmarkVersion = 0;
-
-                    if(nodeBookmarkRoot.Count > 0 && nodeBookmarkRoot[0].Attributes["version"] != null )
-                        dBookmarkVersion = Convert.ToDouble(nodeBookmarkRoot[0].Attributes["version"].Value);
-
-                    XmlNodeList nodeBookmarks = xmlOpen.SelectNodes("/bookmarks/bookmarkdata");
-
-                    // 책갈피 내용별 루프
-                    foreach (XmlNode nodeData in nodeBookmarks)
+                    // 1.1버전 아래에서는 시간값 기준이 밀리초가 아닌 초로 되어 있으므로 보정
+                    if (dBookmarkVersion < 1.1)
                     {
-                        // 이름, 시작시간, 끝시간 읽어오기
-                        string sBookmarkName = nodeData.Attributes["bookmarkName"].Value;
-                        double dBookmarkStart = Convert.ToDouble(nodeData.Attributes["bookmarkStart"].Value);
-                        double dBookmarkEnd = Convert.ToDouble(nodeData.Attributes["bookmarkEnd"].Value);
+                        dBookmarkStart *= 1000;
+                        dBookmarkEnd *= 1000;
+                    }
 
-                        // 1.1버전 아래에서는 시간값 기준이 밀리초가 아닌 초로 되어 있으므로 보정
-                        if (dBookmarkVersion < 1.1)
+                    BookmarkItem itemBookmark = new BookmarkItem(sBookmarkName, dBookmarkStart);
+                    itemBookmark.BookmarkEnd = new BookmarkTimeData(dBookmarkEnd);
+
+                    // 태그 읽어오기
+                    foreach (XmlNode nodeTags in nodeData.ChildNodes)
+                    {
+                        if (nodeTags.Name == "tags")
                         {
-                            dBookmarkStart *= 1000;
-                            dBookmarkEnd *= 1000;
+                            foreach (XmlNode nodeTag in nodeTags.ChildNodes)
+                                itemBookmark.vTags.Add(nodeTag.Attributes["name"].Value);
                         }
+                    }
 
-                        BookmarkItem itemBookmark = new BookmarkItem(sBookmarkName, dBookmarkStart);
-                        itemBookmark.BookmarkEnd = new BookmarkTimeData(dBookmarkEnd);
+                    _nBookmarkCount++;
+                    _listBookmarks.Add(_nBookmarkCount, itemBookmark);
 
-                        // 태그 읽어오기
-                        foreach (XmlNode nodeTags in nodeData.ChildNodes)
-                        {
-                            if (nodeTags.Name == "tags")
-                            {
-                                foreach (XmlNode nodeTag in nodeTags.ChildNodes)
-                                    itemBookmark.vTags.Add(nodeTag.Attributes["name"].Value);
-                            }
-                        }
+                    // 리스트에 등록
+                    ListViewItem item = new ListViewItem(itemBookmark.BookmarkStart.GetTime());
+                    item.SubItems.Add(dBookmarkStart.ToString());
+                    item.SubItems.Add(sBookmarkName);
+                    item.SubItems.Add(_nBookmarkCount.ToString());
 
-                        _nBookmarkCount++;
-                        _listBookmarks.Add(_nBookmarkCount, itemBookmark);
+                    // TODO : 썸네일 저장하게 되면 이미지 인덱스도 입력해야 함
+                    // item.ImageIndex = imageList1.Images.Count;
 
-                        // 리스트에 등록
-                        ListViewItem item = new ListViewItem(itemBookmark.BookmarkStart.GetTime());
-                        item.SubItems.Add(dBookmarkStart.ToString());
-                        item.SubItems.Add(sBookmarkName);
-                        item.SubItems.Add(_nBookmarkCount.ToString());
-
-                        // TODO : 썸네일 저장하게 되면 이미지 인덱스도 입력해야 함
-                        // item.ImageIndex = imageList1.Images.Count;
-
-                        listViewBookmark.Items.Add(item);
-                    }                    
+                    listViewBookmark.Items.Add(item);
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("파일 열기 실패 : " + ex.Message);
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("파일 열기 실패 : " + ex.Message);
             }
         }
 

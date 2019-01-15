@@ -76,6 +76,7 @@
             this.buttonRemoveBookmark = new System.Windows.Forms.Button();
             this.trackBarVolumeControl = new System.Windows.Forms.TrackBar();
             this.panelVolumeControl = new System.Windows.Forms.Panel();
+            this.checkAutoloadBookmark = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -96,9 +97,9 @@
             // 
             // buttonPause
             // 
-            this.buttonPause.Location = new System.Drawing.Point(93, 381);
+            this.buttonPause.Location = new System.Drawing.Point(12, 411);
             this.buttonPause.Name = "buttonPause";
-            this.buttonPause.Size = new System.Drawing.Size(75, 23);
+            this.buttonPause.Size = new System.Drawing.Size(116, 23);
             this.buttonPause.TabIndex = 5;
             this.buttonPause.Text = "재생/정지";
             this.buttonPause.UseVisualStyleBackColor = true;
@@ -106,9 +107,9 @@
             // 
             // buttonOpenFile
             // 
-            this.buttonOpenFile.Location = new System.Drawing.Point(12, 381);
+            this.buttonOpenFile.Location = new System.Drawing.Point(12, 382);
             this.buttonOpenFile.Name = "buttonOpenFile";
-            this.buttonOpenFile.Size = new System.Drawing.Size(75, 23);
+            this.buttonOpenFile.Size = new System.Drawing.Size(88, 23);
             this.buttonOpenFile.TabIndex = 6;
             this.buttonOpenFile.Text = "파일 열기";
             this.buttonOpenFile.UseVisualStyleBackColor = true;
@@ -128,7 +129,7 @@
             // 
             // labelPlayTime
             // 
-            this.labelPlayTime.Location = new System.Drawing.Point(251, 518);
+            this.labelPlayTime.Location = new System.Drawing.Point(261, 518);
             this.labelPlayTime.Name = "labelPlayTime";
             this.labelPlayTime.Size = new System.Drawing.Size(206, 29);
             this.labelPlayTime.TabIndex = 9;
@@ -175,7 +176,7 @@
             // pictureBox1
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(143, 12);
+            this.pictureBox1.Location = new System.Drawing.Point(146, 12);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(104, 104);
             this.pictureBox1.TabIndex = 14;
@@ -189,7 +190,7 @@
             this.tableLayoutPanel1.Controls.Add(this.textBoxBookmarkName, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.panelTagList, 0, 2);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(253, 12);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(258, 12);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
@@ -471,7 +472,7 @@
             // 
             // buttonLoadBookmark
             // 
-            this.buttonLoadBookmark.Location = new System.Drawing.Point(87, 49);
+            this.buttonLoadBookmark.Location = new System.Drawing.Point(159, 13);
             this.buttonLoadBookmark.Name = "buttonLoadBookmark";
             this.buttonLoadBookmark.Size = new System.Drawing.Size(75, 23);
             this.buttonLoadBookmark.TabIndex = 16;
@@ -481,7 +482,7 @@
             // 
             // buttonSaveBookmark
             // 
-            this.buttonSaveBookmark.Location = new System.Drawing.Point(6, 49);
+            this.buttonSaveBookmark.Location = new System.Drawing.Point(78, 13);
             this.buttonSaveBookmark.Name = "buttonSaveBookmark";
             this.buttonSaveBookmark.Size = new System.Drawing.Size(75, 23);
             this.buttonSaveBookmark.TabIndex = 17;
@@ -495,16 +496,16 @@
             this.groupBox1.Controls.Add(this.buttonParse);
             this.groupBox1.Controls.Add(this.buttonSaveBookmark);
             this.groupBox1.Controls.Add(this.buttonLoadBookmark);
-            this.groupBox1.Location = new System.Drawing.Point(12, 439);
+            this.groupBox1.Location = new System.Drawing.Point(12, 468);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(172, 108);
+            this.groupBox1.Size = new System.Drawing.Size(238, 71);
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "책갈피";
             // 
             // buttonExportBandicut
             // 
-            this.buttonExportBandicut.Location = new System.Drawing.Point(6, 79);
+            this.buttonExportBandicut.Location = new System.Drawing.Point(78, 43);
             this.buttonExportBandicut.Name = "buttonExportBandicut";
             this.buttonExportBandicut.Size = new System.Drawing.Size(156, 23);
             this.buttonExportBandicut.TabIndex = 19;
@@ -514,19 +515,19 @@
             // 
             // buttonParse
             // 
-            this.buttonParse.Location = new System.Drawing.Point(6, 20);
+            this.buttonParse.Location = new System.Drawing.Point(6, 13);
             this.buttonParse.Name = "buttonParse";
-            this.buttonParse.Size = new System.Drawing.Size(156, 23);
+            this.buttonParse.Size = new System.Drawing.Size(69, 53);
             this.buttonParse.TabIndex = 18;
-            this.buttonParse.Text = "책갈피 자동생성";
+            this.buttonParse.Text = "책갈피\r\n자동생성";
             this.buttonParse.UseVisualStyleBackColor = true;
             this.buttonParse.Click += new System.EventHandler(this.buttonParse_Click);
             // 
             // buttonQuit
             // 
-            this.buttonQuit.Location = new System.Drawing.Point(175, 381);
+            this.buttonQuit.Location = new System.Drawing.Point(134, 411);
             this.buttonQuit.Name = "buttonQuit";
-            this.buttonQuit.Size = new System.Drawing.Size(75, 23);
+            this.buttonQuit.Size = new System.Drawing.Size(116, 23);
             this.buttonQuit.TabIndex = 19;
             this.buttonQuit.Text = "종료";
             this.buttonQuit.UseVisualStyleBackColor = true;
@@ -534,9 +535,9 @@
             // 
             // buttonSeekPrev
             // 
-            this.buttonSeekPrev.Location = new System.Drawing.Point(124, 412);
+            this.buttonSeekPrev.Location = new System.Drawing.Point(134, 439);
             this.buttonSeekPrev.Name = "buttonSeekPrev";
-            this.buttonSeekPrev.Size = new System.Drawing.Size(60, 23);
+            this.buttonSeekPrev.Size = new System.Drawing.Size(55, 23);
             this.buttonSeekPrev.TabIndex = 20;
             this.buttonSeekPrev.Text = "앞으로";
             this.buttonSeekPrev.UseVisualStyleBackColor = true;
@@ -544,9 +545,9 @@
             // 
             // buttonSeekNext
             // 
-            this.buttonSeekNext.Location = new System.Drawing.Point(190, 412);
+            this.buttonSeekNext.Location = new System.Drawing.Point(195, 439);
             this.buttonSeekNext.Name = "buttonSeekNext";
-            this.buttonSeekNext.Size = new System.Drawing.Size(60, 23);
+            this.buttonSeekNext.Size = new System.Drawing.Size(55, 23);
             this.buttonSeekNext.TabIndex = 21;
             this.buttonSeekNext.Text = "뒤로";
             this.buttonSeekNext.UseVisualStyleBackColor = true;
@@ -554,14 +555,14 @@
             // 
             // numericSeekTimeAmount
             // 
-            this.numericSeekTimeAmount.Location = new System.Drawing.Point(18, 412);
+            this.numericSeekTimeAmount.Location = new System.Drawing.Point(12, 439);
             this.numericSeekTimeAmount.Maximum = new decimal(new int[] {
             60,
             0,
             0,
             0});
             this.numericSeekTimeAmount.Name = "numericSeekTimeAmount";
-            this.numericSeekTimeAmount.Size = new System.Drawing.Size(31, 21);
+            this.numericSeekTimeAmount.Size = new System.Drawing.Size(48, 21);
             this.numericSeekTimeAmount.TabIndex = 22;
             this.numericSeekTimeAmount.Value = new decimal(new int[] {
             5,
@@ -576,7 +577,7 @@
             "초",
             "분",
             "시간"});
-            this.comboBoxSeekType.Location = new System.Drawing.Point(56, 412);
+            this.comboBoxSeekType.Location = new System.Drawing.Point(66, 440);
             this.comboBoxSeekType.Name = "comboBoxSeekType";
             this.comboBoxSeekType.Size = new System.Drawing.Size(62, 20);
             this.comboBoxSeekType.TabIndex = 23;
@@ -584,7 +585,7 @@
             // 
             // panelMediaPlayer
             // 
-            this.panelMediaPlayer.Location = new System.Drawing.Point(253, 122);
+            this.panelMediaPlayer.Location = new System.Drawing.Point(258, 122);
             this.panelMediaPlayer.Name = "panelMediaPlayer";
             this.panelMediaPlayer.Size = new System.Drawing.Size(611, 348);
             this.panelMediaPlayer.TabIndex = 24;
@@ -603,7 +604,7 @@
             // panelTrackbarBackground
             // 
             this.panelTrackbarBackground.Controls.Add(this.trackBarVideoProgress);
-            this.panelTrackbarBackground.Location = new System.Drawing.Point(253, 472);
+            this.panelTrackbarBackground.Location = new System.Drawing.Point(258, 472);
             this.panelTrackbarBackground.Name = "panelTrackbarBackground";
             this.panelTrackbarBackground.Size = new System.Drawing.Size(612, 38);
             this.panelTrackbarBackground.TabIndex = 26;
@@ -637,16 +638,29 @@
             // panelVolumeControl
             // 
             this.panelVolumeControl.Controls.Add(this.trackBarVolumeControl);
-            this.panelVolumeControl.Location = new System.Drawing.Point(758, 511);
+            this.panelVolumeControl.Location = new System.Drawing.Point(763, 511);
             this.panelVolumeControl.Name = "panelVolumeControl";
             this.panelVolumeControl.Size = new System.Drawing.Size(107, 36);
             this.panelVolumeControl.TabIndex = 29;
+            // 
+            // checkAutoloadBookmark
+            // 
+            this.checkAutoloadBookmark.AutoSize = true;
+            this.checkAutoloadBookmark.Checked = true;
+            this.checkAutoloadBookmark.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkAutoloadBookmark.Location = new System.Drawing.Point(110, 386);
+            this.checkAutoloadBookmark.Name = "checkAutoloadBookmark";
+            this.checkAutoloadBookmark.Size = new System.Drawing.Size(140, 16);
+            this.checkAutoloadBookmark.TabIndex = 30;
+            this.checkAutoloadBookmark.Text = "책갈피 자동 불러오기";
+            this.checkAutoloadBookmark.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(870, 551);
+            this.ClientSize = new System.Drawing.Size(873, 551);
+            this.Controls.Add(this.checkAutoloadBookmark);
             this.Controls.Add(this.panelVolumeControl);
             this.Controls.Add(this.buttonRemoveBookmark);
             this.Controls.Add(this.panelTrackbarBackground);
@@ -745,6 +759,7 @@
         private System.Windows.Forms.Button buttonRemoveBookmark;
         private System.Windows.Forms.TrackBar trackBarVolumeControl;
         private System.Windows.Forms.Panel panelVolumeControl;
+        private System.Windows.Forms.CheckBox checkAutoloadBookmark;
     }
 }
 
