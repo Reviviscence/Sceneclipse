@@ -48,6 +48,7 @@ namespace SceneClipse
         private int _nVideoProgress = 0;
         private string _sVideoPlaytime = "";
         private int _nTrackbarMaximum = 0;
+        private List<string> _listFixedTags;
 
         public Form1()
         {
@@ -57,6 +58,7 @@ namespace SceneClipse
 
             this.panelTagList.VerticalScroll.Enabled = false;
             _listBookmarks = new SortedList<int, BookmarkItem>();
+            _listFixedTags = new List<string>();
         }
 
         private void InitializeVLCPlayer()
@@ -352,6 +354,10 @@ namespace SceneClipse
             // 컬럼에 입력한 값 집어넣기
             Label labelNewTag = new Label() { Text = sTag };
 
+            // 입력될 값이 고정태그일 경우 볼드 표시
+            if (_listFixedTags.Find(x => x.Equals(sTag)) != null)
+                labelNewTag.Font = new Font(labelNewTag.Font, FontStyle.Bold);
+
             // 라벨 클릭이벤트 추가
             // 우클릭시 : 해당 태그 삭제
             // 더블클릭시 : 태그 수정
@@ -364,9 +370,28 @@ namespace SceneClipse
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    // 태그 수정 : 기존 태그 입력값을 입력칸에 넣어준 뒤, 기존 태그를 삭제해버림
-                    textBoxTagInput.Text = (s as Label).Text;
-                    RemoveFromTagList((s as Label).Text);
+                    // 태그 고정 기능 : 고정된 태그는 새 책갈피 생성시 자동 입력하도록 함
+                    if ((Control.ModifierKeys & Keys.Control) != 0)
+                    {
+                        if ((s as Label).Font.Bold == false)
+                        {
+                            // 컨트롤+더블클릭시 태그 고정
+                            (s as Label).Font = new Font((s as Label).Font, FontStyle.Bold);
+                            _listFixedTags.Add((s as Label).Text);
+                        }
+                        else
+                        {
+                            // 고정된 태그 해제
+                            (s as Label).Font = new Font((s as Label).Font, FontStyle.Regular);
+                            _listFixedTags.Remove((s as Label).Text);
+                        }
+                    }
+                    else
+                    {
+                        // 태그 수정 : 기존 태그 입력값을 입력칸에 넣어준 뒤, 기존 태그를 삭제해버림
+                        textBoxTagInput.Text = (s as Label).Text;
+                        RemoveFromTagList((s as Label).Text);
+                    }
                 }
             };
 
@@ -475,6 +500,7 @@ namespace SceneClipse
             listViewBookmark.Clear();
             InitializeBookmarkList();
             _listBookmarks.Clear();
+            _listFixedTags.Clear();
             _nBookmarkCount = 0;
             _nCurrentBookmarkIdx = 0;
             _isUpdatingBookmarkInfo = false;
@@ -1325,6 +1351,15 @@ namespace SceneClipse
                 {
                     Bitmap bitmap = new Bitmap(sSnapshotFullPath);
                     itemNewBookmark.imageThumbnail = bitmap;
+                }
+
+                // 고정된 태그 자동 입력
+                if( _listFixedTags.Count > 0 )
+                {
+                    foreach( string tag in _listFixedTags)
+                    {
+                        itemNewBookmark.vTags.Add(tag);
+                    }
                 }
 
                 // 책갈피 목록에 추가            
