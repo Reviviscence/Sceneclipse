@@ -97,6 +97,7 @@
             // 
             // buttonPause
             // 
+            this.buttonPause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonPause.Location = new System.Drawing.Point(12, 411);
             this.buttonPause.Name = "buttonPause";
             this.buttonPause.Size = new System.Drawing.Size(116, 23);
@@ -107,6 +108,7 @@
             // 
             // buttonOpenFile
             // 
+            this.buttonOpenFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonOpenFile.Location = new System.Drawing.Point(12, 382);
             this.buttonOpenFile.Name = "buttonOpenFile";
             this.buttonOpenFile.Size = new System.Drawing.Size(88, 23);
@@ -129,6 +131,7 @@
             // 
             // labelPlayTime
             // 
+            this.labelPlayTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelPlayTime.Location = new System.Drawing.Point(261, 518);
             this.labelPlayTime.Name = "labelPlayTime";
             this.labelPlayTime.Size = new System.Drawing.Size(206, 29);
@@ -145,6 +148,7 @@
             // 
             // buttonBookmark
             // 
+            this.buttonBookmark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonBookmark.Location = new System.Drawing.Point(12, 353);
             this.buttonBookmark.Name = "buttonBookmark";
             this.buttonBookmark.Size = new System.Drawing.Size(156, 23);
@@ -155,6 +159,7 @@
             // 
             // listViewBookmark
             // 
+            this.listViewBookmark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.listViewBookmark.FullRowSelect = true;
             this.listViewBookmark.Location = new System.Drawing.Point(12, 122);
             this.listViewBookmark.MultiSelect = false;
@@ -492,6 +497,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox1.Controls.Add(this.buttonExportBandicut);
             this.groupBox1.Controls.Add(this.buttonParse);
             this.groupBox1.Controls.Add(this.buttonSaveBookmark);
@@ -525,6 +531,7 @@
             // 
             // buttonQuit
             // 
+            this.buttonQuit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonQuit.Location = new System.Drawing.Point(134, 411);
             this.buttonQuit.Name = "buttonQuit";
             this.buttonQuit.Size = new System.Drawing.Size(116, 23);
@@ -535,6 +542,7 @@
             // 
             // buttonSeekPrev
             // 
+            this.buttonSeekPrev.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonSeekPrev.Location = new System.Drawing.Point(134, 439);
             this.buttonSeekPrev.Name = "buttonSeekPrev";
             this.buttonSeekPrev.Size = new System.Drawing.Size(55, 23);
@@ -545,6 +553,7 @@
             // 
             // buttonSeekNext
             // 
+            this.buttonSeekNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonSeekNext.Location = new System.Drawing.Point(195, 439);
             this.buttonSeekNext.Name = "buttonSeekNext";
             this.buttonSeekNext.Size = new System.Drawing.Size(55, 23);
@@ -555,6 +564,7 @@
             // 
             // numericSeekTimeAmount
             // 
+            this.numericSeekTimeAmount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.numericSeekTimeAmount.Location = new System.Drawing.Point(12, 439);
             this.numericSeekTimeAmount.Maximum = new decimal(new int[] {
             60,
@@ -572,6 +582,7 @@
             // 
             // comboBoxSeekType
             // 
+            this.comboBoxSeekType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBoxSeekType.FormattingEnabled = true;
             this.comboBoxSeekType.Items.AddRange(new object[] {
             "초",
@@ -585,6 +596,7 @@
             // 
             // panelMediaPlayer
             // 
+            this.panelMediaPlayer.AutoSize = true;
             this.panelMediaPlayer.Location = new System.Drawing.Point(258, 122);
             this.panelMediaPlayer.Name = "panelMediaPlayer";
             this.panelMediaPlayer.Size = new System.Drawing.Size(611, 348);
@@ -603,8 +615,9 @@
             // 
             // panelTrackbarBackground
             // 
+            this.panelTrackbarBackground.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.panelTrackbarBackground.Controls.Add(this.trackBarVideoProgress);
-            this.panelTrackbarBackground.Location = new System.Drawing.Point(258, 472);
+            this.panelTrackbarBackground.Location = new System.Drawing.Point(259, 472);
             this.panelTrackbarBackground.Name = "panelTrackbarBackground";
             this.panelTrackbarBackground.Size = new System.Drawing.Size(612, 38);
             this.panelTrackbarBackground.TabIndex = 26;
@@ -616,6 +629,7 @@
             // 
             // buttonRemoveBookmark
             // 
+            this.buttonRemoveBookmark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonRemoveBookmark.Location = new System.Drawing.Point(175, 353);
             this.buttonRemoveBookmark.Name = "buttonRemoveBookmark";
             this.buttonRemoveBookmark.Size = new System.Drawing.Size(75, 23);
@@ -637,14 +651,16 @@
             // 
             // panelVolumeControl
             // 
+            this.panelVolumeControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.panelVolumeControl.Controls.Add(this.trackBarVolumeControl);
-            this.panelVolumeControl.Location = new System.Drawing.Point(763, 511);
+            this.panelVolumeControl.Location = new System.Drawing.Point(764, 511);
             this.panelVolumeControl.Name = "panelVolumeControl";
             this.panelVolumeControl.Size = new System.Drawing.Size(107, 36);
             this.panelVolumeControl.TabIndex = 29;
             // 
             // checkAutoloadBookmark
             // 
+            this.checkAutoloadBookmark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkAutoloadBookmark.AutoSize = true;
             this.checkAutoloadBookmark.Checked = true;
             this.checkAutoloadBookmark.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -659,7 +675,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(873, 551);
+            this.ClientSize = new System.Drawing.Size(874, 551);
             this.Controls.Add(this.checkAutoloadBookmark);
             this.Controls.Add(this.panelVolumeControl);
             this.Controls.Add(this.buttonRemoveBookmark);
@@ -680,10 +696,10 @@
             this.Controls.Add(this.textBoxOpenFileName);
             this.Controls.Add(this.buttonOpenFile);
             this.Controls.Add(this.buttonPause);
-            this.MaximizeBox = false;
             this.Name = "Form1";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Form1";
+            this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

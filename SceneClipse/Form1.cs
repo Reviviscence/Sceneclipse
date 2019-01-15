@@ -28,6 +28,10 @@ namespace SceneClipse
         private const string BANDICUT_FILE_DESC = "Bandicut Project File";
         private const string BANDICUT_FILE_EXT = ".bcpf";
         private const string BANDICUT_FILE_OPENTEXT = BANDICUT_FILE_DESC + "|*" + BANDICUT_FILE_EXT;
+        private const int VLCPLAYER_ORG_WIDTH = 610;
+        private const int VLCPLAYER_ORG_HEIGHT = 348;
+        private const int FORM_ORG_WIDTH = 890;
+        private const int FORM_ORG_HEIGHT = 590;
 
 
         // 책갈피 목록<인덱스, 책갈피>
@@ -1366,6 +1370,15 @@ namespace SceneClipse
                 }
                 _isUpdatingBookmarkInfo = false;
             }
+        }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            int nNewWidth = this.Width - panelMediaPlayer.Location.X - 21;
+            int nNewHeight = this.Height - panelMediaPlayer.Location.Y - 120;
+
+            vlcMediaPlayer.Width = nNewWidth;
+            vlcMediaPlayer.Height = nNewHeight; 
         }
     }
 }
