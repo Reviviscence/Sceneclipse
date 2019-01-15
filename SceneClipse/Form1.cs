@@ -18,7 +18,8 @@ namespace SceneClipse
     public partial class Form1 : Form
     {
         // 트랙바(trackBarVideoProgress)와 마우스 클릭 위치를 맞추기 위한 보정값.
-        private const int TRACKBAR_MODIFY_POSITION_VALUE = 13;
+        private const int TRACKBAR_VIDEOPROGRESS_MODIFY_POSITION_VALUE = 13;
+        private const int TRACKBAR_AUDIOVOLUME_MODIFY_POSITION_VALUE = 13;
 
         private const string SCENECLIP_FILE_DESC = "Sceneclips File";
         private const string SCENECLIP_FILE_EXT = ".sclip";
@@ -81,24 +82,29 @@ namespace SceneClipse
             Panel panelVideoProgress = new Panel();
             panelVideoProgress.Dock = DockStyle.Fill;
             panelVideoProgress.BackColor = Color.Transparent;
-
             panelVideoProgress.MouseDown += panelVideoProgress_MouseDown;
-            panelVideoProgress.MouseMove += PanelVideoProgress_MouseMove;
-
+            panelVideoProgress.MouseMove += panelVideoProgress_MouseMove;
             this.panelTrackbarBackground.Controls.Add(panelVideoProgress);
             //panelVideoProgress.BringToFront();
+
+            Panel panelVolume = new Panel();
+            panelVolume.Dock = DockStyle.Fill;
+            panelVolume.BackColor = Color.Transparent;
+            panelVolume.MouseDown += panelVolume_MouseDown;
+            panelVolume.MouseMove += panelVolume_MouseMove;
+            this.panelVolumeControl.Controls.Add(panelVolume);
 
             _nTrackbarMaximum = trackBarVideoProgress.Maximum;
 
         }
-
-        private void PanelVideoProgress_MouseMove(object sender, MouseEventArgs e)
+        
+        private void panelVideoProgress_MouseMove(object sender, MouseEventArgs e)
         {
             if (vlcMediaPlayer.IsPlaying)
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    int nPosition = e.X - TRACKBAR_MODIFY_POSITION_VALUE;
+                    int nPosition = e.X - TRACKBAR_VIDEOPROGRESS_MODIFY_POSITION_VALUE;
                     if (nPosition < 0) nPosition = 0;
 
                     int nProgressValue = Convert.ToInt32(trackBarVideoProgress.Maximum * vlcMediaPlayer.Position);
@@ -107,8 +113,25 @@ namespace SceneClipse
                         (nProgressValue < trackBarVideoProgress.Maximum) ?
                         nProgressValue : trackBarVideoProgress.Maximum;
 
-                    vlcMediaPlayer.Position = ((float)nPosition / (trackBarVideoProgress.Width - TRACKBAR_MODIFY_POSITION_VALUE * 2));
+                    vlcMediaPlayer.Position = ((float)nPosition / (trackBarVideoProgress.Width - TRACKBAR_VIDEOPROGRESS_MODIFY_POSITION_VALUE * 2));
                 }
+            }
+        }
+
+        private void panelVolume_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                int nPosition = Convert.ToInt32(((float)e.X - TRACKBAR_AUDIOVOLUME_MODIFY_POSITION_VALUE)
+                / (trackBarVolumeControl.Width - TRACKBAR_AUDIOVOLUME_MODIFY_POSITION_VALUE * 2) * 100);
+
+                if (nPosition < 0) nPosition = 0;
+                if (nPosition > trackBarVolumeControl.Maximum)
+                    nPosition = trackBarVolumeControl.Maximum;
+
+                trackBarVolumeControl.Value = nPosition;
+                if (vlcMediaPlayer.IsPlaying)
+                    vlcMediaPlayer.Audio.Volume = nPosition;
             }
         }
 
@@ -179,6 +202,7 @@ namespace SceneClipse
                     // _sFilehashPlaying = GetMD5HashFromFile(_sFilenamePlaying);
 
                     vlcMediaPlayer.SetMedia(new FileInfo(openFiledialog1.FileName));
+                    vlcMediaPlayer.Audio.Volume = trackBarVolumeControl.Value;
                     vlcMediaPlayer.Play();
 
                     textBoxOpenFileName.Text = openFiledialog1.FileName;
@@ -1197,11 +1221,32 @@ namespace SceneClipse
         {
             if (vlcMediaPlayer.IsPlaying)
             {
-                int nPosition = e.X - TRACKBAR_MODIFY_POSITION_VALUE;
+                int nPosition = e.X - TRACKBAR_VIDEOPROGRESS_MODIFY_POSITION_VALUE;
                 if (nPosition < 0) nPosition = 0;
 
-                vlcMediaPlayer.Position = ((float)nPosition / (trackBarVideoProgress.Width - TRACKBAR_MODIFY_POSITION_VALUE * 2));
+                int nProgressValue = Convert.ToInt32(trackBarVideoProgress.Maximum * vlcMediaPlayer.Position);
+
+                _nVideoProgress =
+                    (nProgressValue < trackBarVideoProgress.Maximum) ?
+                    nProgressValue : trackBarVideoProgress.Maximum;
+
+                vlcMediaPlayer.Position = ((float)nPosition / (trackBarVideoProgress.Width - TRACKBAR_VIDEOPROGRESS_MODIFY_POSITION_VALUE * 2));
+
             }
+        }
+
+        private void panelVolume_MouseDown(object sender, MouseEventArgs e)
+        {
+            int nPosition = Convert.ToInt32(((float)e.X - TRACKBAR_AUDIOVOLUME_MODIFY_POSITION_VALUE)
+                / (trackBarVolumeControl.Width - TRACKBAR_AUDIOVOLUME_MODIFY_POSITION_VALUE * 2) * 100);
+
+            if (nPosition < 0) nPosition = 0;
+            if (nPosition > trackBarVolumeControl.Maximum)
+                nPosition = trackBarVolumeControl.Maximum;
+
+            trackBarVolumeControl.Value = nPosition;
+            if (vlcMediaPlayer.IsPlaying)
+                vlcMediaPlayer.Audio.Volume = nPosition;
         }
 
         private void timerDisplayPlaytime_Tick(object sender, EventArgs e)

@@ -74,6 +74,8 @@
             this.panelTrackbarBackground = new System.Windows.Forms.Panel();
             this.timerDisplayPlaytime = new System.Windows.Forms.Timer(this.components);
             this.buttonRemoveBookmark = new System.Windows.Forms.Button();
+            this.trackBarVolumeControl = new System.Windows.Forms.TrackBar();
+            this.panelVolumeControl = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -88,6 +90,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericSeekTimeAmount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVideoProgress)).BeginInit();
             this.panelTrackbarBackground.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarVolumeControl)).BeginInit();
+            this.panelVolumeControl.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonPause
@@ -619,11 +623,31 @@
             this.buttonRemoveBookmark.UseVisualStyleBackColor = true;
             this.buttonRemoveBookmark.Click += new System.EventHandler(this.buttonRemoveBookmark_Click);
             // 
+            // trackBarVolumeControl
+            // 
+            this.trackBarVolumeControl.Enabled = false;
+            this.trackBarVolumeControl.Location = new System.Drawing.Point(0, 0);
+            this.trackBarVolumeControl.Maximum = 100;
+            this.trackBarVolumeControl.Name = "trackBarVolumeControl";
+            this.trackBarVolumeControl.Size = new System.Drawing.Size(104, 45);
+            this.trackBarVolumeControl.TabIndex = 28;
+            this.trackBarVolumeControl.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarVolumeControl.Value = 50;
+            // 
+            // panelVolumeControl
+            // 
+            this.panelVolumeControl.Controls.Add(this.trackBarVolumeControl);
+            this.panelVolumeControl.Location = new System.Drawing.Point(758, 511);
+            this.panelVolumeControl.Name = "panelVolumeControl";
+            this.panelVolumeControl.Size = new System.Drawing.Size(107, 36);
+            this.panelVolumeControl.TabIndex = 29;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(870, 551);
+            this.Controls.Add(this.panelVolumeControl);
             this.Controls.Add(this.buttonRemoveBookmark);
             this.Controls.Add(this.panelTrackbarBackground);
             this.Controls.Add(this.panelMediaPlayer);
@@ -664,6 +688,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVideoProgress)).EndInit();
             this.panelTrackbarBackground.ResumeLayout(false);
             this.panelTrackbarBackground.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarVolumeControl)).EndInit();
+            this.panelVolumeControl.ResumeLayout(false);
+            this.panelVolumeControl.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -716,6 +743,8 @@
         private System.Windows.Forms.Panel panelTrackbarBackground;
         private System.Windows.Forms.Timer timerDisplayPlaytime;
         private System.Windows.Forms.Button buttonRemoveBookmark;
+        private System.Windows.Forms.TrackBar trackBarVolumeControl;
+        private System.Windows.Forms.Panel panelVolumeControl;
     }
 }
 
