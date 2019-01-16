@@ -32,6 +32,7 @@ namespace SceneClipse
         private const int VLCPLAYER_ORG_HEIGHT = 348;
         private const int FORM_ORG_WIDTH = 890;
         private const int FORM_ORG_HEIGHT = 590;
+        private const int MODIFY_SEC_TO_VLCTIME = 1000;
 
 
         // 책갈피 목록<인덱스, 책갈피>
@@ -40,6 +41,7 @@ namespace SceneClipse
         private int _nBookmarkCount = 0;
         // 현재 선택된 책갈피 인덱스
         private int _nCurrentBookmarkIdx = 0;
+        private ListViewItem _itemCurrentBookmark;
         // 현재 열려있는 파일 이름(혹은 해시값?)
         private string _sFilenamePlaying = "";
         private string _sFilehashPlaying = "";           // 현재 미사용
@@ -195,7 +197,7 @@ namespace SceneClipse
 
         // 파일 열기. 다이얼로그 표시 후 파일 선택하여 재생
         private void buttonOpenFile_Click(object sender, EventArgs e)
-        {
+        {            
             OpenFileDialog openFiledialog1 = new OpenFileDialog();
             // openFiledialog1.Filter = "Movie files|*.wmv";
             try
@@ -257,7 +259,10 @@ namespace SceneClipse
             if ((sender as ListView).SelectedItems.Count > 0)
             {
                 if (!_isUpdatingBookmarkInfo)
-                    UpdateBookmarkInputData(Convert.ToInt32((sender as ListView).FocusedItem.SubItems[3].Text));
+                {
+                    _itemCurrentBookmark = (sender as ListView).FocusedItem;
+                    UpdateBookmarkInputData(Convert.ToInt32(_itemCurrentBookmark.SubItems[3].Text));
+                }
             }
         }
 
@@ -649,6 +654,13 @@ namespace SceneClipse
                     _isUpdatingBookmarkInfo = true;
                     numericBookmarkStartSec.Value = 0;
                     numericBookmarkStartMin.Value++;
+
+                    if(numericBookmarkStartMin.Value == 60)
+                    {
+                        numericBookmarkStartHour.Value++;
+                        numericBookmarkStartMin.Value = 0;
+                    }
+
                     _isUpdatingBookmarkInfo = false;
                 }
                 if ((sender as NumericUpDown).Value < 0)
@@ -661,7 +673,15 @@ namespace SceneClipse
                     {
                         _isUpdatingBookmarkInfo = true;
                         numericBookmarkStartSec.Value = 59;
-                        numericBookmarkStartMin.Value--;
+
+                        if ( numericBookmarkStartMin.Value == 0 )
+                        {
+                            numericBookmarkStartMin.Value = 59;
+                            numericBookmarkStartHour.Value--;
+                        }
+                        else
+                            numericBookmarkStartMin.Value--;
+
                         _isUpdatingBookmarkInfo = false;
                     }
                 }
@@ -742,6 +762,13 @@ namespace SceneClipse
                     _isUpdatingBookmarkInfo = true;
                     numericBookmarkEndSec.Value = 0;
                     numericBookmarkEndMin.Value++;
+
+                    if (numericBookmarkEndMin.Value == 60)
+                    {
+                        numericBookmarkEndHour.Value++;
+                        numericBookmarkEndMin.Value = 0;
+                    }
+
                     _isUpdatingBookmarkInfo = false;
                 }
                 if ((sender as NumericUpDown).Value < 0)
@@ -754,7 +781,15 @@ namespace SceneClipse
                     {
                         _isUpdatingBookmarkInfo = true;
                         numericBookmarkEndSec.Value = 59;
-                        numericBookmarkEndMin.Value--;
+
+                        if (numericBookmarkEndMin.Value == 0)
+                        {
+                            numericBookmarkEndMin.Value = 59;
+                            numericBookmarkEndHour.Value--;
+                        }
+                        else
+                            numericBookmarkEndMin.Value--;
+
                         _isUpdatingBookmarkInfo = false;
                     }
                 }
@@ -1017,6 +1052,7 @@ namespace SceneClipse
                     // 책갈피 목록에 추가     
                     BookmarkItem itemNewBookmark = new BookmarkItem("책갈피 " + sTimeData, dTimeStart * 1000);
                     itemNewBookmark.BookmarkEnd = new BookmarkTimeData(dTimeEnd * 1000);
+                    itemNewBookmark.vTags = _listFixedTags.ToList();
 
                     _listBookmarks.Add(_nBookmarkCount, itemNewBookmark);
 
@@ -1309,6 +1345,39 @@ namespace SceneClipse
 
             if (trackBarVideoProgress.Value != _nVideoProgress)
                 trackBarVideoProgress.Value = _nVideoProgress;
+
+            // 구간반복재생 사용시 처리
+            if( checkBoxPartialplay.Checked && _listBookmarks.ContainsKey(_nCurrentBookmarkIdx) )
+            {
+                // 현재시간이 책갈피 종료시간을 넘겼을 경우
+                if(vlcMediaPlayer.Time > _listBookmarks[_nCurrentBookmarkIdx].BookmarkEnd.GetTimeDouble())
+                {
+                    if (radioPartialplayOptionLoop.Checked)
+                    {
+                        BookmarkTimeData timeData = _listBookmarks[_nCurrentBookmarkIdx].BookmarkStart;
+                        JumpPlayerToTime(timeData.Hour, timeData.Min, timeData.Sec);
+                    }
+                    else if( radioPartialplayOptionJump.Checked)
+                    {
+                        // 시간 단위로 이후에 작성된 책갈피를 검색
+                        int nIdx = listViewBookmark.Items.IndexOf(_itemCurrentBookmark);
+
+                        // 맨 마지막 순서가 아니면 다음 책갈피를 선택
+                        if (nIdx < listViewBookmark.Items.Count - 1)
+                        {
+                            _itemCurrentBookmark = listViewBookmark.Items[nIdx + 1];
+                            _nCurrentBookmarkIdx = Convert.ToInt32(_itemCurrentBookmark.SubItems[3].Text);
+                            UpdateBookmarkInputData(_nCurrentBookmarkIdx);
+                        }
+                        else if(nIdx == listViewBookmark.Items.Count - 1)
+                        {
+                            _itemCurrentBookmark = listViewBookmark.Items[0];
+                            _nCurrentBookmarkIdx = Convert.ToInt32(_itemCurrentBookmark.SubItems[3].Text);
+                            UpdateBookmarkInputData(_nCurrentBookmarkIdx);
+                        }
+                    }
+                }
+            }
         }
 
         private void buttonBookmark_Click(object sender, EventArgs e)
@@ -1320,18 +1389,37 @@ namespace SceneClipse
                 int nCurrentBookmarkIndex = ++_nBookmarkCount;
 
                 BookmarkTimeData timeVideo = new BookmarkTimeData(vlcMediaPlayer.Time);
+
+                int nModifyTime = (int)numericBookmarkTimeModifyValue.Value;
+                int nModifyType = 1;
+                if (comboBoxBookmarkTimeModifyType.Text == "분")
+                    nModifyType *= 60;
+                else if (comboBoxBookmarkTimeModifyType.Text == "시")
+                    nModifyType *= 60 * 60;
+
                 string sVideoTime = timeVideo.GetTime();
                 double dVideoTime = timeVideo.GetTimeDouble();
+                double dVideoStartTime = dVideoTime;
+                double dVideoEndTime = dVideoTime;
+
+                // 책갈피 시간 보정
+                if (checkBoxBookmarkTimeModifyHead.Checked)
+                    dVideoStartTime -= (nModifyTime * nModifyType * MODIFY_SEC_TO_VLCTIME);
+                if (checkBoxBookmarkTimeModifyTail.Checked)
+                    dVideoEndTime += (nModifyTime * nModifyType * MODIFY_SEC_TO_VLCTIME);
 
                 // 시간이 0시간일 경우 문구 앞에 00을 추가함
                 if (sVideoTime.Split(':').Length < 3) sVideoTime = "00:" + sVideoTime;
 
-                BookmarkItem itemNewBookmark = new BookmarkItem("책갈피 " + sVideoTime, dVideoTime);
-                itemNewBookmark.BookmarkEnd.UpdateTime(dVideoTime);
+                BookmarkItem itemNewBookmark = new BookmarkItem("책갈피 " + sVideoTime, dVideoStartTime);
+                itemNewBookmark.BookmarkEnd.UpdateTime(dVideoEndTime);
 
                 // mediaplayer에서 이미지 가져오기
                 string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
                 string sSnapshotFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
+
+                if (sSnapshotFileName.StartsWith("http"))
+                    sSnapshotFileName = sSnapshotFileName.Substring(sSnapshotFileName.LastIndexOf('/'));
 
                 // 임시설정 - non-ascii 문자를 전부 제거. 현재 잘 해결되지 않았음(TODO : 한글 등의 파일명이 있어도 썸네일이 잘 생성되도록)
                 sSnapshotFileName = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(ToUTF8(sSnapshotFileName))).Replace("?", string.Empty);
@@ -1341,7 +1429,7 @@ namespace SceneClipse
 
                 // 스크린샷 경로가 없으면 새로 만듦
                 if (!Directory.Exists(sSnapshotPath))
-                    Directory.CreateDirectory(sSnapshotPath);
+                    Directory.CreateDirectory(sSnapshotPath);                              
 
                 vlcMediaPlayer.TakeSnapshot(sSnapshotFullPath);
 
@@ -1375,14 +1463,17 @@ namespace SceneClipse
 
 
                 // 리스트에 등록
-                ListViewItem item = new ListViewItem(sVideoTime);
-                item.SubItems.Add(dVideoTime.ToString());
+                ListViewItem item = new ListViewItem(itemNewBookmark.BookmarkStart.GetTime());
+                item.SubItems.Add(dVideoStartTime.ToString());
                 item.SubItems.Add(itemNewBookmark.sBookmarkName);
                 item.SubItems.Add(nCurrentBookmarkIndex.ToString());
 
                 item.ImageIndex = imageList1.Images.Count;
 
                 listViewBookmark.Items.Add(item);
+
+                // 등록한 아이템을 현재 책갈피 아이템으로 설정
+                _itemCurrentBookmark = item;
 
                 // 책갈피 편집부분에도 표시
                 UpdateBookmarkInputData(nCurrentBookmarkIndex, false);
@@ -1405,6 +1496,16 @@ namespace SceneClipse
                     {
                         listViewBookmark.Items[nBookmarkIdx + 1].Selected = true;
                         listViewBookmark.Select();
+                    }
+                    // 현재 책갈피 값을 다음 값으로 수정                    
+                    // 시간 단위로 이후에 작성된 책갈피를 검색
+                    int nIdx = listViewBookmark.Items.IndexOf(_itemCurrentBookmark);
+
+                    // 맨 마지막 순서가 아니면 다음 책갈피를 선택
+                    if (nIdx < listViewBookmark.Items.Count - 1)
+                    {
+                        _itemCurrentBookmark = listViewBookmark.Items[nIdx + 1];
+                        _nCurrentBookmarkIdx = Convert.ToInt32(_itemCurrentBookmark.SubItems[3].Text);
                     }
 
                     _listBookmarks.Remove(Convert.ToInt32(listViewBookmark.FocusedItem.SubItems[3].Text));
@@ -1439,6 +1540,121 @@ namespace SceneClipse
                 {
                     _listFixedTags.Clear();
                     _listFixedTags = dialog._vsFixedTagList.ToList();
+                }
+            }
+        }
+
+        private void buttonSetCurrentTimeToStart_MouseClick(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void buttonSetCurrentTimeToEnd_MouseClick(object sender, MouseEventArgs e)
+        {
+        }
+
+        // 이전 책갈피로 이동
+        private void buttonJumpPrevBookmark_Click(object sender, EventArgs e)
+        {
+            if (_sFilenamePlaying != "")
+            {
+                // 시간 단위로 이전에 작성된 책갈피를 검색
+                int nIdx = listViewBookmark.Items.IndexOf(_itemCurrentBookmark);
+                if (nIdx > 0)
+                {
+                    _itemCurrentBookmark = listViewBookmark.Items[nIdx - 1];
+                    _nCurrentBookmarkIdx = Convert.ToInt32(_itemCurrentBookmark.SubItems[3].Text);
+                    UpdateBookmarkInputData(+_nCurrentBookmarkIdx);
+                }
+            }
+        }
+
+        // 다음 책갈피로 이동
+        private void buttonJumpNextBookmark_Click(object sender, EventArgs e)
+        {
+            if (_sFilenamePlaying != "")
+            {
+                // 시간 단위로 이후에 작성된 책갈피를 검색
+                int nIdx = listViewBookmark.Items.IndexOf(_itemCurrentBookmark);
+
+                // 맨 마지막 순서가 아니면 다음 책갈피를 선택
+                if (nIdx < listViewBookmark.Items.Count - 1)
+                {
+                    _itemCurrentBookmark = listViewBookmark.Items[nIdx + 1];
+                    _nCurrentBookmarkIdx = Convert.ToInt32(_itemCurrentBookmark.SubItems[3].Text);
+                    UpdateBookmarkInputData(+_nCurrentBookmarkIdx);
+                }
+            }
+        }
+
+        private void buttonOpenFile_MouseClick(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void buttonOpenFile_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                InputDialog dialogInput = new InputDialog();
+                var ret = dialogInput.ShowDialog();
+
+                if (ret == DialogResult.OK)
+                {
+                    InitializeBookmarkdata();
+                    _sFilenamePlaying = dialogInput._sInputValue;
+
+                    vlcMediaPlayer.SetMedia(new Uri(_sFilenamePlaying));
+                    vlcMediaPlayer.Audio.Volume = trackBarVolumeControl.Value;
+                    vlcMediaPlayer.Play();
+                }
+            }
+        }
+
+        private void buttonModifyFixedTag_Click(object sender, EventArgs e)
+        {
+            FormEditFixedTag dialog = new FormEditFixedTag();
+            if (_listFixedTags.Count > 0)
+            {
+                dialog.SetFixedBookmark(_listFixedTags);
+            }
+
+            var result = dialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                _listFixedTags.Clear();
+                _listFixedTags = dialog._vsFixedTagList.ToList();
+            }
+        }
+
+        private void checkBoxPartialPlay_CheckedChanged(object sender, EventArgs e)
+        {
+            bool bChecked = checkBoxPartialplay.Checked;
+
+            labelPartialplayOption.Visible = bChecked;
+            radioPartialplayOptionJump.Visible = bChecked;
+            radioPartialplayOptionLoop.Visible = bChecked;
+
+        }
+
+        private void buttonSetCurrentTimeToStart_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_sFilenamePlaying != "")
+            {
+                // 우클릭시 책갈피 시작부분으로 이동
+                if (e.Button == MouseButtons.Right)
+                {
+                    JumpPlayerToTime((int)numericBookmarkStartHour.Value, (int)numericBookmarkStartMin.Value, (int)numericBookmarkStartSec.Value);
+                }
+            }
+        }
+
+        private void buttonSetCurrentTimeToEnd_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_sFilenamePlaying != "")
+            {
+                // 우클릭시 책갈피 끝부분으로 이동
+                if (e.Button == MouseButtons.Right)
+                {
+                    JumpPlayerToTime((int)numericBookmarkEndHour.Value, (int)numericBookmarkEndMin.Value, (int)numericBookmarkEndSec.Value);
                 }
             }
         }

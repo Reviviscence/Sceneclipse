@@ -77,6 +77,19 @@
             this.trackBarVolumeControl = new System.Windows.Forms.TrackBar();
             this.panelVolumeControl = new System.Windows.Forms.Panel();
             this.checkAutoloadBookmark = new System.Windows.Forms.CheckBox();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonJumpPrevBookmark = new System.Windows.Forms.Button();
+            this.buttonJumpNextBookmark = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.checkBoxBookmarkTimeModifyHead = new System.Windows.Forms.CheckBox();
+            this.checkBoxBookmarkTimeModifyTail = new System.Windows.Forms.CheckBox();
+            this.numericBookmarkTimeModifyValue = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxBookmarkTimeModifyType = new System.Windows.Forms.ComboBox();
+            this.buttonModifyFixedTag = new System.Windows.Forms.Button();
+            this.checkBoxPartialplay = new System.Windows.Forms.CheckBox();
+            this.labelPartialplayOption = new System.Windows.Forms.Label();
+            this.radioPartialplayOptionJump = new System.Windows.Forms.RadioButton();
+            this.radioPartialplayOptionLoop = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -93,6 +106,8 @@
             this.panelTrackbarBackground.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVolumeControl)).BeginInit();
             this.panelVolumeControl.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericBookmarkTimeModifyValue)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonPause
@@ -111,11 +126,13 @@
             this.buttonOpenFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonOpenFile.Location = new System.Drawing.Point(12, 382);
             this.buttonOpenFile.Name = "buttonOpenFile";
-            this.buttonOpenFile.Size = new System.Drawing.Size(88, 23);
+            this.buttonOpenFile.Size = new System.Drawing.Size(116, 23);
             this.buttonOpenFile.TabIndex = 6;
             this.buttonOpenFile.Text = "파일 열기";
             this.buttonOpenFile.UseVisualStyleBackColor = true;
             this.buttonOpenFile.Click += new System.EventHandler(this.buttonOpenFile_Click);
+            this.buttonOpenFile.MouseClick += new System.Windows.Forms.MouseEventHandler(this.buttonOpenFile_MouseClick);
+            this.buttonOpenFile.MouseUp += new System.Windows.Forms.MouseEventHandler(this.buttonOpenFile_MouseUp);
             // 
             // textBoxOpenFileName
             // 
@@ -149,9 +166,9 @@
             // buttonBookmark
             // 
             this.buttonBookmark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonBookmark.Location = new System.Drawing.Point(12, 353);
+            this.buttonBookmark.Location = new System.Drawing.Point(12, 279);
             this.buttonBookmark.Name = "buttonBookmark";
-            this.buttonBookmark.Size = new System.Drawing.Size(156, 23);
+            this.buttonBookmark.Size = new System.Drawing.Size(116, 69);
             this.buttonBookmark.TabIndex = 12;
             this.buttonBookmark.Text = "책갈피 만들기";
             this.buttonBookmark.UseVisualStyleBackColor = true;
@@ -164,7 +181,7 @@
             this.listViewBookmark.Location = new System.Drawing.Point(12, 122);
             this.listViewBookmark.MultiSelect = false;
             this.listViewBookmark.Name = "listViewBookmark";
-            this.listViewBookmark.Size = new System.Drawing.Size(238, 225);
+            this.listViewBookmark.Size = new System.Drawing.Size(238, 151);
             this.listViewBookmark.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listViewBookmark.TabIndex = 13;
             this.listViewBookmark.UseCompatibleStateImageBehavior = false;
@@ -192,7 +209,7 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.textBoxBookmarkName, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.panelTagList, 0, 2);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(258, 12);
@@ -206,9 +223,9 @@
             // 
             // textBoxBookmarkName
             // 
-            this.textBoxBookmarkName.Location = new System.Drawing.Point(3, 3);
+            this.textBoxBookmarkName.Location = new System.Drawing.Point(29, 3);
             this.textBoxBookmarkName.Name = "textBoxBookmarkName";
-            this.textBoxBookmarkName.Size = new System.Drawing.Size(387, 21);
+            this.textBoxBookmarkName.Size = new System.Drawing.Size(250, 21);
             this.textBoxBookmarkName.TabIndex = 0;
             this.textBoxBookmarkName.TextChanged += new System.EventHandler(this.textBoxBookmarkName_TextChanged);
             // 
@@ -412,7 +429,8 @@
             this.checkAutoSeekToTime.AutoSize = true;
             this.checkAutoSeekToTime.Checked = true;
             this.checkAutoSeekToTime.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkAutoSeekToTime.Location = new System.Drawing.Point(433, 3);
+            this.checkAutoSeekToTime.Location = new System.Drawing.Point(433, 5);
+            this.checkAutoSeekToTime.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
             this.checkAutoSeekToTime.Name = "checkAutoSeekToTime";
             this.checkAutoSeekToTime.Size = new System.Drawing.Size(136, 16);
             this.checkAutoSeekToTime.TabIndex = 10;
@@ -429,6 +447,8 @@
             this.buttonSetCurrentTimeToEnd.Text = "]";
             this.buttonSetCurrentTimeToEnd.UseVisualStyleBackColor = true;
             this.buttonSetCurrentTimeToEnd.Click += new System.EventHandler(this.buttonSetCurrentTimeToEnd_Click);
+            this.buttonSetCurrentTimeToEnd.MouseClick += new System.Windows.Forms.MouseEventHandler(this.buttonSetCurrentTimeToEnd_MouseClick);
+            this.buttonSetCurrentTimeToEnd.MouseUp += new System.Windows.Forms.MouseEventHandler(this.buttonSetCurrentTimeToEnd_MouseUp);
             // 
             // buttonSetCurrentTimeToStart
             // 
@@ -440,6 +460,8 @@
             this.buttonSetCurrentTimeToStart.Text = "[";
             this.buttonSetCurrentTimeToStart.UseVisualStyleBackColor = true;
             this.buttonSetCurrentTimeToStart.Click += new System.EventHandler(this.buttonSetCurrentTimeToStart_Click);
+            this.buttonSetCurrentTimeToStart.MouseClick += new System.Windows.Forms.MouseEventHandler(this.buttonSetCurrentTimeToStart_MouseClick);
+            this.buttonSetCurrentTimeToStart.MouseUp += new System.Windows.Forms.MouseEventHandler(this.buttonSetCurrentTimeToStart_MouseUp);
             // 
             // panelTagList
             // 
@@ -631,9 +653,9 @@
             // buttonRemoveBookmark
             // 
             this.buttonRemoveBookmark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonRemoveBookmark.Location = new System.Drawing.Point(175, 353);
+            this.buttonRemoveBookmark.Location = new System.Drawing.Point(12, 354);
             this.buttonRemoveBookmark.Name = "buttonRemoveBookmark";
-            this.buttonRemoveBookmark.Size = new System.Drawing.Size(75, 23);
+            this.buttonRemoveBookmark.Size = new System.Drawing.Size(116, 23);
             this.buttonRemoveBookmark.TabIndex = 27;
             this.buttonRemoveBookmark.Text = "삭제";
             this.buttonRemoveBookmark.UseVisualStyleBackColor = true;
@@ -665,18 +687,187 @@
             this.checkAutoloadBookmark.AutoSize = true;
             this.checkAutoloadBookmark.Checked = true;
             this.checkAutoloadBookmark.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkAutoloadBookmark.Location = new System.Drawing.Point(110, 386);
+            this.checkAutoloadBookmark.Location = new System.Drawing.Point(136, 386);
             this.checkAutoloadBookmark.Name = "checkAutoloadBookmark";
-            this.checkAutoloadBookmark.Size = new System.Drawing.Size(140, 16);
+            this.checkAutoloadBookmark.Size = new System.Drawing.Size(116, 16);
             this.checkAutoloadBookmark.TabIndex = 30;
-            this.checkAutoloadBookmark.Text = "책갈피 자동 불러오기";
+            this.checkAutoloadBookmark.Text = "책갈피 자동 읽기";
             this.checkAutoloadBookmark.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 7;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 256F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 79F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Controls.Add(this.textBoxBookmarkName, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.buttonJumpPrevBookmark, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.buttonJumpNextBookmark, 2, 0);
+            this.tableLayoutPanel3.Controls.Add(this.checkBoxPartialplay, 3, 0);
+            this.tableLayoutPanel3.Controls.Add(this.labelPartialplayOption, 4, 0);
+            this.tableLayoutPanel3.Controls.Add(this.radioPartialplayOptionJump, 5, 0);
+            this.tableLayoutPanel3.Controls.Add(this.radioPartialplayOptionLoop, 6, 0);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 1;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(611, 26);
+            this.tableLayoutPanel3.TabIndex = 31;
+            // 
+            // buttonJumpPrevBookmark
+            // 
+            this.buttonJumpPrevBookmark.Location = new System.Drawing.Point(3, 3);
+            this.buttonJumpPrevBookmark.Name = "buttonJumpPrevBookmark";
+            this.buttonJumpPrevBookmark.Size = new System.Drawing.Size(20, 20);
+            this.buttonJumpPrevBookmark.TabIndex = 1;
+            this.buttonJumpPrevBookmark.Text = "<";
+            this.buttonJumpPrevBookmark.UseVisualStyleBackColor = true;
+            this.buttonJumpPrevBookmark.Click += new System.EventHandler(this.buttonJumpPrevBookmark_Click);
+            // 
+            // buttonJumpNextBookmark
+            // 
+            this.buttonJumpNextBookmark.Location = new System.Drawing.Point(285, 3);
+            this.buttonJumpNextBookmark.Name = "buttonJumpNextBookmark";
+            this.buttonJumpNextBookmark.Size = new System.Drawing.Size(20, 20);
+            this.buttonJumpNextBookmark.TabIndex = 2;
+            this.buttonJumpNextBookmark.Text = ">";
+            this.buttonJumpNextBookmark.UseVisualStyleBackColor = true;
+            this.buttonJumpNextBookmark.Click += new System.EventHandler(this.buttonJumpNextBookmark_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(132, 284);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(97, 12);
+            this.label1.TabIndex = 31;
+            this.label1.Text = "책갈피 시간 보정";
+            // 
+            // checkBoxBookmarkTimeModifyHead
+            // 
+            this.checkBoxBookmarkTimeModifyHead.AutoSize = true;
+            this.checkBoxBookmarkTimeModifyHead.Location = new System.Drawing.Point(134, 304);
+            this.checkBoxBookmarkTimeModifyHead.Name = "checkBoxBookmarkTimeModifyHead";
+            this.checkBoxBookmarkTimeModifyHead.Size = new System.Drawing.Size(36, 16);
+            this.checkBoxBookmarkTimeModifyHead.TabIndex = 32;
+            this.checkBoxBookmarkTimeModifyHead.Text = "전";
+            this.checkBoxBookmarkTimeModifyHead.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxBookmarkTimeModifyTail
+            // 
+            this.checkBoxBookmarkTimeModifyTail.AutoSize = true;
+            this.checkBoxBookmarkTimeModifyTail.Location = new System.Drawing.Point(171, 304);
+            this.checkBoxBookmarkTimeModifyTail.Name = "checkBoxBookmarkTimeModifyTail";
+            this.checkBoxBookmarkTimeModifyTail.Size = new System.Drawing.Size(36, 16);
+            this.checkBoxBookmarkTimeModifyTail.TabIndex = 33;
+            this.checkBoxBookmarkTimeModifyTail.Text = "후";
+            this.checkBoxBookmarkTimeModifyTail.UseVisualStyleBackColor = true;
+            // 
+            // numericBookmarkTimeModifyValue
+            // 
+            this.numericBookmarkTimeModifyValue.Location = new System.Drawing.Point(134, 327);
+            this.numericBookmarkTimeModifyValue.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericBookmarkTimeModifyValue.Name = "numericBookmarkTimeModifyValue";
+            this.numericBookmarkTimeModifyValue.Size = new System.Drawing.Size(38, 21);
+            this.numericBookmarkTimeModifyValue.TabIndex = 34;
+            this.numericBookmarkTimeModifyValue.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // comboBoxBookmarkTimeModifyType
+            // 
+            this.comboBoxBookmarkTimeModifyType.FormattingEnabled = true;
+            this.comboBoxBookmarkTimeModifyType.Items.AddRange(new object[] {
+            "초",
+            "분",
+            "시간"});
+            this.comboBoxBookmarkTimeModifyType.Location = new System.Drawing.Point(179, 327);
+            this.comboBoxBookmarkTimeModifyType.Name = "comboBoxBookmarkTimeModifyType";
+            this.comboBoxBookmarkTimeModifyType.Size = new System.Drawing.Size(71, 20);
+            this.comboBoxBookmarkTimeModifyType.TabIndex = 35;
+            this.comboBoxBookmarkTimeModifyType.Text = "초";
+            // 
+            // buttonModifyFixedTag
+            // 
+            this.buttonModifyFixedTag.Location = new System.Drawing.Point(134, 354);
+            this.buttonModifyFixedTag.Name = "buttonModifyFixedTag";
+            this.buttonModifyFixedTag.Size = new System.Drawing.Size(116, 23);
+            this.buttonModifyFixedTag.TabIndex = 36;
+            this.buttonModifyFixedTag.Text = "고정태그 편집";
+            this.buttonModifyFixedTag.UseVisualStyleBackColor = true;
+            this.buttonModifyFixedTag.Click += new System.EventHandler(this.buttonModifyFixedTag_Click);
+            // 
+            // checkBoxPartialplay
+            // 
+            this.checkBoxPartialplay.AutoSize = true;
+            this.checkBoxPartialplay.Location = new System.Drawing.Point(311, 5);
+            this.checkBoxPartialplay.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
+            this.checkBoxPartialplay.Name = "checkBoxPartialplay";
+            this.checkBoxPartialplay.Size = new System.Drawing.Size(76, 16);
+            this.checkBoxPartialplay.TabIndex = 3;
+            this.checkBoxPartialplay.Text = "구간 재생";
+            this.checkBoxPartialplay.UseVisualStyleBackColor = true;
+            this.checkBoxPartialplay.CheckedChanged += new System.EventHandler(this.checkBoxPartialPlay_CheckedChanged);
+            // 
+            // labelPartialplayOption
+            // 
+            this.labelPartialplayOption.AutoSize = true;
+            this.labelPartialplayOption.Location = new System.Drawing.Point(394, 7);
+            this.labelPartialplayOption.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
+            this.labelPartialplayOption.Name = "labelPartialplayOption";
+            this.labelPartialplayOption.Size = new System.Drawing.Size(79, 12);
+            this.labelPartialplayOption.TabIndex = 4;
+            this.labelPartialplayOption.Text = "* 재생 완료시";
+            this.labelPartialplayOption.Visible = false;
+            // 
+            // radioPartialplayOptionJump
+            // 
+            this.radioPartialplayOptionJump.AutoSize = true;
+            this.radioPartialplayOptionJump.Checked = true;
+            this.radioPartialplayOptionJump.Location = new System.Drawing.Point(480, 5);
+            this.radioPartialplayOptionJump.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
+            this.radioPartialplayOptionJump.Name = "radioPartialplayOptionJump";
+            this.radioPartialplayOptionJump.Size = new System.Drawing.Size(71, 16);
+            this.radioPartialplayOptionJump.TabIndex = 5;
+            this.radioPartialplayOptionJump.TabStop = true;
+            this.radioPartialplayOptionJump.Text = "다음으로";
+            this.radioPartialplayOptionJump.UseVisualStyleBackColor = true;
+            this.radioPartialplayOptionJump.Visible = false;
+            // 
+            // radioPartialplayOptionLoop
+            // 
+            this.radioPartialplayOptionLoop.AutoSize = true;
+            this.radioPartialplayOptionLoop.Location = new System.Drawing.Point(559, 5);
+            this.radioPartialplayOptionLoop.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
+            this.radioPartialplayOptionLoop.Name = "radioPartialplayOptionLoop";
+            this.radioPartialplayOptionLoop.Size = new System.Drawing.Size(47, 16);
+            this.radioPartialplayOptionLoop.TabIndex = 6;
+            this.radioPartialplayOptionLoop.Text = "반복";
+            this.radioPartialplayOptionLoop.UseVisualStyleBackColor = true;
+            this.radioPartialplayOptionLoop.Visible = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(874, 551);
+            this.Controls.Add(this.buttonModifyFixedTag);
+            this.Controls.Add(this.comboBoxBookmarkTimeModifyType);
+            this.Controls.Add(this.numericBookmarkTimeModifyValue);
+            this.Controls.Add(this.checkBoxBookmarkTimeModifyTail);
+            this.Controls.Add(this.checkBoxBookmarkTimeModifyHead);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.checkAutoloadBookmark);
             this.Controls.Add(this.panelVolumeControl);
             this.Controls.Add(this.buttonRemoveBookmark);
@@ -703,7 +894,6 @@
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericBookmarkStartHour)).EndInit();
@@ -722,6 +912,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVolumeControl)).EndInit();
             this.panelVolumeControl.ResumeLayout(false);
             this.panelVolumeControl.PerformLayout();
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericBookmarkTimeModifyValue)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -777,6 +970,19 @@
         private System.Windows.Forms.TrackBar trackBarVolumeControl;
         private System.Windows.Forms.Panel panelVolumeControl;
         private System.Windows.Forms.CheckBox checkAutoloadBookmark;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.Button buttonJumpPrevBookmark;
+        private System.Windows.Forms.Button buttonJumpNextBookmark;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox checkBoxBookmarkTimeModifyHead;
+        private System.Windows.Forms.CheckBox checkBoxBookmarkTimeModifyTail;
+        private System.Windows.Forms.NumericUpDown numericBookmarkTimeModifyValue;
+        private System.Windows.Forms.ComboBox comboBoxBookmarkTimeModifyType;
+        private System.Windows.Forms.Button buttonModifyFixedTag;
+        private System.Windows.Forms.CheckBox checkBoxPartialplay;
+        private System.Windows.Forms.Label labelPartialplayOption;
+        private System.Windows.Forms.RadioButton radioPartialplayOptionJump;
+        private System.Windows.Forms.RadioButton radioPartialplayOptionLoop;
     }
 }
 

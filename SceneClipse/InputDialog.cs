@@ -12,7 +12,7 @@ namespace SceneClipse
 {
     public partial class InputDialog : Form
     {
-        public string sInputValue;
+        public string _sInputValue;
 
         public InputDialog()
         {
@@ -21,7 +21,7 @@ namespace SceneClipse
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            sInputValue = textBoxInput.Text;
+            _sInputValue = textBoxInput.Text;
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

@@ -51,6 +51,8 @@
             this.textBoxFixedTagInput.Name = "textBoxFixedTagInput";
             this.textBoxFixedTagInput.Size = new System.Drawing.Size(157, 21);
             this.textBoxFixedTagInput.TabIndex = 1;
+            this.textBoxFixedTagInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxFixedTagInput_KeyDown);
+            this.textBoxFixedTagInput.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFixedTagInput_KeyPress);
             // 
             // buttonAdd
             // 

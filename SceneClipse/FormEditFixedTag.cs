@@ -50,11 +50,19 @@ namespace SceneClipse
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
+            AddItemToList(textBoxFixedTagInput.Text);
+        }
+
+        private void AddItemToList(string sText)
+        {
             // 리스트에 등록
-            ListViewItem item = new ListViewItem(textBoxFixedTagInput.Text);
-            item.SubItems.Add(textBoxFixedTagInput.Text);
+            ListViewItem item = new ListViewItem(sText);
+            item.SubItems.Add(sText);
 
             listViewFixedTags.Items.Add(item);
+
+            textBoxFixedTagInput.Clear();
+            textBoxFixedTagInput.Focus();
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
@@ -75,6 +83,18 @@ namespace SceneClipse
                 item.SubItems.Add(sTag);
 
                 listViewFixedTags.Items.Add(item);
+            }
+        }
+
+        private void textBoxFixedTagInput_KeyPress(object sender, KeyPressEventArgs e)
+        {
+        }
+
+        private void textBoxFixedTagInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                AddItemToList(textBoxFixedTagInput.Text);
             }
         }
     }
