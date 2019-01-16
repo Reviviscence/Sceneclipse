@@ -13,6 +13,7 @@ namespace SceneClipse
     public partial class FormParseDialog : Form
     {
         public List<double> vBookmarkTimes = new List<double>();
+        public List<string> _vsFixedTagList = new List<string>();
         public bool bUseTimeModify;
         public bool bUseModifyHead = false;
         public bool bUseModifyTail = false;
@@ -248,6 +249,21 @@ namespace SceneClipse
         private void checkModifyTime_CheckedChanged(object sender, EventArgs e)
         {
             groupModifyTime.Enabled = checkModifyTime.Checked;
+        }
+
+        private void buttonSetFixedTag_Click(object sender, EventArgs e)
+        {
+            FormEditFixedTag dialog = new FormEditFixedTag();
+            if (_vsFixedTagList.Count > 0)
+            {
+                dialog.SetFixedBookmark(_vsFixedTagList);
+            }
+
+            var result = dialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                _vsFixedTagList = dialog._vsFixedTagList.ToList();
+            }
         }
     }
 }

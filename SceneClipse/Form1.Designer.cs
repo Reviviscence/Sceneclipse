@@ -466,6 +466,7 @@
             this.label6.Size = new System.Drawing.Size(37, 12);
             this.label6.TabIndex = 0;
             this.label6.Text = "태그 :";
+            this.label6.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.label6_MouseDoubleClick);
             // 
             // textBoxTagInput
             // 

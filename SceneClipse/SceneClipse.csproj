@@ -90,6 +90,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormEditFixedTag.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormEditFixedTag.Designer.cs">
+      <DependentUpon>FormEditFixedTag.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormParseDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -106,6 +112,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormEditFixedTag.resx">
+      <DependentUpon>FormEditFixedTag.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormParseDialog.resx">
       <DependentUpon>FormParseDialog.cs</DependentUpon>

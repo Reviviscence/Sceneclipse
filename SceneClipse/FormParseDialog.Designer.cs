@@ -41,12 +41,13 @@
             this.buttonGetTimeDataFromFilename = new System.Windows.Forms.Button();
             this.groupModifyTime = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkBoxModifyTail = new System.Windows.Forms.CheckBox();
+            this.checkBoxModifyHead = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.numericHour = new System.Windows.Forms.NumericUpDown();
             this.checkModifyTime = new System.Windows.Forms.CheckBox();
-            this.checkBoxModifyHead = new System.Windows.Forms.CheckBox();
-            this.checkBoxModifyTail = new System.Windows.Forms.CheckBox();
+            this.buttonSetFixedTag = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericModifySec)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericSec)).BeginInit();
@@ -156,7 +157,7 @@
             // 
             // buttonOK
             // 
-            this.buttonOK.Location = new System.Drawing.Point(15, 532);
+            this.buttonOK.Location = new System.Drawing.Point(15, 563);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 5;
@@ -166,7 +167,7 @@
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(97, 532);
+            this.buttonCancel.Location = new System.Drawing.Point(97, 563);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 6;
@@ -207,6 +208,30 @@
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "보정 위치";
+            // 
+            // checkBoxModifyTail
+            // 
+            this.checkBoxModifyTail.AutoSize = true;
+            this.checkBoxModifyTail.Checked = true;
+            this.checkBoxModifyTail.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxModifyTail.Location = new System.Drawing.Point(110, 18);
+            this.checkBoxModifyTail.Name = "checkBoxModifyTail";
+            this.checkBoxModifyTail.Size = new System.Drawing.Size(64, 16);
+            this.checkBoxModifyTail.TabIndex = 6;
+            this.checkBoxModifyTail.Text = "끝 시간";
+            this.checkBoxModifyTail.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxModifyHead
+            // 
+            this.checkBoxModifyHead.AutoSize = true;
+            this.checkBoxModifyHead.Checked = true;
+            this.checkBoxModifyHead.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxModifyHead.Location = new System.Drawing.Point(19, 18);
+            this.checkBoxModifyHead.Name = "checkBoxModifyHead";
+            this.checkBoxModifyHead.Size = new System.Drawing.Size(76, 16);
+            this.checkBoxModifyHead.TabIndex = 5;
+            this.checkBoxModifyHead.Text = "시작 시간";
+            this.checkBoxModifyHead.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
@@ -251,35 +276,22 @@
             this.checkModifyTime.UseVisualStyleBackColor = true;
             this.checkModifyTime.CheckedChanged += new System.EventHandler(this.checkModifyTime_CheckedChanged);
             // 
-            // checkBoxModifyHead
+            // buttonSetFixedTag
             // 
-            this.checkBoxModifyHead.AutoSize = true;
-            this.checkBoxModifyHead.Checked = true;
-            this.checkBoxModifyHead.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxModifyHead.Location = new System.Drawing.Point(19, 18);
-            this.checkBoxModifyHead.Name = "checkBoxModifyHead";
-            this.checkBoxModifyHead.Size = new System.Drawing.Size(76, 16);
-            this.checkBoxModifyHead.TabIndex = 5;
-            this.checkBoxModifyHead.Text = "시작 시간";
-            this.checkBoxModifyHead.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxModifyTail
-            // 
-            this.checkBoxModifyTail.AutoSize = true;
-            this.checkBoxModifyTail.Checked = true;
-            this.checkBoxModifyTail.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxModifyTail.Location = new System.Drawing.Point(110, 18);
-            this.checkBoxModifyTail.Name = "checkBoxModifyTail";
-            this.checkBoxModifyTail.Size = new System.Drawing.Size(64, 16);
-            this.checkBoxModifyTail.TabIndex = 6;
-            this.checkBoxModifyTail.Text = "끝 시간";
-            this.checkBoxModifyTail.UseVisualStyleBackColor = true;
+            this.buttonSetFixedTag.Location = new System.Drawing.Point(15, 533);
+            this.buttonSetFixedTag.Name = "buttonSetFixedTag";
+            this.buttonSetFixedTag.Size = new System.Drawing.Size(157, 23);
+            this.buttonSetFixedTag.TabIndex = 11;
+            this.buttonSetFixedTag.Text = "고정태그 편집";
+            this.buttonSetFixedTag.UseVisualStyleBackColor = true;
+            this.buttonSetFixedTag.Click += new System.EventHandler(this.buttonSetFixedTag_Click);
             // 
             // FormParseDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(256, 567);
+            this.ClientSize = new System.Drawing.Size(256, 594);
+            this.Controls.Add(this.buttonSetFixedTag);
             this.Controls.Add(this.checkModifyTime);
             this.Controls.Add(this.groupModifyTime);
             this.Controls.Add(this.buttonGetTimeDataFromFilename);
@@ -329,5 +341,6 @@
         private System.Windows.Forms.CheckBox checkModifyTime;
         private System.Windows.Forms.CheckBox checkBoxModifyTail;
         private System.Windows.Forms.CheckBox checkBoxModifyHead;
+        private System.Windows.Forms.Button buttonSetFixedTag;
     }
 }

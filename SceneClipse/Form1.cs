@@ -41,10 +41,10 @@ namespace SceneClipse
         // 현재 선택된 책갈피 인덱스
         private int _nCurrentBookmarkIdx = 0;
         // 현재 열려있는 파일 이름(혹은 해시값?)
-        private string _sFilenamePlaying = "";        
+        private string _sFilenamePlaying = "";
         private string _sFilehashPlaying = "";           // 현재 미사용
         private bool _isUpdatingBookmarkInfo = false;
-        private bool _isWaitingForJump = false;        
+        private bool _isWaitingForJump = false;
         private int _nVideoProgress = 0;
         private string _sVideoPlaytime = "";
         private int _nTrackbarMaximum = 0;
@@ -67,7 +67,7 @@ namespace SceneClipse
             this.vlcMediaPlayer.BeginInit();
             this.vlcMediaPlayer.Size = panelMediaPlayer.Size;
             this.vlcMediaPlayer.VlcLibDirectory = new DirectoryInfo(Path.Combine(".", "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
-            
+
 #if _DEBUG
             this.vlcMediaPlayer.VlcMediaplayerOptions = new[] { "--file-logging", "-vvv", "--extraintf=logger", "--logfile=vlcLog.log" };
 #else
@@ -103,7 +103,7 @@ namespace SceneClipse
             _nTrackbarMaximum = trackBarVideoProgress.Maximum;
 
         }
-        
+
         private void panelVideoProgress_MouseMove(object sender, MouseEventArgs e)
         {
             if (vlcMediaPlayer.IsPlaying)
@@ -114,7 +114,7 @@ namespace SceneClipse
                     if (nPosition < 0) nPosition = 0;
 
                     int nProgressValue = Convert.ToInt32(trackBarVideoProgress.Maximum * vlcMediaPlayer.Position);
-                                        
+
                     _nVideoProgress =
                         (nProgressValue < trackBarVideoProgress.Maximum) ?
                         nProgressValue : trackBarVideoProgress.Maximum;
@@ -210,7 +210,7 @@ namespace SceneClipse
                     if (checkAutoloadBookmark.Checked)
                     {
                         string sBookmarkFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
-                        if( File.Exists(sBookmarkFilename ) )
+                        if (File.Exists(sBookmarkFilename))
                         {
                             LoadBookmarkFormFile(sBookmarkFilename);
                         }
@@ -237,7 +237,7 @@ namespace SceneClipse
                 MessageBox.Show("재생 실패 : " + ex.Message);
             }
         }
-        
+
         // UTF-8 변환용 함수. VLC플레이어에서 스크린샷 생성시 UTF-8로 변환되어 생성되므로 파일명을 변환할 필요가 있을 듯.
         private string ToUTF8(string sSnapshotFullPath)
         {
@@ -247,7 +247,7 @@ namespace SceneClipse
 
         private void listViewBookmark_SelectedIndexChanged(object sender, EventArgs e)
         {
-           
+
         }
 
         // 책갈피 목록에서 항목 선택시
@@ -256,8 +256,8 @@ namespace SceneClipse
         {
             if ((sender as ListView).SelectedItems.Count > 0)
             {
-                if(!_isUpdatingBookmarkInfo)                
-                    UpdateBookmarkInputData(Convert.ToInt32((sender as ListView).FocusedItem.SubItems[3].Text));        
+                if (!_isUpdatingBookmarkInfo)
+                    UpdateBookmarkInputData(Convert.ToInt32((sender as ListView).FocusedItem.SubItems[3].Text));
             }
         }
 
@@ -273,7 +273,7 @@ namespace SceneClipse
 
             BookmarkItem bookmarkSelected = _listBookmarks[_nCurrentBookmarkIdx];
 
-            if ( bJumpToBookmark )
+            if (bJumpToBookmark)
                 vlcMediaPlayer.Time = Convert.ToInt64(bookmarkSelected.BookmarkStart.GetTimeDouble());
             // axMediaPlayer1.Ctlcontrols.currentPosition = bookmarkSelected.BookmarkStart.GetTimeDouble();
 
@@ -283,7 +283,7 @@ namespace SceneClipse
                 pictureBox1.Image = bookmarkSelected.imageThumbnail.GetThumbnailImage(pictureBox1.Width, pictureBox1.Height, null, new IntPtr());
             else if (pictureBox1.Image != null)
                 pictureBox1.Image = null;
-          
+
 
             textBoxBookmarkName.Text = bookmarkSelected.sBookmarkName;
 
@@ -399,7 +399,7 @@ namespace SceneClipse
             labelNewTag.Margin = new Padding(3, 7, 3, 0);
 
             panelTagList.Controls.Add(labelNewTag, panelTagList.ColumnCount - 2, 0);
-            
+
             // 컬럼 크기를 태그 내용 크기에 맞게 조절
             ColumnStyle columnTemp2 = panelTagList.ColumnStyles[panelTagList.ColumnCount - 2];
             columnTemp2.Width = TextRenderer.MeasureText(labelNewTag.Text, labelNewTag.Font).Width + 15;
@@ -417,16 +417,16 @@ namespace SceneClipse
         {
             // 컨트롤을 순회하면서 해당 태그를 검색
             bool bTagDeleted = false;
-            for( int i = 2; i < panelTagList.Controls.Count; i++)
+            for (int i = 2; i < panelTagList.Controls.Count; i++)
             {
                 if (panelTagList.Controls[i].Text == sTag)
                 {
-                    panelTagList.Controls.RemoveAt(i);                     
+                    panelTagList.Controls.RemoveAt(i);
                     _listBookmarks[_nCurrentBookmarkIdx].vTags.Remove(sTag);
                     bTagDeleted = true;
                 }
             }
-            if( bTagDeleted )
+            if (bTagDeleted)
             {
                 ClearTagList();
 
@@ -455,6 +455,7 @@ namespace SceneClipse
 
             // 여백 설정
             labelNewTag.Margin = new Padding(3, 7, 3, 0);
+            labelNewTag.MouseDoubleClick += label6_MouseDoubleClick;
 
             panelTagList.Controls.Add(labelNewTag, panelTagList.ColumnCount - 2, 0);
 
@@ -546,7 +547,7 @@ namespace SceneClipse
                 // TODO : 태그 정보도 업데이트
             }
         }
-        
+
         private void numericBookmarkStartHour_MouseClick(object sender, MouseEventArgs e)
         {
         }
@@ -806,7 +807,7 @@ namespace SceneClipse
              *      </project>
              * </xml>
              * */
-            foreach ( KeyValuePair<int, BookmarkItem> kvItem in _listBookmarks )
+            foreach (KeyValuePair<int, BookmarkItem> kvItem in _listBookmarks)
             {
                 // kvItem.Value.
                 XmlElement nodeBookmark = xml.CreateElement("bookmarkdata");
@@ -832,12 +833,12 @@ namespace SceneClipse
                 nodeRoot.AppendChild(nodeBookmark);
 
             }
-            
+
             string sSaveFilename;
             SaveFileDialog dialogSave = new SaveFileDialog();
             dialogSave.Filter = SCENECLIP_FILE_OPENTEXT;
             sSaveFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
-           
+
             dialogSave.FileName = sSaveFilename;
 
             if (dialogSave.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -974,16 +975,23 @@ namespace SceneClipse
 
             dialogParse.sFileName = _sFilenamePlaying;
 
+            // 고정태그가 있으면 전달(편집용으로)
+            if (_listFixedTags.Count > 0)
+                dialogParse._vsFixedTagList = _listFixedTags;
+
             var result = dialogParse.ShowDialog();
 
-            if( result == DialogResult.OK )
+            if (result == DialogResult.OK)
             {
-                /*
-                 * TODO : 받은 책갈피 시간정보로 실제 책갈피를 생성
-                 * */
-
+                // 책갈피 정보 초기화
                 InitializeBookmarkdata();
 
+                // 고정태그 정보 가져오기
+                _listFixedTags = dialogParse._vsFixedTagList;
+
+                /*
+                 * 받은 책갈피 시간정보로 실제 책갈피를 생성
+                 * */
                 foreach (double d in dialogParse.vBookmarkTimes)
                 {
                     _nBookmarkCount++;
@@ -992,7 +1000,7 @@ namespace SceneClipse
                     dTimeStart = dTimeEnd = d;
 
                     // 시간 보정 여부 체크후 시간값 수정
-                    if( dialogParse.bUseTimeModify)
+                    if (dialogParse.bUseTimeModify)
                     {
                         if (dialogParse.bUseModifyHead)
                             dTimeStart = d - dialogParse.nModifySec;
@@ -1050,9 +1058,9 @@ namespace SceneClipse
                     item.SubItems.Add(d.ToString());
                     item.SubItems.Add(itemNewBookmark.sBookmarkName);
                     item.SubItems.Add(_nBookmarkCount.ToString());
-                    
+
                     // item.ImageIndex = imageList1.Images.Count;
-                    
+
                     listViewBookmark.Items.Add(item);
                 }
             }
@@ -1060,7 +1068,7 @@ namespace SceneClipse
 
         private void buttonSeekPrev_Click(object sender, EventArgs e)
         {
-            if( _sFilenamePlaying != "" )
+            if (_sFilenamePlaying != "")
             {
                 int nSeekTime = Convert.ToInt32(numericSeekTimeAmount.Value);
                 if (comboBoxSeekType.SelectedItem.ToString() == "분")
@@ -1168,7 +1176,7 @@ namespace SceneClipse
 
             string sSaveFilename;
             SaveFileDialog dialogSave = new SaveFileDialog();
-            
+
             dialogSave.Filter = BANDICUT_FILE_OPENTEXT;
             sSaveFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + BANDICUT_FILE_EXT;
 
@@ -1176,11 +1184,11 @@ namespace SceneClipse
 
             if (dialogSave.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                try 
+                try
                 {
                     xml.Save(dialogSave.FileName);
-                   // using (TextWriter sw = new StreamWriter(dialogSave.FileName, false, Encoding.UTF32))
-                   //     xml.Save(sw);
+                    // using (TextWriter sw = new StreamWriter(dialogSave.FileName, false, Encoding.UTF32))
+                    //     xml.Save(sw);
 
                     MessageBox.Show("저장 : " + dialogSave.FileName);
                 }
@@ -1213,7 +1221,7 @@ namespace SceneClipse
 
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
         {
-            if ( _nBookmarkCount != 0)
+            if (_nBookmarkCount != 0)
             {
                 // mediaplayer에서 이미지 가져오기
                 string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
@@ -1354,9 +1362,9 @@ namespace SceneClipse
                 }
 
                 // 고정된 태그 자동 입력
-                if( _listFixedTags.Count > 0 )
+                if (_listFixedTags.Count > 0)
                 {
-                    foreach( string tag in _listFixedTags)
+                    foreach (string tag in _listFixedTags)
                     {
                         itemNewBookmark.vTags.Add(tag);
                     }
@@ -1413,7 +1421,26 @@ namespace SceneClipse
             int nNewHeight = this.Height - panelMediaPlayer.Location.Y - 120;
 
             vlcMediaPlayer.Width = nNewWidth;
-            vlcMediaPlayer.Height = nNewHeight; 
+            vlcMediaPlayer.Height = nNewHeight;
+        }
+
+        private void label6_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if( e.Button == MouseButtons.Left )
+            {
+                FormEditFixedTag dialog = new FormEditFixedTag();
+                if (_listFixedTags.Count > 0)
+                {
+                    dialog.SetFixedBookmark(_listFixedTags);
+                }
+
+                var result = dialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    _listFixedTags.Clear();
+                    _listFixedTags = dialog._vsFixedTagList.ToList();
+                }
+            }
         }
     }
 }
