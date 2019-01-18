@@ -873,7 +873,19 @@ namespace SceneClipse
             string sSaveFilename;
             SaveFileDialog dialogSave = new SaveFileDialog();
             dialogSave.Filter = SCENECLIP_FILE_OPENTEXT;
-            sSaveFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
+
+            if (_sFilenamePlaying.StartsWith("http"))
+            {
+                // url에서 열 경우 파일명 가져오는 방식을 변경
+                string sFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('/') + 1);
+                sFileName = sFileName.Substring(0, sFileName.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
+
+                sSaveFilename = sFileName;
+            }
+            else
+            {
+                sSaveFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
+            }
 
             dialogSave.FileName = sSaveFilename;
 
@@ -913,7 +925,19 @@ namespace SceneClipse
         {
             OpenFileDialog dialogOpen = new OpenFileDialog();
             dialogOpen.Filter = SCENECLIP_FILE_OPENTEXT;
-            string sOpenFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
+            string sOpenFilename;
+
+            if (_sFilenamePlaying.StartsWith("http"))
+            {
+                // url에서 열 경우 파일명 가져오는 방식을 변경
+                string sFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('/') + 1);
+                sFileName = sFileName.Substring(0, sFileName.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
+
+                sOpenFilename = sFileName;
+            }
+            else
+                sOpenFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
+
             dialogOpen.FileName = sOpenFilename;
 
             if (dialogOpen.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -1419,6 +1443,7 @@ namespace SceneClipse
                 string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
                 string sSnapshotFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
 
+                // url에서 열 경우 파일명 가져오는 방식을 변경
                 if (sSnapshotFileName.StartsWith("http"))
                     sSnapshotFileName = sSnapshotFileName.Substring(sSnapshotFileName.LastIndexOf('/'));
 
@@ -1602,6 +1627,11 @@ namespace SceneClipse
                 {
                     InitializeBookmarkdata();
                     _sFilenamePlaying = dialogInput._sInputValue;
+
+                    // 경로 보정
+                    if (_sFilenamePlaying.StartsWith("://")) _sFilenamePlaying = "http" + _sFilenamePlaying;
+                    else if (_sFilenamePlaying.StartsWith("p://")) _sFilenamePlaying = "htt" + _sFilenamePlaying;
+                    else if (_sFilenamePlaying.StartsWith("s://")) _sFilenamePlaying = "http" + _sFilenamePlaying;
 
                     vlcMediaPlayer.SetMedia(new Uri(_sFilenamePlaying));
                     vlcMediaPlayer.Audio.Volume = trackBarVolumeControl.Value;
