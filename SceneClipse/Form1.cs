@@ -148,9 +148,10 @@ namespace SceneClipse
 
             if (vlcMediaPlayer.IsPlaying)
             {
-                BookmarkTimeData time = new BookmarkTimeData(vlcMediaPlayer.Time);
-                _sVideoPlaytime = "재생 중 : " + time.GetTime()
-                    + " (" + Math.Floor(vlcMediaPlayer.Position * 100) + "%)";
+                BookmarkTimeData timeBookmark = new BookmarkTimeData(vlcMediaPlayer.Time);
+                BookmarkTimeData timeMedia = new BookmarkTimeData(vlcMediaPlayer.GetCurrentMedia().Duration.TotalMilliseconds);
+                _sVideoPlaytime = "재생 중 : " + timeBookmark.GetTime()
+                    + " / " +  timeMedia.GetTime() + " (" + Math.Floor(vlcMediaPlayer.Position * 100) + "%)";
 
                 int nProgressValue = Convert.ToInt32(_nTrackbarMaximum * vlcMediaPlayer.Position);
                 _nVideoProgress =

@@ -151,7 +151,7 @@
             this.labelPlayTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelPlayTime.Location = new System.Drawing.Point(261, 518);
             this.labelPlayTime.Name = "labelPlayTime";
-            this.labelPlayTime.Size = new System.Drawing.Size(206, 29);
+            this.labelPlayTime.Size = new System.Drawing.Size(297, 29);
             this.labelPlayTime.TabIndex = 9;
             // 
             // labelOpenFileName
