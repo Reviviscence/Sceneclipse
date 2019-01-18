@@ -310,6 +310,9 @@ namespace SceneClipse
 
             textBoxTagInput.Text = ""; // 텍스트 입력칸에 내용이 있으면 제거
 
+            _itemCurrentBookmark.Selected = true;
+            listViewBookmark.Focus();
+
             _isUpdatingBookmarkInfo = false;
         }
 
@@ -1589,7 +1592,7 @@ namespace SceneClipse
                 {
                     _itemCurrentBookmark = listViewBookmark.Items[nIdx - 1];
                     _nCurrentBookmarkIdx = Convert.ToInt32(_itemCurrentBookmark.SubItems[3].Text);
-                    UpdateBookmarkInputData(+_nCurrentBookmarkIdx);
+                    UpdateBookmarkInputData(_nCurrentBookmarkIdx);
                 }
             }
         }
@@ -1607,7 +1610,7 @@ namespace SceneClipse
                 {
                     _itemCurrentBookmark = listViewBookmark.Items[nIdx + 1];
                     _nCurrentBookmarkIdx = Convert.ToInt32(_itemCurrentBookmark.SubItems[3].Text);
-                    UpdateBookmarkInputData(+_nCurrentBookmarkIdx);
+                    UpdateBookmarkInputData(_nCurrentBookmarkIdx);
                 }
             }
         }
