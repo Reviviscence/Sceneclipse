@@ -39,7 +39,14 @@
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxBookmarkName = new System.Windows.Forms.TextBox();
+            this.buttonJumpPrevBookmark = new System.Windows.Forms.Button();
+            this.buttonJumpNextBookmark = new System.Windows.Forms.Button();
+            this.checkBoxPartialplay = new System.Windows.Forms.CheckBox();
+            this.labelPartialplayOption = new System.Windows.Forms.Label();
+            this.radioPartialplayOptionJump = new System.Windows.Forms.RadioButton();
+            this.radioPartialplayOptionLoop = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.labelBookmarkStart = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -77,21 +84,15 @@
             this.trackBarVolumeControl = new System.Windows.Forms.TrackBar();
             this.panelVolumeControl = new System.Windows.Forms.Panel();
             this.checkAutoloadBookmark = new System.Windows.Forms.CheckBox();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.buttonJumpPrevBookmark = new System.Windows.Forms.Button();
-            this.buttonJumpNextBookmark = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.checkBoxBookmarkTimeModifyHead = new System.Windows.Forms.CheckBox();
             this.checkBoxBookmarkTimeModifyTail = new System.Windows.Forms.CheckBox();
             this.numericBookmarkTimeModifyValue = new System.Windows.Forms.NumericUpDown();
             this.comboBoxBookmarkTimeModifyType = new System.Windows.Forms.ComboBox();
             this.buttonModifyFixedTag = new System.Windows.Forms.Button();
-            this.checkBoxPartialplay = new System.Windows.Forms.CheckBox();
-            this.labelPartialplayOption = new System.Windows.Forms.Label();
-            this.radioPartialplayOptionJump = new System.Windows.Forms.RadioButton();
-            this.radioPartialplayOptionLoop = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericBookmarkStartHour)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericBookmarkStartMin)).BeginInit();
@@ -106,7 +107,6 @@
             this.panelTrackbarBackground.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVolumeControl)).BeginInit();
             this.panelVolumeControl.SuspendLayout();
-            this.tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericBookmarkTimeModifyValue)).BeginInit();
             this.SuspendLayout();
             // 
@@ -221,6 +221,31 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(611, 104);
             this.tableLayoutPanel1.TabIndex = 15;
             // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 7;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 256F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 79F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Controls.Add(this.textBoxBookmarkName, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.buttonJumpPrevBookmark, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.buttonJumpNextBookmark, 2, 0);
+            this.tableLayoutPanel3.Controls.Add(this.checkBoxPartialplay, 3, 0);
+            this.tableLayoutPanel3.Controls.Add(this.labelPartialplayOption, 4, 0);
+            this.tableLayoutPanel3.Controls.Add(this.radioPartialplayOptionJump, 5, 0);
+            this.tableLayoutPanel3.Controls.Add(this.radioPartialplayOptionLoop, 6, 0);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 1;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(611, 26);
+            this.tableLayoutPanel3.TabIndex = 31;
+            // 
             // textBoxBookmarkName
             // 
             this.textBoxBookmarkName.Location = new System.Drawing.Point(29, 3);
@@ -228,6 +253,75 @@
             this.textBoxBookmarkName.Size = new System.Drawing.Size(250, 21);
             this.textBoxBookmarkName.TabIndex = 0;
             this.textBoxBookmarkName.TextChanged += new System.EventHandler(this.textBoxBookmarkName_TextChanged);
+            // 
+            // buttonJumpPrevBookmark
+            // 
+            this.buttonJumpPrevBookmark.Location = new System.Drawing.Point(3, 3);
+            this.buttonJumpPrevBookmark.Name = "buttonJumpPrevBookmark";
+            this.buttonJumpPrevBookmark.Size = new System.Drawing.Size(20, 20);
+            this.buttonJumpPrevBookmark.TabIndex = 1;
+            this.buttonJumpPrevBookmark.Text = "<";
+            this.buttonJumpPrevBookmark.UseVisualStyleBackColor = true;
+            this.buttonJumpPrevBookmark.Click += new System.EventHandler(this.buttonJumpPrevBookmark_Click);
+            // 
+            // buttonJumpNextBookmark
+            // 
+            this.buttonJumpNextBookmark.Location = new System.Drawing.Point(285, 3);
+            this.buttonJumpNextBookmark.Name = "buttonJumpNextBookmark";
+            this.buttonJumpNextBookmark.Size = new System.Drawing.Size(20, 20);
+            this.buttonJumpNextBookmark.TabIndex = 2;
+            this.buttonJumpNextBookmark.Text = ">";
+            this.buttonJumpNextBookmark.UseVisualStyleBackColor = true;
+            this.buttonJumpNextBookmark.Click += new System.EventHandler(this.buttonJumpNextBookmark_Click);
+            // 
+            // checkBoxPartialplay
+            // 
+            this.checkBoxPartialplay.AutoSize = true;
+            this.checkBoxPartialplay.Location = new System.Drawing.Point(311, 5);
+            this.checkBoxPartialplay.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
+            this.checkBoxPartialplay.Name = "checkBoxPartialplay";
+            this.checkBoxPartialplay.Size = new System.Drawing.Size(76, 16);
+            this.checkBoxPartialplay.TabIndex = 3;
+            this.checkBoxPartialplay.Text = "구간 재생";
+            this.checkBoxPartialplay.UseVisualStyleBackColor = true;
+            this.checkBoxPartialplay.CheckedChanged += new System.EventHandler(this.checkBoxPartialPlay_CheckedChanged);
+            // 
+            // labelPartialplayOption
+            // 
+            this.labelPartialplayOption.AutoSize = true;
+            this.labelPartialplayOption.Location = new System.Drawing.Point(394, 7);
+            this.labelPartialplayOption.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
+            this.labelPartialplayOption.Name = "labelPartialplayOption";
+            this.labelPartialplayOption.Size = new System.Drawing.Size(79, 12);
+            this.labelPartialplayOption.TabIndex = 4;
+            this.labelPartialplayOption.Text = "* 재생 완료시";
+            this.labelPartialplayOption.Visible = false;
+            // 
+            // radioPartialplayOptionJump
+            // 
+            this.radioPartialplayOptionJump.AutoSize = true;
+            this.radioPartialplayOptionJump.Checked = true;
+            this.radioPartialplayOptionJump.Location = new System.Drawing.Point(480, 5);
+            this.radioPartialplayOptionJump.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
+            this.radioPartialplayOptionJump.Name = "radioPartialplayOptionJump";
+            this.radioPartialplayOptionJump.Size = new System.Drawing.Size(71, 16);
+            this.radioPartialplayOptionJump.TabIndex = 5;
+            this.radioPartialplayOptionJump.TabStop = true;
+            this.radioPartialplayOptionJump.Text = "다음으로";
+            this.radioPartialplayOptionJump.UseVisualStyleBackColor = true;
+            this.radioPartialplayOptionJump.Visible = false;
+            // 
+            // radioPartialplayOptionLoop
+            // 
+            this.radioPartialplayOptionLoop.AutoSize = true;
+            this.radioPartialplayOptionLoop.Location = new System.Drawing.Point(559, 5);
+            this.radioPartialplayOptionLoop.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
+            this.radioPartialplayOptionLoop.Name = "radioPartialplayOptionLoop";
+            this.radioPartialplayOptionLoop.Size = new System.Drawing.Size(47, 16);
+            this.radioPartialplayOptionLoop.TabIndex = 6;
+            this.radioPartialplayOptionLoop.Text = "반복";
+            this.radioPartialplayOptionLoop.UseVisualStyleBackColor = true;
+            this.radioPartialplayOptionLoop.Visible = false;
             // 
             // tableLayoutPanel2
             // 
@@ -694,53 +788,9 @@
             this.checkAutoloadBookmark.Text = "책갈피 자동 읽기";
             this.checkAutoloadBookmark.UseVisualStyleBackColor = true;
             // 
-            // tableLayoutPanel3
-            // 
-            this.tableLayoutPanel3.ColumnCount = 7;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 256F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 79F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Controls.Add(this.textBoxBookmarkName, 1, 0);
-            this.tableLayoutPanel3.Controls.Add(this.buttonJumpPrevBookmark, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.buttonJumpNextBookmark, 2, 0);
-            this.tableLayoutPanel3.Controls.Add(this.checkBoxPartialplay, 3, 0);
-            this.tableLayoutPanel3.Controls.Add(this.labelPartialplayOption, 4, 0);
-            this.tableLayoutPanel3.Controls.Add(this.radioPartialplayOptionJump, 5, 0);
-            this.tableLayoutPanel3.Controls.Add(this.radioPartialplayOptionLoop, 6, 0);
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 1;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(611, 26);
-            this.tableLayoutPanel3.TabIndex = 31;
-            // 
-            // buttonJumpPrevBookmark
-            // 
-            this.buttonJumpPrevBookmark.Location = new System.Drawing.Point(3, 3);
-            this.buttonJumpPrevBookmark.Name = "buttonJumpPrevBookmark";
-            this.buttonJumpPrevBookmark.Size = new System.Drawing.Size(20, 20);
-            this.buttonJumpPrevBookmark.TabIndex = 1;
-            this.buttonJumpPrevBookmark.Text = "<";
-            this.buttonJumpPrevBookmark.UseVisualStyleBackColor = true;
-            this.buttonJumpPrevBookmark.Click += new System.EventHandler(this.buttonJumpPrevBookmark_Click);
-            // 
-            // buttonJumpNextBookmark
-            // 
-            this.buttonJumpNextBookmark.Location = new System.Drawing.Point(285, 3);
-            this.buttonJumpNextBookmark.Name = "buttonJumpNextBookmark";
-            this.buttonJumpNextBookmark.Size = new System.Drawing.Size(20, 20);
-            this.buttonJumpNextBookmark.TabIndex = 2;
-            this.buttonJumpNextBookmark.Text = ">";
-            this.buttonJumpNextBookmark.UseVisualStyleBackColor = true;
-            this.buttonJumpNextBookmark.Click += new System.EventHandler(this.buttonJumpNextBookmark_Click);
-            // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(132, 284);
             this.label1.Name = "label1";
@@ -750,6 +800,7 @@
             // 
             // checkBoxBookmarkTimeModifyHead
             // 
+            this.checkBoxBookmarkTimeModifyHead.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxBookmarkTimeModifyHead.AutoSize = true;
             this.checkBoxBookmarkTimeModifyHead.Location = new System.Drawing.Point(134, 304);
             this.checkBoxBookmarkTimeModifyHead.Name = "checkBoxBookmarkTimeModifyHead";
@@ -760,6 +811,7 @@
             // 
             // checkBoxBookmarkTimeModifyTail
             // 
+            this.checkBoxBookmarkTimeModifyTail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxBookmarkTimeModifyTail.AutoSize = true;
             this.checkBoxBookmarkTimeModifyTail.Location = new System.Drawing.Point(171, 304);
             this.checkBoxBookmarkTimeModifyTail.Name = "checkBoxBookmarkTimeModifyTail";
@@ -770,6 +822,7 @@
             // 
             // numericBookmarkTimeModifyValue
             // 
+            this.numericBookmarkTimeModifyValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.numericBookmarkTimeModifyValue.Location = new System.Drawing.Point(134, 327);
             this.numericBookmarkTimeModifyValue.Maximum = new decimal(new int[] {
             60,
@@ -787,6 +840,7 @@
             // 
             // comboBoxBookmarkTimeModifyType
             // 
+            this.comboBoxBookmarkTimeModifyType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBoxBookmarkTimeModifyType.FormattingEnabled = true;
             this.comboBoxBookmarkTimeModifyType.Items.AddRange(new object[] {
             "초",
@@ -800,6 +854,7 @@
             // 
             // buttonModifyFixedTag
             // 
+            this.buttonModifyFixedTag.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonModifyFixedTag.Location = new System.Drawing.Point(134, 354);
             this.buttonModifyFixedTag.Name = "buttonModifyFixedTag";
             this.buttonModifyFixedTag.Size = new System.Drawing.Size(116, 23);
@@ -807,55 +862,6 @@
             this.buttonModifyFixedTag.Text = "고정태그 편집";
             this.buttonModifyFixedTag.UseVisualStyleBackColor = true;
             this.buttonModifyFixedTag.Click += new System.EventHandler(this.buttonModifyFixedTag_Click);
-            // 
-            // checkBoxPartialplay
-            // 
-            this.checkBoxPartialplay.AutoSize = true;
-            this.checkBoxPartialplay.Location = new System.Drawing.Point(311, 5);
-            this.checkBoxPartialplay.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
-            this.checkBoxPartialplay.Name = "checkBoxPartialplay";
-            this.checkBoxPartialplay.Size = new System.Drawing.Size(76, 16);
-            this.checkBoxPartialplay.TabIndex = 3;
-            this.checkBoxPartialplay.Text = "구간 재생";
-            this.checkBoxPartialplay.UseVisualStyleBackColor = true;
-            this.checkBoxPartialplay.CheckedChanged += new System.EventHandler(this.checkBoxPartialPlay_CheckedChanged);
-            // 
-            // labelPartialplayOption
-            // 
-            this.labelPartialplayOption.AutoSize = true;
-            this.labelPartialplayOption.Location = new System.Drawing.Point(394, 7);
-            this.labelPartialplayOption.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
-            this.labelPartialplayOption.Name = "labelPartialplayOption";
-            this.labelPartialplayOption.Size = new System.Drawing.Size(79, 12);
-            this.labelPartialplayOption.TabIndex = 4;
-            this.labelPartialplayOption.Text = "* 재생 완료시";
-            this.labelPartialplayOption.Visible = false;
-            // 
-            // radioPartialplayOptionJump
-            // 
-            this.radioPartialplayOptionJump.AutoSize = true;
-            this.radioPartialplayOptionJump.Checked = true;
-            this.radioPartialplayOptionJump.Location = new System.Drawing.Point(480, 5);
-            this.radioPartialplayOptionJump.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
-            this.radioPartialplayOptionJump.Name = "radioPartialplayOptionJump";
-            this.radioPartialplayOptionJump.Size = new System.Drawing.Size(71, 16);
-            this.radioPartialplayOptionJump.TabIndex = 5;
-            this.radioPartialplayOptionJump.TabStop = true;
-            this.radioPartialplayOptionJump.Text = "다음으로";
-            this.radioPartialplayOptionJump.UseVisualStyleBackColor = true;
-            this.radioPartialplayOptionJump.Visible = false;
-            // 
-            // radioPartialplayOptionLoop
-            // 
-            this.radioPartialplayOptionLoop.AutoSize = true;
-            this.radioPartialplayOptionLoop.Location = new System.Drawing.Point(559, 5);
-            this.radioPartialplayOptionLoop.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
-            this.radioPartialplayOptionLoop.Name = "radioPartialplayOptionLoop";
-            this.radioPartialplayOptionLoop.Size = new System.Drawing.Size(47, 16);
-            this.radioPartialplayOptionLoop.TabIndex = 6;
-            this.radioPartialplayOptionLoop.Text = "반복";
-            this.radioPartialplayOptionLoop.UseVisualStyleBackColor = true;
-            this.radioPartialplayOptionLoop.Visible = false;
             // 
             // Form1
             // 
@@ -890,10 +896,12 @@
             this.Controls.Add(this.buttonPause);
             this.Name = "Form1";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
-            this.Text = "Form1";
+            this.Text = "Sceneclipse";
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericBookmarkStartHour)).EndInit();
@@ -912,8 +920,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVolumeControl)).EndInit();
             this.panelVolumeControl.ResumeLayout(false);
             this.panelVolumeControl.PerformLayout();
-            this.tableLayoutPanel3.ResumeLayout(false);
-            this.tableLayoutPanel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericBookmarkTimeModifyValue)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
