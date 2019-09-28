@@ -29,14 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.axMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
             this.buttonPause = new System.Windows.Forms.Button();
             this.buttonOpenFile = new System.Windows.Forms.Button();
             this.textBoxOpenFileName = new System.Windows.Forms.TextBox();
             this.labelPlayTime = new System.Windows.Forms.Label();
             this.labelOpenFileName = new System.Windows.Forms.Label();
-            this.timerPlayTime = new System.Windows.Forms.Timer(this.components);
             this.buttonBookmark = new System.Windows.Forms.Button();
             this.listViewBookmark = new System.Windows.Forms.ListView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
@@ -56,23 +53,25 @@
             this.numericBookmarkEndHour = new System.Windows.Forms.NumericUpDown();
             this.numericBookmarkEndMin = new System.Windows.Forms.NumericUpDown();
             this.numericBookmarkEndSec = new System.Windows.Forms.NumericUpDown();
+            this.checkAutoSeekToTime = new System.Windows.Forms.CheckBox();
+            this.buttonSetCurrentTimeToEnd = new System.Windows.Forms.Button();
+            this.buttonSetCurrentTimeToStart = new System.Windows.Forms.Button();
             this.panelTagList = new System.Windows.Forms.TableLayoutPanel();
             this.label6 = new System.Windows.Forms.Label();
             this.textBoxTagInput = new System.Windows.Forms.TextBox();
             this.buttonLoadBookmark = new System.Windows.Forms.Button();
             this.buttonSaveBookmark = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.buttonExportBandicut = new System.Windows.Forms.Button();
             this.buttonParse = new System.Windows.Forms.Button();
             this.buttonQuit = new System.Windows.Forms.Button();
-            this.buttonExportBandicut = new System.Windows.Forms.Button();
             this.buttonSeekPrev = new System.Windows.Forms.Button();
             this.buttonSeekNext = new System.Windows.Forms.Button();
             this.numericSeekTimeAmount = new System.Windows.Forms.NumericUpDown();
             this.comboBoxSeekType = new System.Windows.Forms.ComboBox();
-            this.checkAutoSeekToTime = new System.Windows.Forms.CheckBox();
-            this.buttonSetCurrentTimeToStart = new System.Windows.Forms.Button();
-            this.buttonSetCurrentTimeToEnd = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.axMediaPlayer1)).BeginInit();
+            this.panelMediaPlayer = new System.Windows.Forms.Panel();
+            this.trackBarVideoProgress = new System.Windows.Forms.TrackBar();
+            this.panelTrackbarBackground = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -85,16 +84,9 @@
             this.panelTagList.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSeekTimeAmount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarVideoProgress)).BeginInit();
+            this.panelTrackbarBackground.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // axMediaPlayer1
-            // 
-            this.axMediaPlayer1.Enabled = true;
-            this.axMediaPlayer1.Location = new System.Drawing.Point(269, 122);
-            this.axMediaPlayer1.Name = "axMediaPlayer1";
-            this.axMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axMediaPlayer1.OcxState")));
-            this.axMediaPlayer1.Size = new System.Drawing.Size(611, 426);
-            this.axMediaPlayer1.TabIndex = 1;
             // 
             // buttonPause
             // 
@@ -130,9 +122,9 @@
             // 
             // labelPlayTime
             // 
-            this.labelPlayTime.Location = new System.Drawing.Point(91, 12);
+            this.labelPlayTime.Location = new System.Drawing.Point(267, 518);
             this.labelPlayTime.Name = "labelPlayTime";
-            this.labelPlayTime.Size = new System.Drawing.Size(100, 55);
+            this.labelPlayTime.Size = new System.Drawing.Size(206, 29);
             this.labelPlayTime.TabIndex = 9;
             // 
             // labelOpenFileName
@@ -143,11 +135,6 @@
             this.labelOpenFileName.Size = new System.Drawing.Size(121, 12);
             this.labelOpenFileName.TabIndex = 10;
             this.labelOpenFileName.Text = "현재 재생중인 파일 : ";
-            // 
-            // timerPlayTime
-            // 
-            this.timerPlayTime.Interval = 1000;
-            this.timerPlayTime.Tick += new System.EventHandler(this.timerPlayTime_Tick);
             // 
             // buttonBookmark
             // 
@@ -405,13 +392,47 @@
             this.numericBookmarkEndSec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numericBookmarkEndSec.ValueChanged += new System.EventHandler(this.numericBookmarkEndSec_ValueChanged);
             // 
+            // checkAutoSeekToTime
+            // 
+            this.checkAutoSeekToTime.AutoSize = true;
+            this.checkAutoSeekToTime.Checked = true;
+            this.checkAutoSeekToTime.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkAutoSeekToTime.Location = new System.Drawing.Point(433, 3);
+            this.checkAutoSeekToTime.Name = "checkAutoSeekToTime";
+            this.checkAutoSeekToTime.Size = new System.Drawing.Size(136, 16);
+            this.checkAutoSeekToTime.TabIndex = 10;
+            this.checkAutoSeekToTime.Text = "시간수정시 자동이동";
+            this.checkAutoSeekToTime.UseVisualStyleBackColor = true;
+            // 
+            // buttonSetCurrentTimeToEnd
+            // 
+            this.buttonSetCurrentTimeToEnd.Location = new System.Drawing.Point(413, 2);
+            this.buttonSetCurrentTimeToEnd.Margin = new System.Windows.Forms.Padding(3, 2, 3, 0);
+            this.buttonSetCurrentTimeToEnd.Name = "buttonSetCurrentTimeToEnd";
+            this.buttonSetCurrentTimeToEnd.Size = new System.Drawing.Size(14, 22);
+            this.buttonSetCurrentTimeToEnd.TabIndex = 12;
+            this.buttonSetCurrentTimeToEnd.Text = "]";
+            this.buttonSetCurrentTimeToEnd.UseVisualStyleBackColor = true;
+            this.buttonSetCurrentTimeToEnd.Click += new System.EventHandler(this.buttonSetCurrentTimeToEnd_Click);
+            // 
+            // buttonSetCurrentTimeToStart
+            // 
+            this.buttonSetCurrentTimeToStart.Location = new System.Drawing.Point(48, 2);
+            this.buttonSetCurrentTimeToStart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 0);
+            this.buttonSetCurrentTimeToStart.Name = "buttonSetCurrentTimeToStart";
+            this.buttonSetCurrentTimeToStart.Size = new System.Drawing.Size(14, 22);
+            this.buttonSetCurrentTimeToStart.TabIndex = 11;
+            this.buttonSetCurrentTimeToStart.Text = "[";
+            this.buttonSetCurrentTimeToStart.UseVisualStyleBackColor = true;
+            this.buttonSetCurrentTimeToStart.Click += new System.EventHandler(this.buttonSetCurrentTimeToStart_Click);
+            // 
             // panelTagList
             // 
             this.panelTagList.AutoScroll = true;
             this.panelTagList.AutoScrollMinSize = new System.Drawing.Size(550, 0);
             this.panelTagList.ColumnCount = 2;
             this.panelTagList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
-            this.panelTagList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 505F));
+            this.panelTagList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 560F));
             this.panelTagList.Controls.Add(this.label6, 0, 0);
             this.panelTagList.Controls.Add(this.textBoxTagInput, 1, 0);
             this.panelTagList.Location = new System.Drawing.Point(3, 59);
@@ -473,6 +494,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "책갈피";
             // 
+            // buttonExportBandicut
+            // 
+            this.buttonExportBandicut.Location = new System.Drawing.Point(6, 79);
+            this.buttonExportBandicut.Name = "buttonExportBandicut";
+            this.buttonExportBandicut.Size = new System.Drawing.Size(156, 23);
+            this.buttonExportBandicut.TabIndex = 19;
+            this.buttonExportBandicut.Text = "반디컷 프로젝트로";
+            this.buttonExportBandicut.UseVisualStyleBackColor = true;
+            this.buttonExportBandicut.Click += new System.EventHandler(this.buttonExportBandicut_Click);
+            // 
             // buttonParse
             // 
             this.buttonParse.Location = new System.Drawing.Point(168, 20);
@@ -492,16 +523,6 @@
             this.buttonQuit.Text = "종료";
             this.buttonQuit.UseVisualStyleBackColor = true;
             this.buttonQuit.Click += new System.EventHandler(this.buttonQuit_Click);
-            // 
-            // buttonExportBandicut
-            // 
-            this.buttonExportBandicut.Location = new System.Drawing.Point(6, 79);
-            this.buttonExportBandicut.Name = "buttonExportBandicut";
-            this.buttonExportBandicut.Size = new System.Drawing.Size(156, 23);
-            this.buttonExportBandicut.TabIndex = 19;
-            this.buttonExportBandicut.Text = "반디컷 프로젝트로";
-            this.buttonExportBandicut.UseVisualStyleBackColor = true;
-            this.buttonExportBandicut.Click += new System.EventHandler(this.buttonExportBandicut_Click);
             // 
             // buttonSeekPrev
             // 
@@ -553,45 +574,39 @@
             this.comboBoxSeekType.TabIndex = 23;
             this.comboBoxSeekType.Text = "초";
             // 
-            // checkAutoSeekToTime
+            // panelMediaPlayer
             // 
-            this.checkAutoSeekToTime.AutoSize = true;
-            this.checkAutoSeekToTime.Checked = true;
-            this.checkAutoSeekToTime.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkAutoSeekToTime.Location = new System.Drawing.Point(433, 3);
-            this.checkAutoSeekToTime.Name = "checkAutoSeekToTime";
-            this.checkAutoSeekToTime.Size = new System.Drawing.Size(136, 16);
-            this.checkAutoSeekToTime.TabIndex = 10;
-            this.checkAutoSeekToTime.Text = "시간수정시 자동이동";
-            this.checkAutoSeekToTime.UseVisualStyleBackColor = true;
+            this.panelMediaPlayer.Location = new System.Drawing.Point(269, 122);
+            this.panelMediaPlayer.Name = "panelMediaPlayer";
+            this.panelMediaPlayer.Size = new System.Drawing.Size(611, 348);
+            this.panelMediaPlayer.TabIndex = 24;
             // 
-            // buttonSetCurrentTimeToStart
+            // trackBarVideoProgress
             // 
-            this.buttonSetCurrentTimeToStart.Location = new System.Drawing.Point(48, 2);
-            this.buttonSetCurrentTimeToStart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 0);
-            this.buttonSetCurrentTimeToStart.Name = "buttonSetCurrentTimeToStart";
-            this.buttonSetCurrentTimeToStart.Size = new System.Drawing.Size(14, 22);
-            this.buttonSetCurrentTimeToStart.TabIndex = 11;
-            this.buttonSetCurrentTimeToStart.Text = "[";
-            this.buttonSetCurrentTimeToStart.UseVisualStyleBackColor = true;
-            this.buttonSetCurrentTimeToStart.Click += new System.EventHandler(this.buttonSetCurrentTimeToStart_Click);
+            this.trackBarVideoProgress.Cursor = System.Windows.Forms.Cursors.UpArrow;
+            this.trackBarVideoProgress.Enabled = false;
+            this.trackBarVideoProgress.Location = new System.Drawing.Point(0, 0);
+            this.trackBarVideoProgress.Maximum = 1000;
+            this.trackBarVideoProgress.Name = "trackBarVideoProgress";
+            this.trackBarVideoProgress.Size = new System.Drawing.Size(611, 45);
+            this.trackBarVideoProgress.TabIndex = 25;
+            this.trackBarVideoProgress.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             // 
-            // buttonSetCurrentTimeToEnd
+            // panelTrackbarBackground
             // 
-            this.buttonSetCurrentTimeToEnd.Location = new System.Drawing.Point(413, 2);
-            this.buttonSetCurrentTimeToEnd.Margin = new System.Windows.Forms.Padding(3, 2, 3, 0);
-            this.buttonSetCurrentTimeToEnd.Name = "buttonSetCurrentTimeToEnd";
-            this.buttonSetCurrentTimeToEnd.Size = new System.Drawing.Size(14, 22);
-            this.buttonSetCurrentTimeToEnd.TabIndex = 12;
-            this.buttonSetCurrentTimeToEnd.Text = "]";
-            this.buttonSetCurrentTimeToEnd.UseVisualStyleBackColor = true;
-            this.buttonSetCurrentTimeToEnd.Click += new System.EventHandler(this.buttonSetCurrentTimeToEnd_Click);
+            this.panelTrackbarBackground.Controls.Add(this.trackBarVideoProgress);
+            this.panelTrackbarBackground.Location = new System.Drawing.Point(269, 472);
+            this.panelTrackbarBackground.Name = "panelTrackbarBackground";
+            this.panelTrackbarBackground.Size = new System.Drawing.Size(612, 38);
+            this.panelTrackbarBackground.TabIndex = 26;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(883, 551);
+            this.Controls.Add(this.panelTrackbarBackground);
+            this.Controls.Add(this.panelMediaPlayer);
             this.Controls.Add(this.comboBoxSeekType);
             this.Controls.Add(this.numericSeekTimeAmount);
             this.Controls.Add(this.buttonSeekNext);
@@ -606,10 +621,8 @@
             this.Controls.Add(this.textBoxOpenFileName);
             this.Controls.Add(this.buttonOpenFile);
             this.Controls.Add(this.buttonPause);
-            this.Controls.Add(this.axMediaPlayer1);
             this.Name = "Form1";
             this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this.axMediaPlayer1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
@@ -625,19 +638,20 @@
             this.panelTagList.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericSeekTimeAmount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarVideoProgress)).EndInit();
+            this.panelTrackbarBackground.ResumeLayout(false);
+            this.panelTrackbarBackground.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private AxWMPLib.AxWindowsMediaPlayer axMediaPlayer1;
         private System.Windows.Forms.Button buttonPause;
         private System.Windows.Forms.Button buttonOpenFile;
         private System.Windows.Forms.TextBox textBoxOpenFileName;
         private System.Windows.Forms.Label labelPlayTime;
         private System.Windows.Forms.Label labelOpenFileName;
-        private System.Windows.Forms.Timer timerPlayTime;
         private System.Windows.Forms.Button buttonBookmark;
         private System.Windows.Forms.ListView listViewBookmark;
         private System.Windows.Forms.ImageList imageList1;
@@ -673,6 +687,10 @@
         private System.Windows.Forms.CheckBox checkAutoSeekToTime;
         private System.Windows.Forms.Button buttonSetCurrentTimeToStart;
         private System.Windows.Forms.Button buttonSetCurrentTimeToEnd;
+        private System.Windows.Forms.Panel panelMediaPlayer;
+        private Vlc.DotNet.Forms.VlcControl vlcMediaPlayer;
+        private System.Windows.Forms.TrackBar trackBarVideoProgress;
+        private System.Windows.Forms.Panel panelTrackbarBackground;
     }
 }
 

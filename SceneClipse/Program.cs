@@ -85,8 +85,8 @@ namespace SceneClipse
             // + "." + (MilliSec / 10).ToString("D2");
         }
 
-        public string getTime() { return sTimeBookmark; }
-        public double getTimeDouble() { return dTimeBookmark; }
+        public string GetTime() { return sTimeBookmark; }
+        public double GetTimeDouble() { return dTimeBookmark; }
 
         private string sTimeBookmark { get; set; }
         private double dTimeBookmark { get; set; }

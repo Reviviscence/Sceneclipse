@@ -17,6 +17,18 @@ namespace SceneClipse
 {
     public partial class Form1 : Form
     {
+        // 트랙바(trackBarVideoProgress)와 마우스 클릭 위치를 맞추기 위한 보정값.
+        private const int TRACKBAR_MODIFY_POSITION_VALUE = 13;
+
+        private const string SCENECLIP_FILE_DESC = "Sceneclips File";
+        private const string SCENECLIP_FILE_EXT = ".sclip";
+        private const string SCENECLIP_FILE_OPENTEXT = SCENECLIP_FILE_DESC + "|*" + SCENECLIP_FILE_EXT;
+
+        private const string BANDICUT_FILE_DESC = "Bandicut Project File";
+        private const string BANDICUT_FILE_EXT = ".bcpf";
+        private const string BANDICUT_FILE_OPENTEXT = BANDICUT_FILE_DESC + "|*" + BANDICUT_FILE_EXT;
+
+
         // 책갈피 목록<인덱스, 책갈피>
         private SortedList<int, BookmarkItem> _listBookmarks;
         // 책갈피 개수(책갈피를 추가시킬때 이 값을 인덱스로 이용)
@@ -28,25 +40,121 @@ namespace SceneClipse
         private string _sFilehashPlaying = "";           // 현재 미사용
         private bool _isUpdatingBookmarkInfo = false;
         private bool _isWaitingForJump = false;
+        private long _nVideoPosition = 0;
 
         public Form1()
         {
             InitializeComponent();
             InitializeBookmarkList();
-            
+            InitializeVLCPlayer();
+
             this.panelTagList.VerticalScroll.Enabled = false;
             _listBookmarks = new SortedList<int, BookmarkItem>();
         }
 
+        private void InitializeVLCPlayer()
+        {
+            this.vlcMediaPlayer = new Vlc.DotNet.Forms.VlcControl();
+            this.vlcMediaPlayer.BeginInit();
+            this.vlcMediaPlayer.Size = panelMediaPlayer.Size;
+            this.vlcMediaPlayer.VlcLibDirectory = new DirectoryInfo(Path.Combine(".", "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
+            
+#if _DEBUG
+            this.vlcMediaPlayer.VlcMediaplayerOptions = new[] { "--file-logging", "-vvv", "--extraintf=logger", "--logfile=vlcLog.log" };
+#else
+            this.vlcMediaPlayer.VlcMediaplayerOptions = new[] { "--no-snapshot-preview", "--snapshot-format=jpg", "--no-video-title", "--quiet-synchro", "--file-logging", "-vv", "--extraintf=logger", "--logfile=vlcLog.log" };
+#endif
+            this.vlcMediaPlayer.EndInit();
+
+            vlcMediaPlayer.PositionChanged += VlcMediaPlayer_PositionChanged;
+            vlcMediaPlayer.EncounteredError += (sender, e) =>
+            {
+                Console.Error.Write("Error : " + e);
+            };
+
+            this.Controls.Add(this.vlcMediaPlayer);
+            this.panelMediaPlayer.Controls.Add(this.vlcMediaPlayer);
+
+            // 트랙바 관련 컨트롤 추가
+            Panel panelVideoProgress = new Panel();
+            panelVideoProgress.Dock = DockStyle.Fill;
+            panelVideoProgress.BackColor = Color.Transparent;
+
+            panelVideoProgress.MouseDown += panelVideoProgress_MouseDown;
+            panelVideoProgress.MouseMove += PanelVideoProgress_MouseMove;
+
+            this.panelTrackbarBackground.Controls.Add(panelVideoProgress);
+            //panelVideoProgress.BringToFront();
+
+        }
+
+        private void PanelVideoProgress_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (vlcMediaPlayer.IsPlaying)
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    int nPosition = e.X - TRACKBAR_MODIFY_POSITION_VALUE;
+                    if (nPosition < 0) nPosition = 0;
+
+                    int nProgressValue = Convert.ToInt32(trackBarVideoProgress.Maximum * vlcMediaPlayer.Position);
+                                        
+                    trackBarVideoProgress.Value =
+                        (nProgressValue < trackBarVideoProgress.Maximum) ?
+                        nProgressValue : trackBarVideoProgress.Maximum;
+
+                    vlcMediaPlayer.Position = ((float)nPosition / (trackBarVideoProgress.Width - TRACKBAR_MODIFY_POSITION_VALUE * 2));
+                }
+            }
+        }
+
+        private void VlcMediaPlayer_PositionChanged(object sender, Vlc.DotNet.Core.VlcMediaPlayerPositionChangedEventArgs e)
+        {
+
+            if (vlcMediaPlayer.IsPlaying)
+            {
+                // 1초에 한번씩만 작동하도록 설정
+                if (_nVideoPosition != vlcMediaPlayer.Time / 1000)
+                {
+                    _nVideoPosition = vlcMediaPlayer.Time / 1000;
+                    BookmarkTimeData time = new BookmarkTimeData(vlcMediaPlayer.Time / 1000);
+                    string sVideoTime = "재생 중 : " + time.GetTime()
+                        + " (" + Math.Floor(vlcMediaPlayer.Position * 100) + "%)";
+
+                    if (labelPlayTime.Text != sVideoTime)
+                    {
+                        labelPlayTime.Invoke((MethodInvoker)delegate
+                        {
+                            labelPlayTime.Text = sVideoTime;
+                        });
+
+                        int nProgressValue = Convert.ToInt32(trackBarVideoProgress.Maximum * vlcMediaPlayer.Position);
+
+                        trackBarVideoProgress.Invoke((MethodInvoker)delegate
+                        {
+                            trackBarVideoProgress.Value =
+                            (nProgressValue < trackBarVideoProgress.Maximum) ?
+                            nProgressValue : trackBarVideoProgress.Maximum;
+                        });
+                    }
+                }
+            }
+            else
+            {
+                labelPlayTime.Invoke((MethodInvoker)delegate {
+                    labelPlayTime.Text = "";
+                });
+            }
+        }
+
         private void buttonPlay_Click(object sender, EventArgs e)
         {
-            axMediaPlayer1.Ctlcontrols.play();
-            timerPlayTime.Start();
+            vlcMediaPlayer.Play();
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
         {
-            axMediaPlayer1.Ctlcontrols.stop();
+            vlcMediaPlayer.Stop();
         }
 
         // pause 버튼 클릭시 - 재생중이면 정지, 정지상태면 다시 재생
@@ -59,16 +167,15 @@ namespace SceneClipse
                 _sFilenamePlaying = @"c:\Wildlife.wmv";
                 // _sFilehashPlaying = GetMD5HashFromFile(_sFilenamePlaying);
 
-                axMediaPlayer1.URL = _sFilenamePlaying;
+                vlcMediaPlayer.SetMedia(new FileInfo(_sFilenamePlaying));
             }
             else
             {
                 // 재생중이면 정지, 정지상태면 다시 재생
-                if (axMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPaused ||
-                    axMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsStopped )
-                    axMediaPlayer1.Ctlcontrols.play();
-                else if (axMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPlaying)
-                    axMediaPlayer1.Ctlcontrols.pause();
+                if (!vlcMediaPlayer.IsPlaying)
+                    vlcMediaPlayer.Play();
+                else
+                    vlcMediaPlayer.Pause();
             }
         }
 
@@ -77,38 +184,36 @@ namespace SceneClipse
         {
             OpenFileDialog openFiledialog1 = new OpenFileDialog();
             // openFiledialog1.Filter = "Movie files|*.wmv";
-
-            if( openFiledialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK )
+            try
             {
-                InitializeBookmarkdata();
+                if (openFiledialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    InitializeBookmarkdata();
 
-                _sFilenamePlaying = openFiledialog1.FileName;
-                // _sFilehashPlaying = GetMD5HashFromFile(_sFilenamePlaying);
+                    _sFilenamePlaying = openFiledialog1.FileName;
+                    // _sFilehashPlaying = GetMD5HashFromFile(_sFilenamePlaying);
 
-                axMediaPlayer1.URL = openFiledialog1.FileName;
-                textBoxOpenFileName.Text = openFiledialog1.FileName;
+                    vlcMediaPlayer.SetMedia(new FileInfo(openFiledialog1.FileName));
+                    vlcMediaPlayer.Play();
 
-                timerPlayTime.Start();
+                    textBoxOpenFileName.Text = openFiledialog1.FileName;
 
-                // labelOpenFileName.Text = "재생중인 파일 : " + openFiledialog1.FileName;
-            }            
-        }
+                    /*
+                    axMediaPlayer1.URL = openFiledialog1.FileName;
 
-        private void timerPlayTime_Tick(object sender, EventArgs e)
-        {
-            if (axMediaPlayer1.playState == WMPPlayState.wmppsPlaying ||
-                axMediaPlayer1.playState == WMPPlayState.wmppsPaused)
-            {
-                string sVideoTime = axMediaPlayer1.Ctlcontrols.currentPositionString;
-                labelPlayTime.Text = "재생 중 : \n" + sVideoTime;
+                    timerPlayTime.Start();
+                    */
+
+                    // labelOpenFileName.Text = "재생중인 파일 : " + openFiledialog1.FileName;
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                labelPlayTime.Text = "";
-                timerPlayTime.Stop();
+                MessageBox.Show("재생 실패 : " + ex.Message);
             }
         }
-
+        
         private void buttonBookmark_Click(object sender, EventArgs e)
         {
 
@@ -117,8 +222,9 @@ namespace SceneClipse
                 // 책갈피 리스트에서 현재 추가할 정보의 인덱스
                 int nCurrentBookmarkIndex = ++_nBookmarkCount;
 
-                string sVideoTime = axMediaPlayer1.Ctlcontrols.currentPositionString;
-                double dVideoTime = axMediaPlayer1.Ctlcontrols.currentPosition;
+                BookmarkTimeData timeVideo = new BookmarkTimeData(vlcMediaPlayer.Time / 1000);
+                string sVideoTime = timeVideo.GetTime();
+                double dVideoTime = timeVideo.GetTimeDouble();
 
                 // 시간이 0시간일 경우 문구 앞에 00을 추가함
                 if (sVideoTime.Split(':').Length < 3) sVideoTime = "00:" + sVideoTime;
@@ -127,24 +233,31 @@ namespace SceneClipse
                 itemNewBookmark.BookmarkEnd.UpdateTime(dVideoTime);
 
                 // mediaplayer에서 이미지 가져오기
-                Bitmap bitmap = new Bitmap(axMediaPlayer1.Width, axMediaPlayer1.Height - 76);
+                string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
+                string sSnapshotFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
+                string sSnapshotFullPath = sSnapshotPath + @"\" + sSnapshotFileName;
+
+                // 스크린샷 경로가 없으면 새로 만듦
+                if( !Directory.Exists(sSnapshotPath) )
+                    Directory.CreateDirectory(sSnapshotPath);
+
+                vlcMediaPlayer.TakeSnapshot(sSnapshotFullPath);
+
+                // 스크린샷의 파일명에 한글 등이 포함되어 있을 경우 UTF-8로 변경되어 파일명이 깨짐.
+                // 해당 문제를 수정하기 위해 파일명이 UTF-8형식으로 깨질 경우 파일명을 변경하도록 코드 수정.
+                if( !File.Exists(sSnapshotFullPath) )
                 {
-                    using (Graphics g = Graphics.FromImage(bitmap))
-                    {
-                        g.CopyFromScreen(axMediaPlayer1.PointToScreen(new System.Drawing.Point()).X,
-                            axMediaPlayer1.PointToScreen(new System.Drawing.Point()).Y,
-                            0, 0,
-                            new System.Drawing.Size(
-                                axMediaPlayer1.Width, axMediaPlayer1.Height - 76));
-
-                    }
-                    // 이미지 표시(디버그용)                
-                    // bitmap.Save("e:\\test.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-
-                    imageList1.Images.Add(bitmap);
+                    if (File.Exists(ToUTF8(sSnapshotFullPath)))
+                        File.Move(ToUTF8(sSnapshotFullPath), sSnapshotFullPath);
                 }
-                itemNewBookmark.imageThumbnail = bitmap;
 
+
+                itemNewBookmark.sThumbnailPath = sSnapshotFileName;
+
+                Bitmap bitmap = new Bitmap(sSnapshotPath + @"\" + sSnapshotFileName);
+                itemNewBookmark.imageThumbnail = bitmap;
+                
+                
                 // 책갈피 목록에 추가            
                 _listBookmarks.Add(nCurrentBookmarkIndex, itemNewBookmark);
 
@@ -165,6 +278,13 @@ namespace SceneClipse
                 //listBookmark.DisplayMember = "sVideoTime";
                 //listBookmark.Items.Add(item);          
             }
+        }
+
+        // UTF-8 변환용 함수. VLC플레이어에서 스크린샷 생성시 UTF-8로 변환되어 생성되므로 파일명을 변환할 필요가 있을 듯.
+        private string ToUTF8(string sSnapshotFullPath)
+        {
+            byte[] bytes = Encoding.Default.GetBytes(sSnapshotFullPath);
+            return Encoding.UTF8.GetString(bytes);
         }
 
         private void listViewBookmark_SelectedIndexChanged(object sender, EventArgs e)
@@ -194,7 +314,8 @@ namespace SceneClipse
 
             BookmarkItem bookmarkSelected = _listBookmarks[_nCurrentBookmarkIdx];
 
-            axMediaPlayer1.Ctlcontrols.currentPosition = bookmarkSelected.BookmarkStart.getTimeDouble();
+            vlcMediaPlayer.Time = Convert.ToInt64(bookmarkSelected.BookmarkStart.GetTimeDouble() * 1000);
+            // axMediaPlayer1.Ctlcontrols.currentPosition = bookmarkSelected.BookmarkStart.GetTimeDouble();
 
             //pictureBox1.Image = imageList1.Images[(sender as ListView).SelectedItems[0].Index];
             // 이미지를 썸네일 크기로 변환해서 표시(TODO : 썸네일 크기 상수화)
@@ -433,7 +554,7 @@ namespace SceneClipse
                 {
                     if (item.SubItems[3].Text == _nCurrentBookmarkIdx.ToString())
                     {
-                        item.SubItems[0].Text = itemCurrent.BookmarkStart.getTime();
+                        item.SubItems[0].Text = itemCurrent.BookmarkStart.GetTime();
                         item.SubItems[2].Text = itemCurrent.sBookmarkName;
                     }
                 }
@@ -475,7 +596,8 @@ namespace SceneClipse
         private void JumpPlayerToTime(int nHour, int nMin, int nSec)
         {
             int nSeekTime = nHour * 3600 + nMin * 60 + nSec;
-            axMediaPlayer1.Ctlcontrols.currentPosition = nSeekTime;
+            vlcMediaPlayer.Time = Convert.ToInt64(nSeekTime * 1000);
+            // axMediaPlayer1.Ctlcontrols.currentPosition = nSeekTime;
         }
 
         private void numericBookmarkStartHour_ValueChanged(object sender, EventArgs e)
@@ -703,8 +825,8 @@ namespace SceneClipse
                 // kvItem.Value.
                 XmlElement nodeBookmark = xml.CreateElement("bookmarkdata");
 
-                nodeBookmark.SetAttribute("bookmarkStart", kvItem.Value.BookmarkStart.getTimeDouble().ToString());
-                nodeBookmark.SetAttribute("bookmarkEnd", kvItem.Value.BookmarkEnd.getTimeDouble().ToString());
+                nodeBookmark.SetAttribute("bookmarkStart", kvItem.Value.BookmarkStart.GetTimeDouble().ToString());
+                nodeBookmark.SetAttribute("bookmarkEnd", kvItem.Value.BookmarkEnd.GetTimeDouble().ToString());
                 nodeBookmark.SetAttribute("bookmarkName", kvItem.Value.sBookmarkName);
 
                 XmlNode nodeTags = xml.CreateElement("tags");
@@ -727,8 +849,8 @@ namespace SceneClipse
             
             string sSaveFilename;
             SaveFileDialog dialogSave = new SaveFileDialog();
-            dialogSave.Filter = "Sceneclips File(.sclip) | *.sclip";
-            sSaveFilename = textBoxOpenFileName.Text.Substring(0, textBoxOpenFileName.Text.LastIndexOf('.')) + ".sclip";
+            dialogSave.Filter = SCENECLIP_FILE_OPENTEXT;
+            sSaveFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
            
             dialogSave.FileName = sSaveFilename;
 
@@ -767,7 +889,9 @@ namespace SceneClipse
         private void buttonLoadBookmark_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialogOpen = new OpenFileDialog();
-            dialogOpen.Filter = "Sceneclips File(.sclip) | *.sclip";
+            dialogOpen.Filter = SCENECLIP_FILE_OPENTEXT;
+            string sOpenFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
+            dialogOpen.FileName = sOpenFilename;
 
             if (dialogOpen.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -814,7 +938,7 @@ namespace SceneClipse
                         _listBookmarks.Add(_nBookmarkCount, itemBookmark);
 
                         // 리스트에 등록
-                        ListViewItem item = new ListViewItem(itemBookmark.BookmarkStart.getTime());
+                        ListViewItem item = new ListViewItem(itemBookmark.BookmarkStart.GetTime());
                         item.SubItems.Add(dBookmarkStart.ToString());
                         item.SubItems.Add(sBookmarkName);
                         item.SubItems.Add(_nBookmarkCount.ToString());
@@ -876,7 +1000,7 @@ namespace SceneClipse
                     if (dTimeStart < 0) dTimeStart = 0;
 
                     BookmarkTimeData time = new BookmarkTimeData(dTimeStart);
-                    string sTimeData = time.getTime();
+                    string sTimeData = time.GetTime();
 
                     // 책갈피 목록에 추가     
                     BookmarkItem itemNewBookmark = new BookmarkItem("책갈피 " + sTimeData, dTimeStart);
@@ -940,7 +1064,8 @@ namespace SceneClipse
                 else if (comboBoxSeekType.SelectedItem.ToString() == "시간")
                     nSeekTime *= 3600;
 
-                axMediaPlayer1.Ctlcontrols.currentPosition -= nSeekTime;
+                vlcMediaPlayer.Time -= Convert.ToInt64(nSeekTime * 1000);
+                // axMediaPlayer1.Ctlcontrols.currentPosition -= nSeekTime;
             }
         }
 
@@ -954,7 +1079,8 @@ namespace SceneClipse
                 else if (comboBoxSeekType.SelectedItem.ToString() == "시간")
                     nSeekTime *= 3600;
 
-                axMediaPlayer1.Ctlcontrols.currentPosition += nSeekTime;
+                vlcMediaPlayer.Time += Convert.ToInt64(nSeekTime * 1000);
+                // axMediaPlayer1.Ctlcontrols.currentPosition += nSeekTime;
             }
         }
 
@@ -1004,8 +1130,8 @@ namespace SceneClipse
                 nodeBookmark.SetAttribute("AudioIndex", "0");
 
                 // 시작, 끝시각 보정 - 끝시각이 0이거나 적절하지 않다면 시작시각과 1초 차이나게 수정
-                double dStart = kvItem.Value.BookmarkStart.getTimeDouble();
-                double dEnd = kvItem.Value.BookmarkEnd.getTimeDouble();
+                double dStart = kvItem.Value.BookmarkStart.GetTimeDouble();
+                double dEnd = kvItem.Value.BookmarkEnd.GetTimeDouble();
                 if (dStart > dEnd)
                     dEnd = dStart + 1;
 
@@ -1038,8 +1164,9 @@ namespace SceneClipse
 
             string sSaveFilename;
             SaveFileDialog dialogSave = new SaveFileDialog();
-            dialogSave.Filter = "Bandicut Project File(.bcpf) | *.bcpf";
-            sSaveFilename = textBoxOpenFileName.Text.Substring(0, textBoxOpenFileName.Text.LastIndexOf('.')) + ".bcpf";
+            
+            dialogSave.Filter = BANDICUT_FILE_OPENTEXT;
+            sSaveFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + BANDICUT_FILE_EXT;
 
             dialogSave.FileName = sSaveFilename;
 
@@ -1062,7 +1189,7 @@ namespace SceneClipse
 
         private void buttonSetCurrentTimeToStart_Click(object sender, EventArgs e)
         {
-            BookmarkTimeData timedata = new BookmarkTimeData(axMediaPlayer1.Ctlcontrols.currentPosition);
+            BookmarkTimeData timedata = new BookmarkTimeData(vlcMediaPlayer.Time / 1000);
             _isUpdatingBookmarkInfo = true;
             numericBookmarkStartHour.Value = timedata.Hour;
             numericBookmarkStartMin.Value = timedata.Min;
@@ -1072,7 +1199,7 @@ namespace SceneClipse
 
         private void buttonSetCurrentTimeToEnd_Click(object sender, EventArgs e)
         {
-            BookmarkTimeData timedata = new BookmarkTimeData(axMediaPlayer1.Ctlcontrols.currentPosition);
+            BookmarkTimeData timedata = new BookmarkTimeData(vlcMediaPlayer.Time / 1000);
             _isUpdatingBookmarkInfo = true;
             numericBookmarkEndHour.Value = timedata.Hour;
             numericBookmarkEndMin.Value = timedata.Min;
@@ -1085,25 +1212,38 @@ namespace SceneClipse
             if ( _nBookmarkCount != 0)
             {
                 // mediaplayer에서 이미지 가져오기
-                Bitmap bitmap = new Bitmap(axMediaPlayer1.Width, axMediaPlayer1.Height - 76);
-                {
-                    using (Graphics g = Graphics.FromImage(bitmap))
-                    {
-                        g.CopyFromScreen(axMediaPlayer1.PointToScreen(new System.Drawing.Point()).X,
-                            axMediaPlayer1.PointToScreen(new System.Drawing.Point()).Y,
-                            0, 0,
-                            new System.Drawing.Size(
-                                axMediaPlayer1.Width, axMediaPlayer1.Height - 76));
-
-                    }
-                    // 이미지 표시(디버그용)                
-                    // bitmap.Save("e:\\test.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-
-                }
+                string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
+                string sSnapshotFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
+                Directory.CreateDirectory(sSnapshotPath);
+                
+                vlcMediaPlayer.TakeSnapshot(sSnapshotPath + @"\\" + sSnapshotFileName);
 
                 BookmarkItem bookmarkSelected = _listBookmarks[_nCurrentBookmarkIdx];
+
+                // 기존 썸네일 파일이 존재한다면 삭제
+                if (bookmarkSelected.sThumbnailPath != null)
+                {
+                    bookmarkSelected.imageThumbnail.Dispose();
+                    File.Delete(sSnapshotPath + @"\\" + bookmarkSelected.sThumbnailPath);
+                }
+
+                bookmarkSelected.sThumbnailPath = sSnapshotFileName;
+
+                Bitmap bitmap = new Bitmap(sSnapshotPath + @"\\" + sSnapshotFileName);
                 bookmarkSelected.imageThumbnail = bitmap;
+
                 pictureBox1.Image = bookmarkSelected.imageThumbnail.GetThumbnailImage(pictureBox1.Width, pictureBox1.Height, null, new IntPtr());
+            }
+        }
+
+        private void panelVideoProgress_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (vlcMediaPlayer.IsPlaying)
+            {
+                int nPosition = e.X - TRACKBAR_MODIFY_POSITION_VALUE;
+                if (nPosition < 0) nPosition = 0;
+
+                vlcMediaPlayer.Position = ((float)nPosition / (trackBarVideoProgress.Width - TRACKBAR_MODIFY_POSITION_VALUE * 2));
             }
         }
     }
