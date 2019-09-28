@@ -70,6 +70,8 @@
             this.numericSeekTimeAmount = new System.Windows.Forms.NumericUpDown();
             this.comboBoxSeekType = new System.Windows.Forms.ComboBox();
             this.checkAutoSeekToTime = new System.Windows.Forms.CheckBox();
+            this.buttonSetCurrentTimeToStart = new System.Windows.Forms.Button();
+            this.buttonSetCurrentTimeToEnd = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.axMediaPlayer1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -116,19 +118,19 @@
             // 
             // textBoxOpenFileName
             // 
-            this.textBoxOpenFileName.Location = new System.Drawing.Point(14, 82);
+            this.textBoxOpenFileName.Location = new System.Drawing.Point(12, 80);
             this.textBoxOpenFileName.MaximumSize = new System.Drawing.Size(150, 500);
-            this.textBoxOpenFileName.MinimumSize = new System.Drawing.Size(150, 4);
+            this.textBoxOpenFileName.MinimumSize = new System.Drawing.Size(100, 4);
             this.textBoxOpenFileName.Multiline = true;
             this.textBoxOpenFileName.Name = "textBoxOpenFileName";
             this.textBoxOpenFileName.ReadOnly = true;
             this.textBoxOpenFileName.ShortcutsEnabled = false;
-            this.textBoxOpenFileName.Size = new System.Drawing.Size(150, 36);
+            this.textBoxOpenFileName.Size = new System.Drawing.Size(139, 36);
             this.textBoxOpenFileName.TabIndex = 8;
             // 
             // labelPlayTime
             // 
-            this.labelPlayTime.Location = new System.Drawing.Point(162, 12);
+            this.labelPlayTime.Location = new System.Drawing.Point(91, 12);
             this.labelPlayTime.Name = "labelPlayTime";
             this.labelPlayTime.Size = new System.Drawing.Size(100, 55);
             this.labelPlayTime.TabIndex = 9;
@@ -176,11 +178,13 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(230, 12);
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox1.Location = new System.Drawing.Point(159, 12);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(104, 104);
             this.pictureBox1.TabIndex = 14;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
             // 
             // tableLayoutPanel1
             // 
@@ -189,13 +193,13 @@
             this.tableLayoutPanel1.Controls.Add(this.textBoxBookmarkName, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.panelTagList, 0, 2);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(340, 12);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(269, 12);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 41F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(540, 104);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(611, 104);
             this.tableLayoutPanel1.TabIndex = 15;
             // 
             // textBoxBookmarkName
@@ -208,38 +212,43 @@
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 13;
+            this.tableLayoutPanel2.ColumnCount = 15;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 15F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 15F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 15F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 15F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 15F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 15F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.Controls.Add(this.labelBookmarkStart, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label2, 2, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label3, 4, 0);
-            this.tableLayoutPanel2.Controls.Add(this.labelBookmarkEnd, 6, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label4, 8, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label5, 10, 0);
-            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkStartHour, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkStartMin, 3, 0);
-            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkStartSec, 5, 0);
-            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkEndHour, 7, 0);
-            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkEndMin, 9, 0);
-            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkEndSec, 11, 0);
-            this.tableLayoutPanel2.Controls.Add(this.checkAutoSeekToTime, 12, 0);
+            this.tableLayoutPanel2.Controls.Add(this.label2, 3, 0);
+            this.tableLayoutPanel2.Controls.Add(this.label3, 5, 0);
+            this.tableLayoutPanel2.Controls.Add(this.labelBookmarkEnd, 7, 0);
+            this.tableLayoutPanel2.Controls.Add(this.label4, 9, 0);
+            this.tableLayoutPanel2.Controls.Add(this.label5, 11, 0);
+            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkStartHour, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkStartMin, 4, 0);
+            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkStartSec, 6, 0);
+            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkEndHour, 8, 0);
+            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkEndMin, 10, 0);
+            this.tableLayoutPanel2.Controls.Add(this.numericBookmarkEndSec, 12, 0);
+            this.tableLayoutPanel2.Controls.Add(this.checkAutoSeekToTime, 14, 0);
+            this.tableLayoutPanel2.Controls.Add(this.buttonSetCurrentTimeToEnd, 13, 0);
+            this.tableLayoutPanel2.Controls.Add(this.buttonSetCurrentTimeToStart, 1, 0);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 29);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(534, 24);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(605, 24);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
             // labelBookmarkStart
@@ -255,7 +264,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(88, 7);
+            this.label2.Location = new System.Drawing.Point(108, 7);
             this.label2.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(9, 12);
@@ -265,7 +274,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(143, 7);
+            this.label3.Location = new System.Drawing.Point(163, 7);
             this.label3.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(9, 12);
@@ -274,7 +283,7 @@
             // 
             // labelBookmarkEnd
             // 
-            this.labelBookmarkEnd.Location = new System.Drawing.Point(198, 7);
+            this.labelBookmarkEnd.Location = new System.Drawing.Point(218, 7);
             this.labelBookmarkEnd.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.labelBookmarkEnd.Name = "labelBookmarkEnd";
             this.labelBookmarkEnd.Size = new System.Drawing.Size(39, 12);
@@ -285,7 +294,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(283, 7);
+            this.label4.Location = new System.Drawing.Point(303, 7);
             this.label4.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(9, 12);
@@ -295,7 +304,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(338, 7);
+            this.label5.Location = new System.Drawing.Point(358, 7);
             this.label5.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(9, 12);
@@ -304,7 +313,7 @@
             // 
             // numericBookmarkStartHour
             // 
-            this.numericBookmarkStartHour.Location = new System.Drawing.Point(48, 3);
+            this.numericBookmarkStartHour.Location = new System.Drawing.Point(68, 3);
             this.numericBookmarkStartHour.Name = "numericBookmarkStartHour";
             this.numericBookmarkStartHour.Size = new System.Drawing.Size(34, 21);
             this.numericBookmarkStartHour.TabIndex = 4;
@@ -313,7 +322,7 @@
             // 
             // numericBookmarkStartMin
             // 
-            this.numericBookmarkStartMin.Location = new System.Drawing.Point(103, 3);
+            this.numericBookmarkStartMin.Location = new System.Drawing.Point(123, 3);
             this.numericBookmarkStartMin.Maximum = new decimal(new int[] {
             61,
             0,
@@ -332,7 +341,7 @@
             // 
             // numericBookmarkStartSec
             // 
-            this.numericBookmarkStartSec.Location = new System.Drawing.Point(158, 3);
+            this.numericBookmarkStartSec.Location = new System.Drawing.Point(178, 3);
             this.numericBookmarkStartSec.Maximum = new decimal(new int[] {
             60,
             0,
@@ -351,7 +360,7 @@
             // 
             // numericBookmarkEndHour
             // 
-            this.numericBookmarkEndHour.Location = new System.Drawing.Point(243, 3);
+            this.numericBookmarkEndHour.Location = new System.Drawing.Point(263, 3);
             this.numericBookmarkEndHour.Name = "numericBookmarkEndHour";
             this.numericBookmarkEndHour.Size = new System.Drawing.Size(34, 21);
             this.numericBookmarkEndHour.TabIndex = 7;
@@ -360,7 +369,7 @@
             // 
             // numericBookmarkEndMin
             // 
-            this.numericBookmarkEndMin.Location = new System.Drawing.Point(298, 3);
+            this.numericBookmarkEndMin.Location = new System.Drawing.Point(318, 3);
             this.numericBookmarkEndMin.Maximum = new decimal(new int[] {
             60,
             0,
@@ -379,7 +388,7 @@
             // 
             // numericBookmarkEndSec
             // 
-            this.numericBookmarkEndSec.Location = new System.Drawing.Point(353, 3);
+            this.numericBookmarkEndSec.Location = new System.Drawing.Point(373, 3);
             this.numericBookmarkEndSec.Maximum = new decimal(new int[] {
             60,
             0,
@@ -409,7 +418,7 @@
             this.panelTagList.Name = "panelTagList";
             this.panelTagList.RowCount = 1;
             this.panelTagList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.panelTagList.Size = new System.Drawing.Size(534, 42);
+            this.panelTagList.Size = new System.Drawing.Size(605, 42);
             this.panelTagList.TabIndex = 2;
             // 
             // label6
@@ -492,6 +501,7 @@
             this.buttonExportBandicut.TabIndex = 19;
             this.buttonExportBandicut.Text = "반디컷 프로젝트로";
             this.buttonExportBandicut.UseVisualStyleBackColor = true;
+            this.buttonExportBandicut.Click += new System.EventHandler(this.buttonExportBandicut_Click);
             // 
             // buttonSeekPrev
             // 
@@ -548,12 +558,34 @@
             this.checkAutoSeekToTime.AutoSize = true;
             this.checkAutoSeekToTime.Checked = true;
             this.checkAutoSeekToTime.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkAutoSeekToTime.Location = new System.Drawing.Point(393, 3);
+            this.checkAutoSeekToTime.Location = new System.Drawing.Point(433, 3);
             this.checkAutoSeekToTime.Name = "checkAutoSeekToTime";
             this.checkAutoSeekToTime.Size = new System.Drawing.Size(136, 16);
             this.checkAutoSeekToTime.TabIndex = 10;
             this.checkAutoSeekToTime.Text = "시간수정시 자동이동";
             this.checkAutoSeekToTime.UseVisualStyleBackColor = true;
+            // 
+            // buttonSetCurrentTimeToStart
+            // 
+            this.buttonSetCurrentTimeToStart.Location = new System.Drawing.Point(48, 2);
+            this.buttonSetCurrentTimeToStart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 0);
+            this.buttonSetCurrentTimeToStart.Name = "buttonSetCurrentTimeToStart";
+            this.buttonSetCurrentTimeToStart.Size = new System.Drawing.Size(14, 22);
+            this.buttonSetCurrentTimeToStart.TabIndex = 11;
+            this.buttonSetCurrentTimeToStart.Text = "[";
+            this.buttonSetCurrentTimeToStart.UseVisualStyleBackColor = true;
+            this.buttonSetCurrentTimeToStart.Click += new System.EventHandler(this.buttonSetCurrentTimeToStart_Click);
+            // 
+            // buttonSetCurrentTimeToEnd
+            // 
+            this.buttonSetCurrentTimeToEnd.Location = new System.Drawing.Point(413, 2);
+            this.buttonSetCurrentTimeToEnd.Margin = new System.Windows.Forms.Padding(3, 2, 3, 0);
+            this.buttonSetCurrentTimeToEnd.Name = "buttonSetCurrentTimeToEnd";
+            this.buttonSetCurrentTimeToEnd.Size = new System.Drawing.Size(14, 22);
+            this.buttonSetCurrentTimeToEnd.TabIndex = 12;
+            this.buttonSetCurrentTimeToEnd.Text = "]";
+            this.buttonSetCurrentTimeToEnd.UseVisualStyleBackColor = true;
+            this.buttonSetCurrentTimeToEnd.Click += new System.EventHandler(this.buttonSetCurrentTimeToEnd_Click);
             // 
             // Form1
             // 
@@ -639,6 +671,8 @@
         private System.Windows.Forms.NumericUpDown numericSeekTimeAmount;
         private System.Windows.Forms.ComboBox comboBoxSeekType;
         private System.Windows.Forms.CheckBox checkAutoSeekToTime;
+        private System.Windows.Forms.Button buttonSetCurrentTimeToStart;
+        private System.Windows.Forms.Button buttonSetCurrentTimeToEnd;
     }
 }
 

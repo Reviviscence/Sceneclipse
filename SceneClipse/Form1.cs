@@ -96,8 +96,8 @@ namespace SceneClipse
 
         private void timerPlayTime_Tick(object sender, EventArgs e)
         {
-            if (axMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPlaying ||
-                axMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPaused)
+            if (axMediaPlayer1.playState == WMPPlayState.wmppsPlaying ||
+                axMediaPlayer1.playState == WMPPlayState.wmppsPaused)
             {
                 string sVideoTime = axMediaPlayer1.Ctlcontrols.currentPositionString;
                 labelPlayTime.Text = "재생 중 : \n" + sVideoTime;
@@ -140,9 +140,6 @@ namespace SceneClipse
                     }
                     // 이미지 표시(디버그용)                
                     // bitmap.Save("e:\\test.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-
-                    // if (pictureBox1.Image != null) pictureBox1.Image.Dispose();
-                    // pictureBox1.Image = bitmap.Clone(new Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
 
                     imageList1.Images.Add(bitmap);
                 }
@@ -202,7 +199,10 @@ namespace SceneClipse
             //pictureBox1.Image = imageList1.Images[(sender as ListView).SelectedItems[0].Index];
             // 이미지를 썸네일 크기로 변환해서 표시(TODO : 썸네일 크기 상수화)
             if (bookmarkSelected.imageThumbnail != null)
-                pictureBox1.Image = bookmarkSelected.imageThumbnail.GetThumbnailImage(imageList1.ImageSize.Width, imageList1.ImageSize.Height, null, new IntPtr());
+                pictureBox1.Image = bookmarkSelected.imageThumbnail.GetThumbnailImage(pictureBox1.Width, pictureBox1.Height, null, new IntPtr());
+            else if (pictureBox1.Image != null)
+                pictureBox1.Image = null;
+          
 
             textBoxBookmarkName.Text = bookmarkSelected.sBookmarkName;
 
@@ -471,6 +471,7 @@ namespace SceneClipse
             UpdateBookmarkDataFromInput();
         }
 
+        // 플레이어의 시간 변경
         private void JumpPlayerToTime(int nHour, int nMin, int nSec)
         {
             int nSeekTime = nHour * 3600 + nMin * 60 + nSec;
@@ -479,150 +480,199 @@ namespace SceneClipse
 
         private void numericBookmarkStartHour_ValueChanged(object sender, EventArgs e)
         {
-            if (checkAutoSeekToTime.Checked)
+            if (_isUpdatingBookmarkInfo == false)
             {
-                JumpPlayerToTime(
-                    Convert.ToInt32(numericBookmarkStartHour.Value), 
-                    Convert.ToInt32(numericBookmarkStartMin.Value),
-                    Convert.ToInt32(numericBookmarkStartSec.Value));
-            }
+                if (checkAutoSeekToTime.Checked)
+                {
+                    JumpPlayerToTime(
+                        Convert.ToInt32(numericBookmarkStartHour.Value),
+                        Convert.ToInt32(numericBookmarkStartMin.Value),
+                        Convert.ToInt32(numericBookmarkStartSec.Value));
+                }
 
-            UpdateBookmarkDataFromInput();
+                UpdateBookmarkDataFromInput();
+            }
         }
 
         private void numericBookmarkStartMin_ValueChanged(object sender, EventArgs e)
         {
-            // 60을 넘겼을 경우 시간에 +1 후 초기화
-            if((sender as NumericUpDown).Value == 60)
+            if (_isUpdatingBookmarkInfo == false)
             {
-                _isUpdatingBookmarkInfo = true;
-                numericBookmarkStartMin.Value = 0;
-                numericBookmarkStartHour.Value++;
-                _isUpdatingBookmarkInfo = false;
-            }
-            if ((sender as NumericUpDown).Value < 0)
-            {
-                _isUpdatingBookmarkInfo = true;
-                numericBookmarkStartMin.Value = 59;
-                numericBookmarkStartHour.Value--;
-                _isUpdatingBookmarkInfo = false;
-            }
+                // 60을 넘겼을 경우 시간에 +1 후 초기화
+                if ((sender as NumericUpDown).Value == 60)
+                {
+                    _isUpdatingBookmarkInfo = true;
+                    numericBookmarkStartMin.Value = 0;
+                    numericBookmarkStartHour.Value++;
+                    _isUpdatingBookmarkInfo = false;
+                }
+                if ((sender as NumericUpDown).Value < 0)
+                {
+                    // 0시간이라 더이상 내릴 수 없을 경우 값을 변경하지 않음
+                    if (numericBookmarkStartHour.Value == 0)
+                        numericBookmarkStartMin.Value = 0;
+                    else
+                    {
+                        _isUpdatingBookmarkInfo = true;
+                        numericBookmarkStartMin.Value = 59;
+                        numericBookmarkStartHour.Value--;
+                        _isUpdatingBookmarkInfo = false;
+                    }
+                }
 
-            if (checkAutoSeekToTime.Checked)
-            {
-                JumpPlayerToTime(
-                    Convert.ToInt32(numericBookmarkStartHour.Value),
-                    Convert.ToInt32(numericBookmarkStartMin.Value),
-                    Convert.ToInt32(numericBookmarkStartSec.Value));
-            }
+                if (checkAutoSeekToTime.Checked)
+                {
+                    JumpPlayerToTime(
+                        Convert.ToInt32(numericBookmarkStartHour.Value),
+                        Convert.ToInt32(numericBookmarkStartMin.Value),
+                        Convert.ToInt32(numericBookmarkStartSec.Value));
+                }
 
-            UpdateBookmarkDataFromInput();
+                UpdateBookmarkDataFromInput();
+            }
         }
 
         private void numericBookmarkStartSec_ValueChanged(object sender, EventArgs e)
         {
-            // 60을 넘겼을 경우 시간에 +1 후 초기화
-            if ((sender as NumericUpDown).Value == 60)
+            if (_isUpdatingBookmarkInfo == false)
             {
-                _isUpdatingBookmarkInfo = true;
-                numericBookmarkStartSec.Value = 0;
-                numericBookmarkStartMin.Value++;
-                _isUpdatingBookmarkInfo = false;
-            }
-            if ((sender as NumericUpDown).Value < 0)
-            {
-                _isUpdatingBookmarkInfo = true;
-                numericBookmarkStartSec.Value = 59;
-                numericBookmarkStartMin.Value--;
-                _isUpdatingBookmarkInfo = false;
-            }
+                // 60을 넘겼을 경우 시간에 +1 후 초기화
+                if ((sender as NumericUpDown).Value == 60)
+                {
+                    _isUpdatingBookmarkInfo = true;
+                    numericBookmarkStartSec.Value = 0;
+                    numericBookmarkStartMin.Value++;
+                    _isUpdatingBookmarkInfo = false;
+                }
+                if ((sender as NumericUpDown).Value < 0)
+                {
+                    // 0시간 0분이라 더이상 내릴 수 없을 경우 값을 변경하지 않음
+                    if (numericBookmarkStartHour.Value == 0
+                        && numericBookmarkStartMin.Value == 0)
+                        numericBookmarkStartSec.Value = 0;
+                    else
+                    {
+                        _isUpdatingBookmarkInfo = true;
+                        numericBookmarkStartSec.Value = 59;
+                        numericBookmarkStartMin.Value--;
+                        _isUpdatingBookmarkInfo = false;
+                    }
+                }
 
-            if (checkAutoSeekToTime.Checked)
-            {
-                JumpPlayerToTime(
-                    Convert.ToInt32(numericBookmarkStartHour.Value),
-                    Convert.ToInt32(numericBookmarkStartMin.Value),
-                    Convert.ToInt32(numericBookmarkStartSec.Value));
-            }
+                if (checkAutoSeekToTime.Checked)
+                {
+                    JumpPlayerToTime(
+                        Convert.ToInt32(numericBookmarkStartHour.Value),
+                        Convert.ToInt32(numericBookmarkStartMin.Value),
+                        Convert.ToInt32(numericBookmarkStartSec.Value));
+                }
 
-            UpdateBookmarkDataFromInput();
+                UpdateBookmarkDataFromInput();
+            }
         }
 
         private void numericBookmarkEndHour_ValueChanged(object sender, EventArgs e)
         {
-            if (checkAutoSeekToTime.Checked)
+            if (_isUpdatingBookmarkInfo == false)
             {
-                JumpPlayerToTime(
-                    Convert.ToInt32(numericBookmarkEndHour.Value),
-                    Convert.ToInt32(numericBookmarkEndMin.Value),
-                    Convert.ToInt32(numericBookmarkEndSec.Value));
-            }
+                if (checkAutoSeekToTime.Checked)
+                {
+                    JumpPlayerToTime(
+                        Convert.ToInt32(numericBookmarkEndHour.Value),
+                        Convert.ToInt32(numericBookmarkEndMin.Value),
+                        Convert.ToInt32(numericBookmarkEndSec.Value));
+                }
 
-            UpdateBookmarkDataFromInput();
+                UpdateBookmarkDataFromInput();
+            }
         }
 
         private void numericBookmarkEndMin_ValueChanged(object sender, EventArgs e)
         {
-            // 60을 넘겼을 경우 시간에 +1 후 초기화
-            if ((sender as NumericUpDown).Value == 60)
+            if (_isUpdatingBookmarkInfo == false)
             {
-                _isUpdatingBookmarkInfo = true;
-                numericBookmarkEndMin.Value = 0;
-                numericBookmarkEndHour.Value++;
-                _isUpdatingBookmarkInfo = false;
-            }
-            if ((sender as NumericUpDown).Value < 0)
-            {
-                _isUpdatingBookmarkInfo = true;
-                numericBookmarkEndMin.Value = 59;
-                numericBookmarkEndHour.Value--;
-                _isUpdatingBookmarkInfo = false;
-            }
+                // 60을 넘겼을 경우 시간에 +1 후 초기화
+                if ((sender as NumericUpDown).Value == 60)
+                {
+                    _isUpdatingBookmarkInfo = true;
+                    numericBookmarkEndMin.Value = 0;
+                    numericBookmarkEndHour.Value++;
+                    _isUpdatingBookmarkInfo = false;
+                }
+                if ((sender as NumericUpDown).Value < 0)
+                {
+                    // 0시간이라 더이상 내릴 수 없을 경우 값을 변경하지 않음
+                    if (numericBookmarkEndHour.Value == 0)
+                        numericBookmarkEndMin.Value = 0;
+                    else
+                    {
+                        _isUpdatingBookmarkInfo = true;
+                        numericBookmarkEndMin.Value = 59;
+                        numericBookmarkEndHour.Value--;
+                        _isUpdatingBookmarkInfo = false;
+                    }
+                }
 
-            if (checkAutoSeekToTime.Checked)
-            {
-                JumpPlayerToTime(
-                    Convert.ToInt32(numericBookmarkEndHour.Value),
-                    Convert.ToInt32(numericBookmarkEndMin.Value),
-                    Convert.ToInt32(numericBookmarkEndSec.Value));
-            }
+                if (checkAutoSeekToTime.Checked)
+                {
+                    JumpPlayerToTime(
+                        Convert.ToInt32(numericBookmarkEndHour.Value),
+                        Convert.ToInt32(numericBookmarkEndMin.Value),
+                        Convert.ToInt32(numericBookmarkEndSec.Value));
+                }
 
-            UpdateBookmarkDataFromInput();
+                UpdateBookmarkDataFromInput();
+            }
         }
 
         private void numericBookmarkEndSec_ValueChanged(object sender, EventArgs e)
         {
-            // 60을 넘겼을 경우 시간에 +1 후 초기화
-            if ((sender as NumericUpDown).Value == 60)
+            if (_isUpdatingBookmarkInfo == false)
             {
-                _isUpdatingBookmarkInfo = true;
-                numericBookmarkEndSec.Value = 0;
-                numericBookmarkEndMin.Value++;
-                _isUpdatingBookmarkInfo = false;
-            }
-            if ((sender as NumericUpDown).Value < 0)
-            {
-                _isUpdatingBookmarkInfo = true;
-                numericBookmarkEndSec.Value = 59;
-                numericBookmarkEndMin.Value--;
-                _isUpdatingBookmarkInfo = false;
-            }
-            
-            if (checkAutoSeekToTime.Checked)
-            {
-                JumpPlayerToTime(
-                    Convert.ToInt32(numericBookmarkEndHour.Value),
-                    Convert.ToInt32(numericBookmarkEndMin.Value),
-                    Convert.ToInt32(numericBookmarkEndSec.Value));
-            }
+                // 60을 넘겼을 경우 시간에 +1 후 초기화
+                if ((sender as NumericUpDown).Value == 60)
+                {
+                    _isUpdatingBookmarkInfo = true;
+                    numericBookmarkEndSec.Value = 0;
+                    numericBookmarkEndMin.Value++;
+                    _isUpdatingBookmarkInfo = false;
+                }
+                if ((sender as NumericUpDown).Value < 0)
+                {
+                    // 0시간 0분이라 더이상 내릴 수 없을 경우 값을 변경하지 않음
+                    if (numericBookmarkEndHour.Value == 0
+                        && numericBookmarkEndMin.Value == 0)
+                        numericBookmarkEndSec.Value = 0;
+                    else
+                    {
+                        _isUpdatingBookmarkInfo = true;
+                        numericBookmarkEndSec.Value = 59;
+                        numericBookmarkEndMin.Value--;
+                        _isUpdatingBookmarkInfo = false;
+                    }
+                }
 
-            UpdateBookmarkDataFromInput();
+                if (checkAutoSeekToTime.Checked)
+                {
+                    JumpPlayerToTime(
+                        Convert.ToInt32(numericBookmarkEndHour.Value),
+                        Convert.ToInt32(numericBookmarkEndMin.Value),
+                        Convert.ToInt32(numericBookmarkEndSec.Value));
+                }
+
+                UpdateBookmarkDataFromInput();
+            }
         }
 
         // 책갈피 정보를 XML화해서 파일로 저장
         private void buttonSaveBookmark_Click(object sender, EventArgs e)
         {
             XmlDocument xml = new XmlDocument();
+
+            // utf-16 인코딩 정의
+            XmlDeclaration xmldecl = xml.CreateXmlDeclaration("1.0", "utf-16", null);
+            xml.InsertBefore(xmldecl, xml.DocumentElement);
+
             XmlNode nodeRoot = xml.CreateElement("bookmarks");
             xml.AppendChild(nodeRoot);
 
@@ -653,8 +703,8 @@ namespace SceneClipse
                 // kvItem.Value.
                 XmlElement nodeBookmark = xml.CreateElement("bookmarkdata");
 
-                nodeBookmark.SetAttribute("bookmarkStart", kvItem.Value.BookmarkStart.getTime());
-                nodeBookmark.SetAttribute("bookmarkEnd", kvItem.Value.BookmarkEnd.getTime());
+                nodeBookmark.SetAttribute("bookmarkStart", kvItem.Value.BookmarkStart.getTimeDouble().ToString());
+                nodeBookmark.SetAttribute("bookmarkEnd", kvItem.Value.BookmarkEnd.getTimeDouble().ToString());
                 nodeBookmark.SetAttribute("bookmarkName", kvItem.Value.sBookmarkName);
 
                 XmlNode nodeTags = xml.CreateElement("tags");
@@ -677,8 +727,8 @@ namespace SceneClipse
             
             string sSaveFilename;
             SaveFileDialog dialogSave = new SaveFileDialog();
-            dialogSave.Filter = "XML File | *.xml";
-            sSaveFilename = textBoxOpenFileName.Text.Substring(0, textBoxOpenFileName.Text.LastIndexOf('.')) + ".xml";
+            dialogSave.Filter = "Sceneclips File(.sclip) | *.sclip";
+            sSaveFilename = textBoxOpenFileName.Text.Substring(0, textBoxOpenFileName.Text.LastIndexOf('.')) + ".sclip";
            
             dialogSave.FileName = sSaveFilename;
 
@@ -717,11 +767,14 @@ namespace SceneClipse
         private void buttonLoadBookmark_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialogOpen = new OpenFileDialog();
-            dialogOpen.Filter = "XML File | *.xml";
+            dialogOpen.Filter = "Sceneclips File(.sclip) | *.sclip";
 
-            if(dialogOpen.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (dialogOpen.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 XmlDocument xmlOpen = new XmlDocument();
+
+                // utf-16 인코딩 정의
+                XmlDeclaration xmldecl = xmlOpen.CreateXmlDeclaration("1.0", "utf-16", null);
                 try
                 {
                     xmlOpen.Load(dialogOpen.FileName);
@@ -860,9 +913,6 @@ namespace SceneClipse
                         // 이미지 표시(디버그용)                
                         // bitmap.Save("e:\\test.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
-                        // if (pictureBox1.Image != null) pictureBox1.Image.Dispose();
-                        // pictureBox1.Image = bitmap.Clone(new Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
-
                         imageList1.Images.Add(bitmap);
                     }
                     itemNewBookmark.imageThumbnail = bitmap;
@@ -905,6 +955,155 @@ namespace SceneClipse
                     nSeekTime *= 3600;
 
                 axMediaPlayer1.Ctlcontrols.currentPosition += nSeekTime;
+            }
+        }
+
+        private void buttonExportBandicut_Click(object sender, EventArgs e)
+        {
+            XmlDocument xml = new XmlDocument();
+
+            // utf-16 인코딩 정의
+            XmlDeclaration xmldecl = xml.CreateXmlDeclaration("1.0", "utf-16", null);
+            xml.InsertBefore(xmldecl, xml.DocumentElement);
+
+            XmlNode nodeRoot = xml.CreateElement("BandicutProjectFile");
+            xml.AppendChild(nodeRoot);
+
+            // 각 책갈피 리스트를 반복해 입력
+            // 반디컷 프로젝트파일 예제
+            /*
+             * <?xml version="1.0" encoding="utf-16"?>
+             *      <BandicutProjectFile>
+             *          <Setting Type="Cut" Join="No" />
+             *          <VideoItem	Index="0"	Crc="0"	VideoIndex="0"	AudioIndex="0"
+		                    Start="0"		End="1921934000(시간값(초) * 1000000)"
+		                    Title="Notitle"
+		                    File="D:\Movs\working\2017-03-30-2114-47-페르소나4.mp4" />
+                        <VideoItem	Index="1"	Crc="0"	VideoIndex="0"	AudioIndex="0"
+		                    Start="1915934000"		End="7049700000"
+		                    Title="Notitle"
+		                    File="D:\Movs\working\2017-03-30-2114-47-페르소나4.mp4" />
+             *      </BandicutProjectFile>
+             * </xml>
+             * */
+
+            // <Setting Type="Cut" Join="No" />
+            XmlElement nodeSetting = xml.CreateElement("Setting");
+            nodeSetting.SetAttribute("Type", "Cut");
+            nodeSetting.SetAttribute("Join", "No");
+            nodeRoot.AppendChild(nodeSetting);
+
+            int nIdx = 0;
+            foreach (KeyValuePair<int, BookmarkItem> kvItem in _listBookmarks)
+            {
+                XmlElement nodeBookmark = xml.CreateElement("VideoItem");
+
+                nodeBookmark.SetAttribute("Index", nIdx.ToString());
+                nodeBookmark.SetAttribute("Crc", "0");
+                nodeBookmark.SetAttribute("VideoIndex", "0");
+                nodeBookmark.SetAttribute("AudioIndex", "0");
+
+                // 시작, 끝시각 보정 - 끝시각이 0이거나 적절하지 않다면 시작시각과 1초 차이나게 수정
+                double dStart = kvItem.Value.BookmarkStart.getTimeDouble();
+                double dEnd = kvItem.Value.BookmarkEnd.getTimeDouble();
+                if (dStart > dEnd)
+                    dEnd = dStart + 1;
+
+                nodeBookmark.SetAttribute("Start", (dStart * 1000000).ToString());
+                nodeBookmark.SetAttribute("End", (dEnd * 1000000).ToString());
+                nodeBookmark.SetAttribute("Title", kvItem.Value.sBookmarkName);
+
+                // 파일경로 보정 - 파일명만 남게 수정
+                string sFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1);
+                nodeBookmark.SetAttribute("File", sFileName);
+
+                XmlNode nodeTags = xml.CreateElement("tags");
+                nodeBookmark.AppendChild(nodeTags);
+
+                // 태그 저장(기본 반디컷 프로젝트에서는 사용되지 않지만 임시로 등록. 나중에 호환 가능할지도?)
+                if (kvItem.Value.vTags.Count > 0)
+                {
+                    foreach (string sTag in kvItem.Value.vTags)
+                    {
+                        XmlElement nodeTag = xml.CreateElement("tag");
+                        nodeTag.SetAttribute("name", sTag);
+                        nodeTags.AppendChild(nodeTag);
+                    }
+                }
+
+                nodeRoot.AppendChild(nodeBookmark);
+
+                nIdx++;
+            }
+
+            string sSaveFilename;
+            SaveFileDialog dialogSave = new SaveFileDialog();
+            dialogSave.Filter = "Bandicut Project File(.bcpf) | *.bcpf";
+            sSaveFilename = textBoxOpenFileName.Text.Substring(0, textBoxOpenFileName.Text.LastIndexOf('.')) + ".bcpf";
+
+            dialogSave.FileName = sSaveFilename;
+
+            if (dialogSave.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                try 
+                {
+                    xml.Save(dialogSave.FileName);
+                   // using (TextWriter sw = new StreamWriter(dialogSave.FileName, false, Encoding.UTF32))
+                   //     xml.Save(sw);
+
+                    MessageBox.Show("저장 : " + dialogSave.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("저장 실패 : " + ex.Message);
+                }
+            }
+        }
+
+        private void buttonSetCurrentTimeToStart_Click(object sender, EventArgs e)
+        {
+            BookmarkTimeData timedata = new BookmarkTimeData(axMediaPlayer1.Ctlcontrols.currentPosition);
+            _isUpdatingBookmarkInfo = true;
+            numericBookmarkStartHour.Value = timedata.Hour;
+            numericBookmarkStartMin.Value = timedata.Min;
+            numericBookmarkStartSec.Value = timedata.Sec;
+            _isUpdatingBookmarkInfo = false;
+        }
+
+        private void buttonSetCurrentTimeToEnd_Click(object sender, EventArgs e)
+        {
+            BookmarkTimeData timedata = new BookmarkTimeData(axMediaPlayer1.Ctlcontrols.currentPosition);
+            _isUpdatingBookmarkInfo = true;
+            numericBookmarkEndHour.Value = timedata.Hour;
+            numericBookmarkEndMin.Value = timedata.Min;
+            numericBookmarkEndSec.Value = timedata.Sec;
+            _isUpdatingBookmarkInfo = false;
+        }
+
+        private void pictureBox1_DoubleClick(object sender, EventArgs e)
+        {
+            if ( _nBookmarkCount != 0)
+            {
+                // mediaplayer에서 이미지 가져오기
+                Bitmap bitmap = new Bitmap(axMediaPlayer1.Width, axMediaPlayer1.Height - 76);
+                {
+                    using (Graphics g = Graphics.FromImage(bitmap))
+                    {
+                        g.CopyFromScreen(axMediaPlayer1.PointToScreen(new System.Drawing.Point()).X,
+                            axMediaPlayer1.PointToScreen(new System.Drawing.Point()).Y,
+                            0, 0,
+                            new System.Drawing.Size(
+                                axMediaPlayer1.Width, axMediaPlayer1.Height - 76));
+
+                    }
+                    // 이미지 표시(디버그용)                
+                    // bitmap.Save("e:\\test.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                }
+
+                BookmarkItem bookmarkSelected = _listBookmarks[_nCurrentBookmarkIdx];
+                bookmarkSelected.imageThumbnail = bitmap;
+                pictureBox1.Image = bookmarkSelected.imageThumbnail.GetThumbnailImage(pictureBox1.Width, pictureBox1.Height, null, new IntPtr());
             }
         }
     }

@@ -35,6 +35,19 @@ bld/
 [Oo]bj/
 [Ll]og/
 
+Sceneclipse/[Dd]ebug/
+Sceneclipse/[Dd]ebugPublic/
+Sceneclipse/[Rr]elease/
+Sceneclipse/[Rr]eleases/
+Sceneclipse/x64/
+Sceneclipse/x86/
+Sceneclipse/[Aa][Rr][Mm]/
+Sceneclipse/[Aa][Rr][Mm]64/
+Sceneclipse/bld/
+Sceneclipse/[Bb]in/
+Sceneclipse/[Oo]bj/
+Sceneclipse/[Ll]og/
+
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
