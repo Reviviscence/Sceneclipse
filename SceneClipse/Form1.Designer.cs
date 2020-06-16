@@ -178,6 +178,7 @@
             // 
             this.listViewBookmark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.listViewBookmark.FullRowSelect = true;
+            this.listViewBookmark.HideSelection = false;
             this.listViewBookmark.Location = new System.Drawing.Point(12, 122);
             this.listViewBookmark.MultiSelect = false;
             this.listViewBookmark.Name = "listViewBookmark";
