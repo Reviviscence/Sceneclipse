@@ -11,7 +11,6 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Xml;
 using System.Threading;
-using WMPLib;
 
 namespace SceneClipse
 {

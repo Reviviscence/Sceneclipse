@@ -20,7 +20,11 @@ namespace SceneClipse
         public int nModifySec;
         public string sFileName;
 
-        internal List<BookmarkItem> VBookmarkGenerated { get => _vBookmarkGenerated; set => _vBookmarkGenerated = value; }
+        internal List<BookmarkItem> VBookmarkGenerated
+        {
+            get { return _vBookmarkGenerated; }
+            set { _vBookmarkGenerated = value; }
+        }
 
         public FormParseDialog()
         {
