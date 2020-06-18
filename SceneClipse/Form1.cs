@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Xml;
 using System.Threading;
+using Vlc.DotNet.Core;
 
 namespace SceneClipse
 {
@@ -46,6 +47,7 @@ namespace SceneClipse
         private string _sFilehashPlaying = "";           // 현재 미사용
         private bool _isUpdatingBookmarkInfo = false;
         private bool _isWaitingForJump = false;
+        private bool _isFinishedPlaying = false;
         private int _nVideoProgress = 0;
         private string _sVideoPlaytime = "";
         private int _nTrackbarMaximum = 0;
@@ -77,6 +79,7 @@ namespace SceneClipse
             this.vlcMediaPlayer.EndInit();
 
             vlcMediaPlayer.PositionChanged += VlcMediaPlayer_PositionChanged;
+            vlcMediaPlayer.Stopped += VlcMediaPlayer_Stopped;
             vlcMediaPlayer.EncounteredError += (sender, e) =>
             {
                 Console.Error.Write("Error : " + e);
@@ -107,7 +110,8 @@ namespace SceneClipse
 
         private void panelVideoProgress_MouseMove(object sender, MouseEventArgs e)
         {
-            if (vlcMediaPlayer.IsPlaying)
+            // 파일이 로드되었는지 여부
+            if (_sFilenamePlaying.Length > 0)
             {
                 if (e.Button == MouseButtons.Left)
                 {
@@ -163,6 +167,12 @@ namespace SceneClipse
             }
         }
 
+        private void VlcMediaPlayer_Stopped(object sender, VlcMediaPlayerStoppedEventArgs e)
+        {
+            // vlcMediaPlayer.SetMedia(new FileInfo(_sFilenamePlaying));
+            _isFinishedPlaying = true;
+        }
+
         private void buttonPlay_Click(object sender, EventArgs e)
         {
             vlcMediaPlayer.Play();
@@ -183,13 +193,21 @@ namespace SceneClipse
                 _sFilenamePlaying = @"c:\Wildlife.wmv";
                 // _sFilehashPlaying = GetMD5HashFromFile(_sFilenamePlaying);
 
+                _isFinishedPlaying = false;
                 vlcMediaPlayer.SetMedia(new FileInfo(_sFilenamePlaying));
             }
             else
             {
                 // 재생중이면 정지, 정지상태면 다시 재생
                 if (!vlcMediaPlayer.IsPlaying)
+                {
+                    if (_isFinishedPlaying)
+                    {
+                        _isFinishedPlaying = false;
+                        vlcMediaPlayer.SetMedia(new FileInfo(_sFilenamePlaying));
+                    }
                     vlcMediaPlayer.Play();
+                }
                 else
                     vlcMediaPlayer.Pause();
             }
@@ -218,6 +236,7 @@ namespace SceneClipse
                         }
                     }
 
+                    _isFinishedPlaying = false;
                     vlcMediaPlayer.SetMedia(new FileInfo(openFiledialog1.FileName));
                     vlcMediaPlayer.Audio.Volume = trackBarVolumeControl.Value;
                     vlcMediaPlayer.Play();
@@ -1574,6 +1593,7 @@ namespace SceneClipse
                     else if (_sFilenamePlaying.StartsWith("p://")) _sFilenamePlaying = "htt" + _sFilenamePlaying;
                     else if (_sFilenamePlaying.StartsWith("s://")) _sFilenamePlaying = "http" + _sFilenamePlaying;
 
+                    _isFinishedPlaying = false;
                     vlcMediaPlayer.SetMedia(new Uri(_sFilenamePlaying));
                     vlcMediaPlayer.Audio.Volume = trackBarVolumeControl.Value;
                     vlcMediaPlayer.Play();
