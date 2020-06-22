@@ -174,9 +174,13 @@ namespace SceneClipse
                                     {
                                         nTimeBookmark = Convert.ToInt32(nHour * 3600 + nMin * 60 + nSec);
 
-                                        if (nTimeOrg < nTimeBookmark)
+                                        // 영상 시작시각과 책갈피한 시각의 차이값을 저장
+                                        nTimeBookmark -= nTimeOrg;
+
+                                        // 차이값이 -일 경우 : 하루가 경과했을 경우로 판단(11:59 -> 00:00)하고, 24시간을 더함
+                                        if (nTimeBookmark < 0)
                                         {
-                                            nTimeBookmark -= nTimeOrg;
+                                            nTimeBookmark += 24 * 60 * 60;
                                         }
                                     }
                                 }
