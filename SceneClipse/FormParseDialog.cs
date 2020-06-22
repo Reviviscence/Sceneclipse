@@ -19,7 +19,8 @@ namespace SceneClipse
         public bool bUseModifyTail = false;
         public int nModifySec;
         public string sFileName;
-
+        const string _InitializedTextExample = "입력 형식 : \r\n시간(시:분:초)|태그(, 구분)|제목\r\n\r\n 예 :\r\n13:19:00|태그|제목1\r\n13:28:00|태그1,태그2|제목2\r\n14 Dec 2018 13:08:00||제목3";
+        
         internal List<BookmarkItem> VBookmarkGenerated
         {
             get { return _vBookmarkGenerated; }
@@ -83,6 +84,10 @@ namespace SceneClipse
             bUseModifyHead = checkBoxModifyHead.Checked;
             bUseModifyTail = checkBoxModifyTail.Checked;
             nModifySec = Convert.ToInt32(numericModifySec.Value);
+
+            // 내용의 색이 ControlDark일 경우 예제만 표시되어 있는 상태 = 아무것도 입력을 하지 않음
+            if (textBoxInputBookmark.ForeColor == SystemColors.ControlDark)
+                textBoxInputBookmark.Text = "";
 
             _vBookmarkGenerated.Clear();
 
@@ -346,6 +351,24 @@ namespace SceneClipse
             if (result == DialogResult.OK)
             {
                 _vsFixedTagList = dialog._vsFixedTagList.ToList();
+            }
+        }
+
+        private void textBoxInputBookmark_Enter(object sender, EventArgs e)
+        {
+            if (textBoxInputBookmark.ForeColor == SystemColors.ControlDark)
+            {
+                textBoxInputBookmark.Text = "";
+                textBoxInputBookmark.ForeColor = SystemColors.WindowText;
+            }
+        }
+
+        private void textBoxInputBookmark_Leave(object sender, EventArgs e)
+        {
+            if (textBoxInputBookmark.Text.Length == 0)
+            {
+                textBoxInputBookmark.Text = _InitializedTextExample;
+                textBoxInputBookmark.ForeColor = SystemColors.ControlDark;
             }
         }
     }
