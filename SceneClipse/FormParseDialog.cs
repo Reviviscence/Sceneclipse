@@ -19,7 +19,8 @@ namespace SceneClipse
         public bool bUseModifyTail = false;
         public int nModifySec;
         public string sFileName;
-
+        const string _InitializedTextExample = "입력 형식 : \r\n시간(시:분:초)|태그(, 구분)|제목\r\n\r\n 예 :\r\n13:19:00|태그|제목1\r\n13:28:00|태그1,태그2|제목2\r\n14 Dec 2018 13:08:00||제목3";
+        
         internal List<BookmarkItem> VBookmarkGenerated
         {
             get { return _vBookmarkGenerated; }
@@ -83,6 +84,10 @@ namespace SceneClipse
             bUseModifyHead = checkBoxModifyHead.Checked;
             bUseModifyTail = checkBoxModifyTail.Checked;
             nModifySec = Convert.ToInt32(numericModifySec.Value);
+
+            // 내용의 색이 ControlDark일 경우 예제만 표시되어 있는 상태 = 아무것도 입력을 하지 않음
+            if (textBoxInputBookmark.ForeColor == SystemColors.ControlDark)
+                textBoxInputBookmark.Text = "";
 
             _vBookmarkGenerated.Clear();
 
@@ -174,9 +179,13 @@ namespace SceneClipse
                                     {
                                         nTimeBookmark = Convert.ToInt32(nHour * 3600 + nMin * 60 + nSec);
 
-                                        if (nTimeOrg < nTimeBookmark)
+                                        // 영상 시작시각과 책갈피한 시각의 차이값을 저장
+                                        nTimeBookmark -= nTimeOrg;
+
+                                        // 차이값이 -일 경우 : 하루가 경과했을 경우로 판단(11:59 -> 00:00)하고, 24시간을 더함
+                                        if (nTimeBookmark < 0)
                                         {
-                                            nTimeBookmark -= nTimeOrg;
+                                            nTimeBookmark += 24 * 60 * 60;
                                         }
                                     }
                                 }
@@ -198,7 +207,9 @@ namespace SceneClipse
                 }
 
                 // 북마크정보 생성
-                // 시간 보정 여부 체크후 시간값 수정
+                dTimeStart = dTimeEnd = nTimeBookmark;
+
+                // 시간 보정 여부 체크후 시간값 보정
                 if (bUseTimeModify)
                 {
                     if (bUseModifyHead)
@@ -206,8 +217,6 @@ namespace SceneClipse
                     if (bUseModifyTail)
                         dTimeEnd = nTimeBookmark + nModifySec;
                 }
-                else
-                    dTimeStart = dTimeEnd = nTimeBookmark;
 
                 // 시간보정 이후 시간이 - 값이 되지 않도록 보정
                 if (dTimeStart < 0) dTimeStart = 0;
@@ -342,6 +351,24 @@ namespace SceneClipse
             if (result == DialogResult.OK)
             {
                 _vsFixedTagList = dialog._vsFixedTagList.ToList();
+            }
+        }
+
+        private void textBoxInputBookmark_Enter(object sender, EventArgs e)
+        {
+            if (textBoxInputBookmark.ForeColor == SystemColors.ControlDark)
+            {
+                textBoxInputBookmark.Text = "";
+                textBoxInputBookmark.ForeColor = SystemColors.WindowText;
+            }
+        }
+
+        private void textBoxInputBookmark_Leave(object sender, EventArgs e)
+        {
+            if (textBoxInputBookmark.Text.Length == 0)
+            {
+                textBoxInputBookmark.Text = _InitializedTextExample;
+                textBoxInputBookmark.ForeColor = SystemColors.ControlDark;
             }
         }
     }

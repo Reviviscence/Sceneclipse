@@ -139,12 +139,16 @@
             // textBoxInputBookmark
             // 
             this.textBoxInputBookmark.Location = new System.Drawing.Point(15, 110);
+            this.textBoxInputBookmark.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.textBoxInputBookmark.Multiline = true;
             this.textBoxInputBookmark.Name = "textBoxInputBookmark";
             this.textBoxInputBookmark.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxInputBookmark.Size = new System.Drawing.Size(229, 292);
             this.textBoxInputBookmark.TabIndex = 3;
-            this.textBoxInputBookmark.Text = "14 Dec 2018 13:08\r\n14 Dec 2018 13:19\r\n14 Dec 2018 13:28\r\n";
+            this.textBoxInputBookmark.Text = "입력 형식 : \r\n시간(시:분:초)|태그(,구분)|제목\r\n\r\n예 :\r\n13:19:00|태그|제목1\r\n13:28:00|태그1,태그2|제목2\r\n14 " +
+    "Dec 2018 13:08:00||제목3";
+            this.textBoxInputBookmark.Enter += new System.EventHandler(this.textBoxInputBookmark_Enter);
+            this.textBoxInputBookmark.Leave += new System.EventHandler(this.textBoxInputBookmark_Leave);
             // 
             // label4
             // 
