@@ -202,7 +202,9 @@ namespace SceneClipse
                 }
 
                 // 북마크정보 생성
-                // 시간 보정 여부 체크후 시간값 수정
+                dTimeStart = dTimeEnd = nTimeBookmark;
+
+                // 시간 보정 여부 체크후 시간값 보정
                 if (bUseTimeModify)
                 {
                     if (bUseModifyHead)
@@ -210,8 +212,6 @@ namespace SceneClipse
                     if (bUseModifyTail)
                         dTimeEnd = nTimeBookmark + nModifySec;
                 }
-                else
-                    dTimeStart = dTimeEnd = nTimeBookmark;
 
                 // 시간보정 이후 시간이 - 값이 되지 않도록 보정
                 if (dTimeStart < 0) dTimeStart = 0;
