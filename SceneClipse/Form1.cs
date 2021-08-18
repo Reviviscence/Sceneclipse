@@ -169,7 +169,15 @@ namespace SceneClipse
 
         private void VlcMediaPlayer_Stopped(object sender, VlcMediaPlayerStoppedEventArgs e)
         {
-            // vlcMediaPlayer.SetMedia(new FileInfo(_sFilenamePlaying));
+            // 현재는 수동으로 "Pause"는 가능해도 "Stop"을 걸 방법이 없기 때문에 Stop = 재생이 완료된 것으로 판단
+            // 나중에 Stop을 별개로 만들게 된다면, 이 트리거에서 구분해서 작동하게 할 필요가 있음
+
+            // 재생 완료를 표시
+            vlcMediaPlayer.Position = 1.0f;
+            BookmarkTimeData timeMedia = new BookmarkTimeData(vlcMediaPlayer.GetCurrentMedia().Duration.TotalMilliseconds);
+            _sVideoPlaytime = "재생 완료 : " + timeMedia.GetTime()
+                + " / " + timeMedia.GetTime() + " (" + Math.Floor(vlcMediaPlayer.Position * 100) + "%)";
+
             _isFinishedPlaying = true;
         }
 
