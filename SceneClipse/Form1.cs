@@ -1517,8 +1517,11 @@ namespace SceneClipse
             int nNewWidth = this.Width - panelMediaPlayer.Location.X - 21;
             int nNewHeight = this.Height - panelMediaPlayer.Location.Y - 120;
 
-            vlcMediaPlayer.Width = nNewWidth;
-            vlcMediaPlayer.Height = nNewHeight;
+            if (vlcMediaPlayer != null)
+            {
+                vlcMediaPlayer.Width = nNewWidth;
+                vlcMediaPlayer.Height = nNewHeight;
+            }
         }
 
         private void label6_MouseDoubleClick(object sender, MouseEventArgs e)
