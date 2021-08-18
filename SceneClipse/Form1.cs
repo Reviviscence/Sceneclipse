@@ -1335,9 +1335,11 @@ namespace SceneClipse
 
             if (labelPlayTime.Text != _sVideoPlaytime)
                 labelPlayTime.Text = _sVideoPlaytime;
-
-            if (trackBarVideoProgress.Value != _nVideoProgress)
-                trackBarVideoProgress.Value = _nVideoProgress;
+                        
+            if (_isFinishedPlaying)
+                trackBarVideoProgress.Value = _nTrackbarMaximum; // 재생이 종료되었다면 진행 바는 맨 끝으로 이동
+            else if (trackBarVideoProgress.Value != _nVideoProgress)
+                trackBarVideoProgress.Value = _nVideoProgress; // 진행수준에 맞춰 진행 바를 설정
 
             // 구간반복재생 사용시 처리
             if( checkBoxPartialplay.Checked && _listBookmarks.ContainsKey(_nCurrentBookmarkIdx) )
