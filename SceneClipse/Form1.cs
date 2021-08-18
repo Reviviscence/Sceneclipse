@@ -169,7 +169,15 @@ namespace SceneClipse
 
         private void VlcMediaPlayer_Stopped(object sender, VlcMediaPlayerStoppedEventArgs e)
         {
-            // vlcMediaPlayer.SetMedia(new FileInfo(_sFilenamePlaying));
+            // 현재는 수동으로 "Pause"는 가능해도 "Stop"을 걸 방법이 없기 때문에 Stop = 재생이 완료된 것으로 판단
+            // 나중에 Stop을 별개로 만들게 된다면, 이 트리거에서 구분해서 작동하게 할 필요가 있음
+
+            // 재생 완료를 표시
+            vlcMediaPlayer.Position = 1.0f;
+            BookmarkTimeData timeMedia = new BookmarkTimeData(vlcMediaPlayer.GetCurrentMedia().Duration.TotalMilliseconds);
+            _sVideoPlaytime = "재생 완료 : " + timeMedia.GetTime()
+                + " / " + timeMedia.GetTime() + " (" + Math.Floor(vlcMediaPlayer.Position * 100) + "%)";
+
             _isFinishedPlaying = true;
         }
 
@@ -1327,9 +1335,11 @@ namespace SceneClipse
 
             if (labelPlayTime.Text != _sVideoPlaytime)
                 labelPlayTime.Text = _sVideoPlaytime;
-
-            if (trackBarVideoProgress.Value != _nVideoProgress)
-                trackBarVideoProgress.Value = _nVideoProgress;
+                        
+            if (_isFinishedPlaying)
+                trackBarVideoProgress.Value = _nTrackbarMaximum; // 재생이 종료되었다면 진행 바는 맨 끝으로 이동
+            else if (trackBarVideoProgress.Value != _nVideoProgress)
+                trackBarVideoProgress.Value = _nVideoProgress; // 진행수준에 맞춰 진행 바를 설정
 
             // 구간반복재생 사용시 처리
             if( checkBoxPartialplay.Checked && _listBookmarks.ContainsKey(_nCurrentBookmarkIdx) )
@@ -1507,8 +1517,11 @@ namespace SceneClipse
             int nNewWidth = this.Width - panelMediaPlayer.Location.X - 21;
             int nNewHeight = this.Height - panelMediaPlayer.Location.Y - 120;
 
-            vlcMediaPlayer.Width = nNewWidth;
-            vlcMediaPlayer.Height = nNewHeight;
+            if (vlcMediaPlayer != null)
+            {
+                vlcMediaPlayer.Width = nNewWidth;
+                vlcMediaPlayer.Height = nNewHeight;
+            }
         }
 
         private void label6_MouseDoubleClick(object sender, MouseEventArgs e)
