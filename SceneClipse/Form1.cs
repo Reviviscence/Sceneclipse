@@ -598,6 +598,10 @@ namespace SceneClipse
                     }
                 }
 
+                // 구간재생 중 다음 이동을 위해 대기중인 상태에서 수정이 가해지면, 대기를 취소시킴(일시 정지시킴)
+                if (_pauseReason == pauseReason.PAUSE_BY_PARTIALPLAY)
+                    _pauseReason = pauseReason.PAUSE_BY_USER;
+
                 // TODO : 태그 정보도 업데이트
             }
         }
