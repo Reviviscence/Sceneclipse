@@ -53,6 +53,11 @@ namespace SceneClipse
         private int _nTrackbarMaximum = 0;
         private List<string> _listFixedTags;
 
+        private enum pauseReason { PAUSE_NONE, PAUSE_BY_USER, PAUSE_BY_PARTIALPLAY };
+        private pauseReason _pauseReason = pauseReason.PAUSE_NONE; // 일시정지를 수행한 원인
+        private int _nPartialPlayWaitTime = 0;
+        private int _nPartialplayOptionJumpTime = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -62,6 +67,7 @@ namespace SceneClipse
             this.panelTagList.VerticalScroll.Enabled = false;
             _listBookmarks = new SortedList<int, BookmarkItem>();
             _listFixedTags = new List<string>();
+            _nPartialplayOptionJumpTime = (int)numericUpDownPartialPlayJumpStopTime.Value;
         }
 
         private void InitializeVLCPlayer()
@@ -183,6 +189,7 @@ namespace SceneClipse
 
         private void buttonPlay_Click(object sender, EventArgs e)
         {
+            _pauseReason = pauseReason.PAUSE_NONE;
             vlcMediaPlayer.Play();
         }
 
@@ -209,15 +216,26 @@ namespace SceneClipse
                 // 재생중이면 정지, 정지상태면 다시 재생
                 if (!vlcMediaPlayer.IsPlaying)
                 {
+                    // 반복재생에 의해 대기중인 상태에서 pause를 눌렀다면 reason만 바꾸고 그대로 정지시킴
+                    if (_pauseReason == pauseReason.PAUSE_BY_PARTIALPLAY)
+                    {
+                        _pauseReason = pauseReason.PAUSE_BY_USER;
+                        return;
+                    }
+
                     if (_isFinishedPlaying)
                     {
                         _isFinishedPlaying = false;
                         vlcMediaPlayer.SetMedia(new FileInfo(_sFilenamePlaying));
                     }
                     vlcMediaPlayer.Play();
+                    _pauseReason = pauseReason.PAUSE_NONE;
                 }
                 else
+                {
                     vlcMediaPlayer.Pause();
+                    _pauseReason = pauseReason.PAUSE_BY_USER;
+                }
             }
         }
 
@@ -245,6 +263,7 @@ namespace SceneClipse
                     }
 
                     _isFinishedPlaying = false;
+                    _pauseReason = pauseReason.PAUSE_NONE;
                     vlcMediaPlayer.SetMedia(new FileInfo(openFiledialog1.FileName));
                     vlcMediaPlayer.Audio.Volume = trackBarVolumeControl.Value;
                     vlcMediaPlayer.Play();
@@ -578,6 +597,10 @@ namespace SceneClipse
                         item.SubItems[2].Text = itemCurrent.sBookmarkName;
                     }
                 }
+
+                // 구간재생 중 다음 이동을 위해 대기중인 상태에서 수정이 가해지면, 대기를 취소시킴(일시 정지시킴)
+                if (_pauseReason == pauseReason.PAUSE_BY_PARTIALPLAY)
+                    _pauseReason = pauseReason.PAUSE_BY_USER;
 
                 // TODO : 태그 정보도 업데이트
             }
@@ -1347,6 +1370,7 @@ namespace SceneClipse
                 // 현재시간이 책갈피 종료시간을 넘겼을 경우
                 if(vlcMediaPlayer.Time > _listBookmarks[_nCurrentBookmarkIdx].BookmarkEnd.GetTimeDouble())
                 {
+                    // 단순 반복일 경우 처음으로 돌아감
                     if (radioPartialplayOptionLoop.Checked)
                     {
                         BookmarkTimeData timeData = _listBookmarks[_nCurrentBookmarkIdx].BookmarkStart;
@@ -1354,22 +1378,51 @@ namespace SceneClipse
                     }
                     else if( radioPartialplayOptionJump.Checked)
                     {
+                        // 일정시간 대기 후 재생값이 있을 경우, 일단 대기상태로 변경
+                        if(_nPartialplayOptionJumpTime > 0)
+                        {
+                            // 재생 중이었다면 정지시키고, 다음 책갈피로 넘길때까지의 시간을 update하는 스레드를 실행시킴
+                            if(vlcMediaPlayer.IsPlaying)
+                            {
+                                vlcMediaPlayer.Pause();
+                                _nPartialPlayWaitTime = 0;
+                                _pauseReason = pauseReason.PAUSE_BY_PARTIALPLAY;
+                                labelPlayTime.Text += "\r\n * " + _nPartialplayOptionJumpTime + "초 후 다음 책갈피로 이동합니다..";
+                                Thread threadWaitPartialPlayJump = new Thread(() => WaitPartialPlayJump());
+                                threadWaitPartialPlayJump.Start();
+                                return;
+                            }
+                            else
+                            {
+                                // 유저에 의해 정지버튼이 눌렀다면 더 이상 진행하지 않음
+                                if (_pauseReason == pauseReason.PAUSE_BY_USER)
+                                    return;
+
+                                // 정지 중이라면 시간을 업데이트
+                                if (_nPartialPlayWaitTime < _nPartialplayOptionJumpTime)
+                                {
+                                    labelPlayTime.Text += "\r\n * " + (_nPartialplayOptionJumpTime - _nPartialPlayWaitTime) + "초 후 다음 책갈피로 이동합니다..";
+                                    return;
+                                }
+                                else
+                                {
+                                    _pauseReason = pauseReason.PAUSE_NONE;
+                                    vlcMediaPlayer.Play();
+                                }
+                            }
+                        }
+
                         // 시간 단위로 이후에 작성된 책갈피를 검색
                         int nIdx = listViewBookmark.Items.IndexOf(_itemCurrentBookmark);
 
-                        // 맨 마지막 순서가 아니면 다음 책갈피를 선택
+                        // 다음 책갈피를 선택
                         if (nIdx < listViewBookmark.Items.Count - 1)
-                        {
                             _itemCurrentBookmark = listViewBookmark.Items[nIdx + 1];
-                            _nCurrentBookmarkIdx = Convert.ToInt32(_itemCurrentBookmark.SubItems[3].Text);
-                            UpdateBookmarkInputData(_nCurrentBookmarkIdx);
-                        }
                         else if(nIdx == listViewBookmark.Items.Count - 1)
-                        {
-                            _itemCurrentBookmark = listViewBookmark.Items[0];
-                            _nCurrentBookmarkIdx = Convert.ToInt32(_itemCurrentBookmark.SubItems[3].Text);
-                            UpdateBookmarkInputData(_nCurrentBookmarkIdx);
-                        }
+                            _itemCurrentBookmark = listViewBookmark.Items[0]; // 맨 마지막 순서라면 첫 책갈피를 선택
+
+                        _nCurrentBookmarkIdx = Convert.ToInt32(_itemCurrentBookmark.SubItems[3].Text);
+                        UpdateBookmarkInputData(_nCurrentBookmarkIdx);
                     }
                 }
             }
@@ -1607,6 +1660,7 @@ namespace SceneClipse
                     else if (_sFilenamePlaying.StartsWith("s://")) _sFilenamePlaying = "http" + _sFilenamePlaying;
 
                     _isFinishedPlaying = false;
+                    _pauseReason = pauseReason.PAUSE_NONE;
                     vlcMediaPlayer.SetMedia(new Uri(_sFilenamePlaying));
                     vlcMediaPlayer.Audio.Volume = trackBarVolumeControl.Value;
                     vlcMediaPlayer.Play();
@@ -1636,6 +1690,8 @@ namespace SceneClipse
 
             labelPartialplayOption.Visible = bChecked;
             radioPartialplayOptionJump.Visible = bChecked;
+            numericUpDownPartialPlayJumpStopTime.Visible = bChecked;
+            labelPartialplayOptionJumpTime.Visible = bChecked;
             radioPartialplayOptionLoop.Visible = bChecked;
 
         }
@@ -1662,6 +1718,23 @@ namespace SceneClipse
                     JumpPlayerToTime((int)numericBookmarkEndHour.Value, (int)numericBookmarkEndMin.Value, (int)numericBookmarkEndSec.Value);
                 }
             }
+        }
+
+        private void WaitPartialPlayJump()
+        {
+            while (_nPartialPlayWaitTime <= _nPartialplayOptionJumpTime)
+            {
+                if (_pauseReason == pauseReason.PAUSE_BY_USER)
+                    break;
+
+                Thread.Sleep(1000);
+                _nPartialPlayWaitTime++;
+            }
+        }
+
+        private void numericUpDownPartialPlayJumpStopTime_ValueChanged(object sender, EventArgs e)
+        {
+            _nPartialplayOptionJumpTime = (int)numericUpDownPartialPlayJumpStopTime.Value;
         }
     }
 }
