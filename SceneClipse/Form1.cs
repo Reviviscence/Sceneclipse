@@ -12,6 +12,7 @@ using System.IO;
 using System.Xml;
 using System.Threading;
 using Vlc.DotNet.Core;
+using System.Text.RegularExpressions;
 
 namespace SceneClipse
 {
@@ -43,7 +44,7 @@ namespace SceneClipse
         private int _nCurrentBookmarkIdx = 0;
         private ListViewItem _itemCurrentBookmark;
         // 현재 열려있는 파일 이름(혹은 해시값?)
-        private string _sFilenamePlaying = "";
+        private string _sFilePathPlaying = "";
         private string _sFilehashPlaying = "";           // 현재 미사용
         private bool _isUpdatingBookmarkInfo = false;
         private bool _isWaitingForJump = false;
@@ -117,7 +118,7 @@ namespace SceneClipse
         private void panelVideoProgress_MouseMove(object sender, MouseEventArgs e)
         {
             // 파일이 로드되었는지 여부
-            if (_sFilenamePlaying.Length > 0)
+            if (_sFilePathPlaying.Length > 0)
             {
                 if (e.Button == MouseButtons.Left)
                 {
@@ -202,14 +203,14 @@ namespace SceneClipse
         private void buttonPause_Click(object sender, EventArgs e)
         {
             // 디버그용 임시 파일 설정(TODO : 이후에 제거)
-            if (_sFilenamePlaying == "")
+            if (_sFilePathPlaying == "")
             {
                 InitializeBookmarkdata();
-                _sFilenamePlaying = @"c:\Wildlife.wmv";
-                // _sFilehashPlaying = GetMD5HashFromFile(_sFilenamePlaying);
+                _sFilePathPlaying = @"c:\Wildlife.wmv";
+                // _sFilehashPlaying = GetMD5HashFromFile(_sFilePathPlaying);
 
                 _isFinishedPlaying = false;
-                vlcMediaPlayer.SetMedia(new FileInfo(_sFilenamePlaying));
+                vlcMediaPlayer.SetMedia(new FileInfo(_sFilePathPlaying));
             }
             else
             {
@@ -226,7 +227,7 @@ namespace SceneClipse
                     if (_isFinishedPlaying)
                     {
                         _isFinishedPlaying = false;
-                        vlcMediaPlayer.SetMedia(new FileInfo(_sFilenamePlaying));
+                        vlcMediaPlayer.SetMedia(new FileInfo(_sFilePathPlaying));
                     }
                     vlcMediaPlayer.Play();
                     _pauseReason = pauseReason.PAUSE_NONE;
@@ -249,13 +250,13 @@ namespace SceneClipse
                 if (openFiledialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     InitializeBookmarkdata();
-                    _sFilenamePlaying = openFiledialog1.FileName;
-                    // _sFilehashPlaying = GetMD5HashFromFile(_sFilenamePlaying);
+                    _sFilePathPlaying = openFiledialog1.FileName;
+                    // _sFilehashPlaying = GetMD5HashFromFile(_sFilePathPlaying);
 
                     // 자동 북마크파일 불러오기(불러오는 파일의 위치와 동일한 경로에 같은 이름의 .sclip 파일이 있으면 자동으로 읽어옴)
                     if (checkAutoloadBookmark.Checked)
                     {
-                        string sBookmarkFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
+                        string sBookmarkFilename = _sFilePathPlaying.Substring(0, _sFilePathPlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
                         if (File.Exists(sBookmarkFilename))
                         {
                             LoadBookmarkFormFile(sBookmarkFilename);
@@ -566,7 +567,7 @@ namespace SceneClipse
         // 입력된 값을 참고해서 책갈피 정보를 갱신
         private void UpdateBookmarkDataFromInput()
         {
-            if (_sFilenamePlaying != "" && _nCurrentBookmarkIdx != 0 && _isUpdatingBookmarkInfo == false)
+            if (_sFilePathPlaying != "" && _nCurrentBookmarkIdx != 0 && _isUpdatingBookmarkInfo == false)
             {
                 BookmarkItem itemCurrent = _listBookmarks[_nCurrentBookmarkIdx];
 
@@ -926,17 +927,17 @@ namespace SceneClipse
             SaveFileDialog dialogSave = new SaveFileDialog();
             dialogSave.Filter = SCENECLIP_FILE_OPENTEXT;
 
-            if (_sFilenamePlaying.StartsWith("http"))
+            if (_sFilePathPlaying.StartsWith("http"))
             {
                 // url에서 열 경우 파일명 가져오는 방식을 변경
-                string sFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('/') + 1);
+                string sFileName = _sFilePathPlaying.Substring(_sFilePathPlaying.LastIndexOf('/') + 1);
                 sFileName = sFileName.Substring(0, sFileName.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
 
                 sSaveFilename = sFileName;
             }
             else
             {
-                sSaveFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
+                sSaveFilename = _sFilePathPlaying.Substring(0, _sFilePathPlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
             }
 
             dialogSave.FileName = sSaveFilename;
@@ -979,16 +980,16 @@ namespace SceneClipse
             dialogOpen.Filter = SCENECLIP_FILE_OPENTEXT;
             string sOpenFilename;
 
-            if (_sFilenamePlaying.StartsWith("http"))
+            if (_sFilePathPlaying.StartsWith("http"))
             {
                 // url에서 열 경우 파일명 가져오는 방식을 변경
-                string sFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('/') + 1);
+                string sFileName = _sFilePathPlaying.Substring(_sFilePathPlaying.LastIndexOf('/') + 1);
                 sFileName = sFileName.Substring(0, sFileName.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
 
                 sOpenFilename = sFileName;
             }
             else
-                sOpenFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
+                sOpenFilename = _sFilePathPlaying.Substring(0, _sFilePathPlaying.LastIndexOf('.')) + SCENECLIP_FILE_EXT;
 
             dialogOpen.FileName = sOpenFilename;
 
@@ -1083,7 +1084,7 @@ namespace SceneClipse
         // 받아온 시간정보를 이용해 책갈피 작성
         private void buttonParse_Click(object sender, EventArgs e)
         {
-            var dialogParse = new FormParseDialog(_sFilenamePlaying);
+            var dialogParse = new FormParseDialog(_sFilePathPlaying.Substring(_sFilePathPlaying.LastIndexOf('\\') + 1));
 
             // 고정태그가 있으면 전달(편집용으로)
             if (_listFixedTags.Count > 0)
@@ -1120,7 +1121,7 @@ namespace SceneClipse
 
         private void buttonSeekPrev_Click(object sender, EventArgs e)
         {
-            if (_sFilenamePlaying != "")
+            if (_sFilePathPlaying != "")
             {
                 int nSeekTime = Convert.ToInt32(numericSeekTimeAmount.Value);
                 if (comboBoxSeekType.SelectedItem.ToString() == "분")
@@ -1135,7 +1136,7 @@ namespace SceneClipse
 
         private void buttonSeekNext_Click(object sender, EventArgs e)
         {
-            if (_sFilenamePlaying != "")
+            if (_sFilePathPlaying != "")
             {
                 int nSeekTime = Convert.ToInt32(numericSeekTimeAmount.Value);
                 if (comboBoxSeekType.SelectedItem.ToString() == "분")
@@ -1204,7 +1205,7 @@ namespace SceneClipse
                 nodeBookmark.SetAttribute("Title", kvItem.Value.sBookmarkName);
 
                 // 파일경로 보정 - 파일명만 남게 수정
-                string sFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1);
+                string sFileName = _sFilePathPlaying.Substring(_sFilePathPlaying.LastIndexOf('\\') + 1);
                 nodeBookmark.SetAttribute("File", sFileName);
 
                 XmlNode nodeTags = xml.CreateElement("tags");
@@ -1230,7 +1231,7 @@ namespace SceneClipse
             SaveFileDialog dialogSave = new SaveFileDialog();
 
             dialogSave.Filter = BANDICUT_FILE_OPENTEXT;
-            sSaveFilename = _sFilenamePlaying.Substring(0, _sFilenamePlaying.LastIndexOf('.')) + BANDICUT_FILE_EXT;
+            sSaveFilename = _sFilePathPlaying.Substring(0, _sFilePathPlaying.LastIndexOf('.')) + BANDICUT_FILE_EXT;
 
             dialogSave.FileName = sSaveFilename;
 
@@ -1277,7 +1278,7 @@ namespace SceneClipse
             {
                 // mediaplayer에서 이미지 가져오기
                 string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
-                string sSnapshotFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
+                string sSnapshotFileName = _sFilePathPlaying.Substring(_sFilePathPlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
 
                 // 임시설정 - non-ascii 문자를 전부 제거. 현재 잘 해결되지 않았음(TODO : 한글 등의 파일명이 있어도 썸네일이 잘 생성되도록)
                 sSnapshotFileName = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(ToUTF8(sSnapshotFileName))).Replace("?", string.Empty);
@@ -1431,7 +1432,7 @@ namespace SceneClipse
         private void buttonBookmark_Click(object sender, EventArgs e)
         {
 
-            if (_sFilenamePlaying != "")
+            if (_sFilePathPlaying != "")
             {
                 // 책갈피 리스트에서 현재 추가할 정보의 인덱스
                 int nCurrentBookmarkIndex = ++_nBookmarkCount;
@@ -1464,7 +1465,7 @@ namespace SceneClipse
 
                 // mediaplayer에서 이미지 가져오기
                 string sSnapshotPath = Path.Combine(Application.StartupPath, "Thumbnail");
-                string sSnapshotFileName = _sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
+                string sSnapshotFileName = _sFilePathPlaying.Substring(_sFilePathPlaying.LastIndexOf('\\') + 1) + "_" + vlcMediaPlayer.Time.ToString() + ".jpg";
 
                 // url에서 열 경우 파일명 가져오는 방식을 변경
                 if (sSnapshotFileName.StartsWith("http"))
@@ -1607,7 +1608,7 @@ namespace SceneClipse
         // 이전 책갈피로 이동
         private void buttonJumpPrevBookmark_Click(object sender, EventArgs e)
         {
-            if (_sFilenamePlaying != "")
+            if (_sFilePathPlaying != "")
             {
                 // 시간 단위로 이전에 작성된 책갈피를 검색
                 int nIdx = listViewBookmark.Items.IndexOf(_itemCurrentBookmark);
@@ -1623,7 +1624,7 @@ namespace SceneClipse
         // 다음 책갈피로 이동
         private void buttonJumpNextBookmark_Click(object sender, EventArgs e)
         {
-            if (_sFilenamePlaying != "")
+            if (_sFilePathPlaying != "")
             {
                 // 시간 단위로 이후에 작성된 책갈피를 검색
                 int nIdx = listViewBookmark.Items.IndexOf(_itemCurrentBookmark);
@@ -1652,16 +1653,16 @@ namespace SceneClipse
                 if (ret == DialogResult.OK)
                 {
                     InitializeBookmarkdata();
-                    _sFilenamePlaying = dialogInput._sInputValue;
+                    _sFilePathPlaying = dialogInput._sInputValue;
 
                     // 경로 보정
-                    if (_sFilenamePlaying.StartsWith("://")) _sFilenamePlaying = "http" + _sFilenamePlaying;
-                    else if (_sFilenamePlaying.StartsWith("p://")) _sFilenamePlaying = "htt" + _sFilenamePlaying;
-                    else if (_sFilenamePlaying.StartsWith("s://")) _sFilenamePlaying = "http" + _sFilenamePlaying;
+                    if (_sFilePathPlaying.StartsWith("://")) _sFilePathPlaying = "http" + _sFilePathPlaying;
+                    else if (_sFilePathPlaying.StartsWith("p://")) _sFilePathPlaying = "htt" + _sFilePathPlaying;
+                    else if (_sFilePathPlaying.StartsWith("s://")) _sFilePathPlaying = "http" + _sFilePathPlaying;
 
                     _isFinishedPlaying = false;
                     _pauseReason = pauseReason.PAUSE_NONE;
-                    vlcMediaPlayer.SetMedia(new Uri(_sFilenamePlaying));
+                    vlcMediaPlayer.SetMedia(new Uri(_sFilePathPlaying));
                     vlcMediaPlayer.Audio.Volume = trackBarVolumeControl.Value;
                     vlcMediaPlayer.Play();
                 }
@@ -1698,7 +1699,7 @@ namespace SceneClipse
 
         private void buttonSetCurrentTimeToStart_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_sFilenamePlaying != "")
+            if (_sFilePathPlaying != "")
             {
                 // 우클릭시 책갈피 시작부분으로 이동
                 if (e.Button == MouseButtons.Right)
@@ -1710,7 +1711,7 @@ namespace SceneClipse
 
         private void buttonSetCurrentTimeToEnd_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_sFilenamePlaying != "")
+            if (_sFilePathPlaying != "")
             {
                 // 우클릭시 책갈피 끝부분으로 이동
                 if (e.Button == MouseButtons.Right)
@@ -1735,6 +1736,37 @@ namespace SceneClipse
         private void numericUpDownPartialPlayJumpStopTime_ValueChanged(object sender, EventArgs e)
         {
             _nPartialplayOptionJumpTime = (int)numericUpDownPartialPlayJumpStopTime.Value;
+        }
+
+        private bool GetTimeDataFromFileName(string filename, out DateTime fileDate)
+        {
+            Regex regex_old = new Regex(@"[0-9][0-9][0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]\s[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]"); // 2018-12-14 13-00-08_영상이름.mp4
+            Regex regex_new = new Regex(@"[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"); // 2023030919160469.mp4
+
+            bool bValid = false;
+            fileDate = new DateTime();
+
+            if (filename != "")
+            {
+                if (regex_old.IsMatch(filename))
+                {
+                    // 시간 형식 : **.mp4 혹은 **_영상이름.mp4 가 될 수 있으므로 뒷부분을 지움
+                    string sTimeMod = filename.Substring(0, filename.IndexOf("."));
+                    if (sTimeMod.Contains("_"))
+                        sTimeMod = filename.Substring(0, filename.IndexOf("_"));
+                    bValid = DateTime.TryParseExact(sTimeMod, "yyyy-MM-dd HH-mm-ss", null, System.Globalization.DateTimeStyles.None, out fileDate);
+                } // (regex_old.IsMatch(filename))
+                else if (regex_new.IsMatch(filename))
+                {
+                    string sTimeMod = filename.Substring(0, 14); // 시간 형식 : 앞의 14자리를 자름(ms단위의 뒤쪽 두 숫자는 무시)
+                    if (sTimeMod.All(Char.IsDigit))
+                    {
+                        bValid = DateTime.TryParseExact(sTimeMod, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out fileDate);
+                    }
+                }
+            }
+
+            return bValid;
         }
     }
 }

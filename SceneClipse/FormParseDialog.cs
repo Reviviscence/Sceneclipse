@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace SceneClipse
 {
@@ -244,88 +245,21 @@ namespace SceneClipse
         private void buttonGetTimeDataFromFilename_Click(object sender, EventArgs e)
         {
             /*
-             * TODO : 영상의 시간정보를 전송해 줌
-             * 2018-12-14 13-00-08_저지아이즈.mp4
+             * 영상의 시간정보를 전송해 줌
              * */
-            if (sFileName != "")
+
+            bool bValid = false;
+            DateTime fileDate;
+
+            bValid = GetTimeDataFromFileName(sFileName, out fileDate);
+
+            if (bValid)
             {
-                int nHour, nMin, nSec;
-                nHour = nMin = nSec = 0;
-
-                foreach (string sTempStr in sFileName.Split(' '))
-                {
-                    string[] vTempStr = sTempStr.Split('-');
-                    if (vTempStr.Count() >= 3)
-                    {
-                        int nCnt = 1;
-                        bool bValid = true;
-                        foreach (string sTime in vTempStr)
-                        {
-                            switch (nCnt)
-                            {
-                                case 1:
-                                    // 시
-                                    // 숫자로만 구성되었는지 체크
-                                    bValid = sTime.All(Char.IsDigit);
-                                    if (bValid)
-                                    {
-                                        int nTemp = Convert.ToInt32(sTime);
-                                        if (nTemp > 24 || nTemp < 0)
-                                            bValid = false;
-                                        else
-                                            nHour = nTemp;
-                                    }
-                                    break;
-                                case 2:
-                                    // 분
-                                    // 숫자로만 구성되었는지 체크
-                                    bValid = sTime.All(Char.IsDigit);
-                                    if (bValid)
-                                    {
-                                        int nTemp = Convert.ToInt32(sTime);
-                                        if (nTemp > 60 || nTemp < 0)
-                                            bValid = false;
-                                        else
-                                            nMin = nTemp;
-                                    }
-                                    break;
-                                case 3:
-                                    // 초
-                                    // 초 형식 : **.mp4 혹은 **_영상이름.mp4 가 될 수 있으므로 뒷부분을 자름
-                                    string sTimeMod = sTime.Substring(0, sTime.IndexOf('.'));
-                                    if (sTimeMod.IndexOf('_') > 0)
-                                        sTimeMod = sTimeMod.Substring(0, sTimeMod.IndexOf('_'));
-
-                                    // 숫자로만 구성되었는지 체크
-                                    bValid = sTimeMod.All(Char.IsDigit);
-                                    if (bValid)
-                                    {
-                                        int nTemp = Convert.ToInt32(sTimeMod);
-                                        if (nTemp > 60 || nTemp < 0)
-                                            bValid = false;
-                                        else
-                                            nSec = nTemp;
-                                    }
-                                    break;
-                                default:
-                                    break;
-                            }
-
-                            if (!bValid)
-                                break;
-
-                            nCnt++;
-                        }
-
-                        if (bValid)
-                        {
-                            numericHour.Value = nHour;
-                            numericMin.Value = nMin;
-                            numericSec.Value = nSec;
-                        }
-                    }
-                }
+                numericHour.Value = fileDate.Hour;
+                numericMin.Value = fileDate.Minute;
+                numericSec.Value = fileDate.Second;
             }
+
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -370,6 +304,37 @@ namespace SceneClipse
                 textBoxInputBookmark.Text = _InitializedTextExample;
                 textBoxInputBookmark.ForeColor = SystemColors.ControlDark;
             }
+        }
+
+        private bool GetTimeDataFromFileName(string filename, out DateTime fileDate)
+        {
+            Regex regex_old = new Regex(@"[0-9][0-9][0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]\s[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]"); // 2018-12-14 13-00-08_영상이름.mp4
+            Regex regex_new = new Regex(@"[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"); // 2023030919160469.mp4
+
+            bool bValid = false;
+            fileDate = new DateTime();
+
+            if (filename != "")
+            {
+                if (regex_old.IsMatch(filename))
+                {
+                    // 시간 형식 : **.mp4 혹은 **_영상이름.mp4 가 될 수 있으므로 뒷부분을 지움
+                    string sTimeMod = filename.Substring(0, filename.IndexOf("."));
+                    if (sTimeMod.Contains("_"))
+                        sTimeMod = filename.Substring(0, filename.IndexOf("_"));
+                    bValid = DateTime.TryParseExact(sTimeMod, "yyyy-MM-dd HH-mm-ss", null, System.Globalization.DateTimeStyles.None, out fileDate);
+                } // (regex_old.IsMatch(filename))
+                else if (regex_new.IsMatch(filename))
+                {
+                    string sTimeMod = filename.Substring(0, 14); // 시간 형식 : 앞의 14자리를 자름(ms단위의 뒤쪽 두 숫자는 무시)
+                    if (sTimeMod.All(Char.IsDigit))
+                    {
+                        bValid = DateTime.TryParseExact(sTimeMod, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out fileDate);
+                    }
+                }
+            }
+
+            return bValid;
         }
     }
 }
