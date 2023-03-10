@@ -12,6 +12,7 @@ using System.IO;
 using System.Xml;
 using System.Threading;
 using Vlc.DotNet.Core;
+using System.Text.RegularExpressions;
 
 namespace SceneClipse
 {
@@ -1083,7 +1084,7 @@ namespace SceneClipse
         // 받아온 시간정보를 이용해 책갈피 작성
         private void buttonParse_Click(object sender, EventArgs e)
         {
-            var dialogParse = new FormParseDialog(_sFilenamePlaying);
+            var dialogParse = new FormParseDialog(_sFilenamePlaying.Substring(_sFilenamePlaying.LastIndexOf('\\') + 1));
 
             // 고정태그가 있으면 전달(편집용으로)
             if (_listFixedTags.Count > 0)
@@ -1735,6 +1736,37 @@ namespace SceneClipse
         private void numericUpDownPartialPlayJumpStopTime_ValueChanged(object sender, EventArgs e)
         {
             _nPartialplayOptionJumpTime = (int)numericUpDownPartialPlayJumpStopTime.Value;
+        }
+
+        private bool GetTimeDataFromFileName(string filename, out DateTime fileDate)
+        {
+            Regex regex_old = new Regex(@"[0-9][0-9][0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]\s[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]"); // 2018-12-14 13-00-08_영상이름.mp4
+            Regex regex_new = new Regex(@"[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"); // 2023030919160469.mp4
+
+            bool bValid = false;
+            fileDate = new DateTime();
+
+            if (filename != "")
+            {
+                if (regex_old.IsMatch(filename))
+                {
+                    // 시간 형식 : **.mp4 혹은 **_영상이름.mp4 가 될 수 있으므로 뒷부분을 지움
+                    string sTimeMod = filename.Substring(0, filename.IndexOf("."));
+                    if (sTimeMod.Contains("_"))
+                        sTimeMod = filename.Substring(0, filename.IndexOf("_"));
+                    bValid = DateTime.TryParseExact(sTimeMod, "yyyy-MM-dd HH-mm-ss", null, System.Globalization.DateTimeStyles.None, out fileDate);
+                } // (regex_old.IsMatch(filename))
+                else if (regex_new.IsMatch(filename))
+                {
+                    string sTimeMod = filename.Substring(0, 14); // 시간 형식 : 앞의 14자리를 자름(ms단위의 뒤쪽 두 숫자는 무시)
+                    if (sTimeMod.All(Char.IsDigit))
+                    {
+                        bValid = DateTime.TryParseExact(sTimeMod, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out fileDate);
+                    }
+                }
+            }
+
+            return bValid;
         }
     }
 }
